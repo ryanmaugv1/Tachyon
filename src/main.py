@@ -6,9 +6,13 @@
 #  Ryan Maugin <ryan.maugin@adacollege.org.uk>
 #
 
-import lexer
 import os
+import lexer
 
+##
+#  Will call lexical analysis method from lexer class and
+#  give in source code content to it in oerder to get tokens
+##
 def lexical_analyzer():
     # Create an instance of the lexer class
     lex = lexer.Lexer()
