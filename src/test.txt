@@ -1,2 +1,5 @@
 int a = 12;
 str name = "Ryan";
+if (a == 12) {
+    print("Lol");
+}

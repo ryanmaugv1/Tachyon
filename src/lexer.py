@@ -33,5 +33,12 @@ class Lexer(object):
             # Identify all of the Data Types
             if word in self.DATATYPE:
                 tokens.append("[DATATYPE " + word + "]")
-                source_index += 1
+            
+            # Identify all the indentifiers which are all in 'KEYWWORDS' const
+            if word in self.KEYWORDS:
+                tokens.append("[IDENTIFIER " + word + "]")
+            
+            # Increment to the next word in tachus source code
+            source_index += 1
 
+        print(tokens)
