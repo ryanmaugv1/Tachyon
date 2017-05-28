@@ -6,6 +6,8 @@
 #  Ryan Maugin <ryan.maugin@adacollege.org.uk>
 #
 
+import re # for performing regex expressions
+
 class Lexer(object):
 
     # Reserved keywords for programming language
@@ -30,17 +32,26 @@ class Lexer(object):
             # This will be the word that is retrieved from source code
             word = source_code[source_index]
 
+            # Check for new lines and ignore them
+            if word in "\n": pass
+
             # Identify all of the Data Types
-            if word in self.DATATYPE:
+            elif word in self.DATATYPE:
                 tokens.append("[DATATYPE " + word + "]")
             
             # Identify all the indentifiers which are all in 'KEYWWORDS' const
-            if word in self.KEYWORDS:
+            elif word in self.KEYWORDS:
                 tokens.append("[IDENTIFIER " + word + "]")
 
             # Identify all aithmetic operations in source code
-            if word in "*-/+%":
+            elif word in "*-/+%":
                 tokens.append("[OPERATOR " + word + "]")
+
+            # Identify all integer (number) values
+            elif re.match(".[0-9]", word):
+                tokens.append("[INTEGER " + word + "]")
+
+            
             
             # Increment to the next word in tachus source code
             source_index += 1
