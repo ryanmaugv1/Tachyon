@@ -37,6 +37,10 @@ class Lexer(object):
             # Identify all the indentifiers which are all in 'KEYWWORDS' const
             if word in self.KEYWORDS:
                 tokens.append("[IDENTIFIER " + word + "]")
+
+            # Identify all aithmetic operations in source code
+            if word in "*-/+%":
+                tokens.append("[OPERATOR " + word + "]")
             
             # Increment to the next word in tachus source code
             source_index += 1
