@@ -51,7 +51,13 @@ class Lexer(object):
             elif re.match(".[0-9]", word):
                 tokens.append("[INTEGER " + word + "]")
 
+            # Identifiy integer with a ';' at the end which terminates a statement and creates a token for the statement ender and number
+            elif re.match(".[0-9$;]", word):
+                tokens.append("[INTEGER " + word[:-1] + "]") 
             
+            # Checks for the end of a statement ';'
+            if ";" in word:
+                tokens.append("[STATEMENT_END ;]")
             
             # Increment to the next word in tachus source code
             source_index += 1
