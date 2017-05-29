@@ -48,7 +48,19 @@ class Lexer(object):
                 return [ " ".join(source_code[current_index:current_index + iterator_tracker]), iterator_tracker]
             
 
+
     def tokenize(self, source_code):
+        """ Tokenize
+
+        This method will tokenize the source code and return them the the parser in order
+        to form the syntax tree
+
+        Args:
+            source_code (str) : This is the tachus source code to be tokenized
+
+        Returns:
+            tokens (list) : It will return a lost of all the tokens
+        """
 
         # This will hold a record of all the tokens
         tokens = []
