@@ -16,6 +16,21 @@ class Lexer(object):
 
 
     def getMatcher(self, matcher, current_index, source_code):
+        """ Get Matcher
+        
+        This method will find a matcher like an ending quote in other indexes of the
+        source code and form the string.
+
+        Args:
+            matcher (str)       : The matcher we are looking for
+            current_index (int) : The index we began the search for the matcher from
+            source_code (list)  : This is the source_code we will iterate through
+
+        Returns:
+            List:
+                Contents between 1st matcher to 2nd matcher e.g "Ryan Maugin"
+                index count from current_index to the index where 2nd matcher was found e.g 10
+        """
 
         # This will track how much iterations it took to find the matcher
         iterator_tracker = 0
