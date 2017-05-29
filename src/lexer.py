@@ -11,9 +11,27 @@ import re # for performing regex expressions
 class Lexer(object):
 
     # Reserved keywords for programming language
-    KEYWORDS = ["function", "class", "if", "true", "false", "nil"]
+    KEYWORDS = ["function", "class", "if", "true", "false", "nil", "print"]
     DATATYPE = ["bool", "int", "str"]
 
+
+    def getMatcher(self, matcher, current_index, source_code):
+
+        # This will track how much iterations it took to find the matcher
+        iterator_tracker = 0
+
+        # Will loop through source code from current index forward to find the matcher
+        for item in range(current_index, len(source_code)):
+
+            # Add 1 to iterator tracker everytime it loops through source code item and doesn't find matcher
+            iterator_tracker += 1
+
+            # This checks if the matcher is in the item being looped
+            if source_code[item].find(matcher):
+
+                # If the matcher was found then return the string and amount of indexes it was away from first matcher
+                return [ " ".join(source_code[current_index:current_index + iterator_tracker]), iterator_tracker]
+            
 
     def tokenize(self, source_code):
 
@@ -37,7 +55,7 @@ class Lexer(object):
 
             # Identify all of the Data Types
             elif word in self.DATATYPE: tokens.append("[DATATYPE " + word + "]")
-            
+
             # Identify all the indentifiers which are all in 'KEYWWORDS' const
             elif word in self.KEYWORDS: tokens.append("[IDENTIFIER " + word + "]")
 
@@ -49,6 +67,32 @@ class Lexer(object):
 
             # Identifiy integer with a ';' at the end which terminates a statement and creates a token for the statement ender and number
             elif re.match(".[0-9$;]", word): tokens.append("[INTEGER " + word[:-1] + "]") 
+
+            # Identify any strings which are surrounded in '' or ""
+            elif ('"') in word: 
+
+                # If there are two quotes this means the is no need to search for closing partner
+                if word.count('"') == 2: tokens.append("[STRING " + word[0:len(word) - 1] + "]")
+                
+                # If there is only one quote then we need to search for next one to close string
+                else:
+
+                    # Call the method and get the return response data
+                    getMatcherMethod = self.getMatcher('"', source_index, source_code)
+                    getString = getMatcherMethod[0]
+                    getIndexToSkip = getMatcherMethod[1]
+
+                    # Check for STATEMENT_END
+                    if getString[len(getString) - 1] == ";":
+                        tokens.append("[STRING " + getString[0:len(getString) - 1] + "]") # Append string token without statement_end
+                        tokens.append("[STATEMENT_END ;]")                                # Add statement end seperatrly
+                    else: tokens.append("[STRING " + getString + "]")                     # Simply append string token
+
+                    # Skip a certain amount of indexes that have been already sorted for getting string
+                    source_index += getIndexToSkip
+                    
+                    # Start loop again rather than run other checks and increments
+                    pass
             
             # Checks for the end of a statement ';'
             if ";" in word: tokens.append("[STATEMENT_END ;]")
@@ -56,4 +100,4 @@ class Lexer(object):
             # Increment to the next word in tachus source code
             source_index += 1
 
-        print(tokens)
+        print(tokens) # TODO Change this to return statement
