@@ -9,6 +9,7 @@
 | operator      | [OPERATOR +]           | [Operators](#Operators)         |
 | integer       | [INTEGER 12]           | [Integers](#Integers)           |
 | statement_end | [STATEMENT_END ;]      | [End Statement](#end-statements)|
+| comparison_operator | [COMPARISON_OPERATOR ==] | [Comparison Operators](#comparison-operators)
 
 
 # Data Types
@@ -43,12 +44,30 @@ These are analysed the same way in which the keywords and data types are analyse
     elif word in "*-/+%": tokens.append("[OPERATOR " + word + "]")
     
 The only operators tachus has for the moment is:
+
 - `*` multiplication
 - `-` subtractions
 - `/` division
 - `+` addition
 - `%` modulus
+- `=` equals to
 
+
+# Comparison Operators
+
+The same way in whic i search for normal operators I used to search for comparison operators. The way I did this was:
+
+    # Identify all comparison symbols in source code
+    elif word in "==" or word in "!=" or word in ">" or word in "<": tokens.append("[COMPARISON_OPERATOR " + word + "]")
+
+The reason I had to do different `or` checks is because I was looking for a specific pair of operators together and not one like this `+/-*%` where any of the ones in there could be found and that would be an operator token.
+
+I kept the comparison operators to the minimal and cucial ones but I am planning on adding the rest later on. In the meanwhle these are the comparison editors I have added token analysis for:
+
+- `==` equals to
+- `!=` not equal to
+- `>` greater than
+- `<` less than
 
 # Integers
 
