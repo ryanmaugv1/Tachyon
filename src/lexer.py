@@ -122,7 +122,7 @@ class Lexer(object):
                     pass
             
             # Checks for the end of a statement ';'
-            if ";" in word: tokens.append("[STATEMENT_END ;]")
+            if ";" in word[len(word) - 1]: tokens.append("[STATEMENT_END ;]")
             
             # Increment to the next word in tachus source code
             source_index += 1

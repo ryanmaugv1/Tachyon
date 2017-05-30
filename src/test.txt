@@ -1,5 +1,5 @@
 int a = 11 + 1;
 str name = "Ryan Maugin";
 if (a == 12) {
-    print "Lol";
+    print "L;ol";
 }
