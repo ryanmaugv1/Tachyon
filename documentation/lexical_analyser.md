@@ -15,7 +15,7 @@
 
 # Data Types
 
-Currently the data types for tachus language are minimal and simple so that it is easy to begin with but more will be added as time goes on, in the meanwhile these are the ones I have:
+Currently the data types for tachyon language are minimal and simple so that it is easy to begin with but more will be added as time goes on, in the meanwhile these are the ones I have:
 
     DATATYPE = ["bool", "int", "str"]
 
@@ -27,7 +27,7 @@ The way that I create tokens for data types is very easy because they will usual
 
 # Identifiers
 
-There are not many keywords (identifiers) for the tachus language at the moment for the same reasons there are not a lot of data types is in order to keep it minimal and the keywords the language has as of now are:
+There are not many keywords (identifiers) for the tachyon language at the moment for the same reasons there are not a lot of data types is in order to keep it minimal and the keywords the language has as of now are:
 
     KEYWORDS = ["function", "class", "if", "true", "false", "nil", "print"]
     
@@ -44,7 +44,7 @@ These are analysed the same way in which the keywords and data types are analyse
     # Identify all aithmetic operations in source code
     elif word in "*-/+%": tokens.append("[OPERATOR " + word + "]")
     
-The only operators tachus has for the moment is:
+The only operators tachyon has for the moment is:
 
 - `*` multiplication
 - `-` subtractions

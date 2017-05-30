@@ -1,5 +1,5 @@
 #
-#  Tachus
+#  Tachyon
 #  lexer.py
 #
 #  Created on 26/05/17
@@ -56,7 +56,7 @@ class Lexer(object):
         to form the syntax tree
 
         Args:
-            source_code (str) : This is the tachus source code to be tokenized
+            source_code (str) : This is the tachyon source code to be tokenized
 
         Returns:
             tokens (list) : It will return a lost of all the tokens
@@ -133,7 +133,7 @@ class Lexer(object):
             # Checks for the end of a statement ';'
             if ";" in word[len(word) - 1]: tokens.append("[STATEMENT_END ;]")
             
-            # Increment to the next word in tachus source code
+            # Increment to the next word in tachyon source code
             source_index += 1
         
         print(tokens) # TODO Change this to return statement

@@ -1,5 +1,5 @@
 #
-#  Tachus
+#  Tachyon
 #  main.py
 #
 #  Created on 27/05/17
