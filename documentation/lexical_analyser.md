@@ -1,5 +1,7 @@
 # Lexical Analyzer
 
+> May rewrite lexical analyser to loop through each character instead of split words from source code
+
 # Patterns
 | Type          | Token                  | Reference                       |
 |---------------|------------------------|---------------------------------|
