@@ -148,16 +148,16 @@ This shows where the string begins and then ends and illustrates that the closin
 > ### GetMatcher(matcher, current_index, source_code)
 What this function will do is loop from current source code index where the first quote was found and iterate through the rest of the source code until it finds the closing quote.
 
-***`Arguments`*** the arguments are:
+**`Arguments`** the arguments are:
 - `matcher` this is the quote we found or in other cases a `(` or `{`.
 - `current_index` is the index at which we found the character we need to find a matcher for.
 - `source_code` is the source code we are looping through to find matcher.
 
-***`return`*** this will return:
+**`return`** this will return:
 - The full string
-- Number of indexes at which second matcher was found at. This is used to skip all the checked indexes and not have to rechecks them.
+- Number of indexes at which second matcher was found at. This is used to skip all the checked indexes and not have to rechecks them. `Minus 1 from the index_tracker when returning it or else it skips the next source code item`
 
-***`Source code`***:
+**`Source code`**:
 
         def getMatcher(self, matcher, current_index, source_code):
 
@@ -174,9 +174,9 @@ What this function will do is loop from current source code index where the firs
               if source_code[item].find(matcher):
 
                   # If the matcher was found then return the string and amount of indexes it was away from first matcher
-                  return [ " ".join(source_code[current_index:current_index + iterator_tracker]), iterator_tracker]
+                  return [ " ".join(source_code[current_index:current_index + iterator_tracker]), iterator_tracker - 1]
                   
-***`Things to fix`***:
+**`Things to fix`**:
 This is not perfect and still has improvements that need to be done and some bugs are:
 
 - In order to work quote has to be at the beggining of the item like this `"Ryan` and not like this `("Ryan` or else it won't work.
@@ -186,7 +186,6 @@ This is not perfect and still has improvements that need to be done and some bug
   - `buzz"` would also be valid
   - `fizz";` would be a valid
   - `fizzbuzz";)` would be invalid
-                  
 
 
 # END STATEMENTS
