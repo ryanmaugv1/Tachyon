@@ -9,7 +9,8 @@
 | operator      | [OPERATOR +]           | [Operators](#Operators)         |
 | integer       | [INTEGER 12]           | [Integers](#Integers)           |
 | statement_end | [STATEMENT_END ;]      | [End Statement](#end-statements)|
-| comparison_operator | [COMPARISON_OPERATOR ==] | [Comparison Operators](#comparison-operators)
+| comparison_operator | [COMPARISON_OPERATOR ==] | [Comparison Operators](#comparison-operators) |
+| scope_definer | [SCOPE_DEFINER {]      | [Scope Definer](#scope-definer) |
 
 
 # Data Types
@@ -84,6 +85,18 @@ But if I was to to get an integer item like `255;`, it will be tokenized by this
     elif re.match(".[0-9$;]", word): tokens.append("[INTEGER " + word[:-1] + "]")
 
 The difference is that the consition which tokenizes the integer item which looks like this `255;` will remove the end statement (semi colon).
+
+
+# Scope Definer
+
+The scope definer will handle the scope of code for example if statement:
+
+    if condition { scope }
+
+The definers of that scope will be the opening `{` and closing `}` and anyhting between that will be a scope, the way I defined this token was like this:
+
+    # Identify all scope definers '{ }' in source code
+    elif word in "{}": tokens.append("[SCOPE_DEFINER " + word + "]")
 
 
 # Strings

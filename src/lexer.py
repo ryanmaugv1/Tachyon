@@ -95,6 +95,9 @@ class Lexer(object):
             # Identify all comparison symbols in source code
             elif word in "==" or word in "!=" or word in ">" or word in "<": tokens.append("[COMPARISON_OPERATOR " + word + "]")
 
+            # Identify all scope definers '{ }' in source code
+            elif word in "{}": tokens.append("[SCOPE_DEFINER " + word + "]")
+
             # Identify all integer (number) values
             elif re.match(".[0-9]", word): tokens.append("[INTEGER " + word + "]")
 
