@@ -45,7 +45,7 @@ class Lexer(object):
             if source_code[item].find(matcher):
 
                 # If the matcher was found then return the string and amount of indexes it was away from first matcher
-                return [ " ".join(source_code[current_index:current_index + iterator_tracker]), iterator_tracker]
+                return [ " ".join(source_code[current_index:current_index + iterator_tracker]), iterator_tracker - 1]
             
 
 
@@ -85,6 +85,9 @@ class Lexer(object):
 
             # Identify all the indentifiers which are all in 'KEYWWORDS' const
             elif word in self.KEYWORDS: tokens.append("[IDENTIFIER " + word + "]")
+
+            # Identify all custom identifers like variable names in source code
+            elif re.match("[a-z]", word): tokens.append("[IDENTIFIER " + word + "]")
 
             # Identify all aithmetic operations in source code
             elif word in "*-/+%=": tokens.append("[OPERATOR " + word + "]")
@@ -129,5 +132,5 @@ class Lexer(object):
             
             # Increment to the next word in tachus source code
             source_index += 1
-
+        
         print(tokens) # TODO Change this to return statement
