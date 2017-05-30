@@ -87,7 +87,10 @@ class Lexer(object):
             elif word in self.KEYWORDS: tokens.append("[IDENTIFIER " + word + "]")
 
             # Identify all aithmetic operations in source code
-            elif word in "*-/+%": tokens.append("[OPERATOR " + word + "]")
+            elif word in "*-/+%=": tokens.append("[OPERATOR " + word + "]")
+
+            # Identify all comparison symbols in source code
+            elif word in "==" or word in "!=" or word in ">" or word in "<": tokens.append("[COMPARISON_OPERATOR " + word + "]")
 
             # Identify all integer (number) values
             elif re.match(".[0-9]", word): tokens.append("[INTEGER " + word + "]")
