@@ -42,7 +42,7 @@ class LexerTestCase(unittest.TestCase):
         )
 
         # This will print out if the test was successful in logs when running test
-        print("SUCCESS - Test getMatcher() method with two words")
+        print("SUCCESS - Testing getMatcher() method with two words")
 
     
     def test_get_matcher_method_with_sentence(self):
@@ -54,7 +54,7 @@ class LexerTestCase(unittest.TestCase):
         )
 
         # Print success message to logs if it doesn't fail
-        print("SUCCESS - Test getMatcher() method with sentence")
+        print("SUCCESS - Testing if getMatcher() method can handle a sentence")
 
 
     def test_get_matcher_method_single_word_handling(self):
@@ -67,7 +67,8 @@ class LexerTestCase(unittest.TestCase):
         )
 
         # Print success message if no errors occur
-        print('SUCCESS - Test getMatcher() with single word')
+        print('SUCCESS - Testing if getMatcher() can handle single word')
+
 
     def test_get_matcher_method_without_extra_characters(self):
 
@@ -80,6 +81,18 @@ class LexerTestCase(unittest.TestCase):
 
         # Print success message if no errors occur
         print("SUCCESS - Testing if getMatcher() can handle standalone string with no extra characters")
+
+    
+    def test_get_matcher_method_with_empty_string(self):
+
+        # Check that if getMatcher() method get given an empty string "" will return an empty string
+        self.assertEqual(
+            self.lexerTestObject.getMatcher('"', 0, ['"";']),
+            ['""', '', ';']
+        )
+
+        # Print success message if no errors occur
+        print("SUCCESS - Testing if getMatcher() can handle empty strings")
 
 
 if __name__ == '__main__':
