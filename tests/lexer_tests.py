@@ -19,6 +19,12 @@ class LexerTestCase(unittest.TestCase):
     lexerTestObject = src.lexer.Lexer()
 
 
+    # # # # # #
+    #
+    #  TESTS for getMatcher() Method
+    #
+    # # # # # #
+
     def test_get_matcher_method_with_two_item(self):
         """ Testing getMatcher() method
 
@@ -38,7 +44,7 @@ class LexerTestCase(unittest.TestCase):
         # This will run the assertEqual to see if input is equal to our wanted output
         self.assertEqual( 
             self.lexerTestObject.getMatcher('"', 0, ['"Ryan', 'Maugin";']),
-            ['"Ryan Maugin"', '; ', 2]
+            ['"Ryan Maugin"', '; ', 1]
         )
 
         # This will print out if the test was successful in logs when running test
@@ -50,7 +56,7 @@ class LexerTestCase(unittest.TestCase):
         # Check that a sentence has the correct input and iteration count with the correct end character
         self.assertEqual(
             self.lexerTestObject.getMatcher('"', 0, ['"Tachyon', 'programming', 'language', 'is', 'created by Ryan Maugin";']),
-            ['"Tachyon programming language is created by Ryan Maugin"', '; ', 5]
+            ['"Tachyon programming language is created by Ryan Maugin"', '; ', 4]
         )
 
         # Print success message to logs if it doesn't fail
@@ -76,7 +82,7 @@ class LexerTestCase(unittest.TestCase):
         # ending matcher (closing quote) of a string
         self.assertEqual(
             self.lexerTestObject.getMatcher('"', 0, ['"My', 'name', 'is', 'Ryan!"']),
-            ['"My name is Ryan!"', ' ', 4]
+            ['"My name is Ryan!"', ' ', 3]
         )
 
         # Print success message if no errors occur
@@ -93,6 +99,8 @@ class LexerTestCase(unittest.TestCase):
 
         # Print success message if no errors occur
         print("SUCCESS - Testing if getMatcher() can handle empty strings")
+
+    
 
 
 if __name__ == '__main__':
