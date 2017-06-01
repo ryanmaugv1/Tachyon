@@ -27,12 +27,12 @@ class LexerTestCase(unittest.TestCase):
         looped through to find matcher and complete the string.
         
         Input:
-            matcher (string) : "
+            matcher (string)    : "
             current_index (int) : 0
-            source_code (list): ['"Ryan', 'Maugin"']
+            source_code (list)  : ['"Ryan', 'Maugin"']
 
         Expected Output:
-            return (list) : ['"Ryan Maugin"', 1]
+            return (list)       : ['"Ryan Maugin"', 1]
         """
 
         # This will run the assertEqual to see if input is equal to our wanted output
