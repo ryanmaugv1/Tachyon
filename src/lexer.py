@@ -71,8 +71,8 @@ class Lexer(object):
                     # return the whole string, iteration count and extra characters like a statement end
                     return [
                         '"' + word.partition('"')[-1].partition('"'[0])[0] + '"', # The string
-                        word.partition('"')[-1].partition('"'[0])[2], # The extra character
-                        iter_count
+                        word.partition('"')[-1].partition('"'[0])[2],             # The extra character
+                        iter_count                                                # Number of iterations it took to get string
                     ]
 
                     # Break out the loop as the whole string was found
