@@ -105,50 +105,30 @@ The definers of that scope will be the opening `{` and closing `}` and anyhting 
 
 ### Implementation of string token analysis
 
-In this code snippet I look for a double quote inside each source code item to identify the start of a string. What I then do is check if there are two quotes in the source code item I am look through like this:
+The following code snippet simple calls the getMatcher function to get the string and returns it but what this snippet does extra is check the return to see how to behave.
 
-    if word.count('"') == 2:
-
-This means that the opening and closing quotes to the string is within the same source code item which means we don't have to run `getMatcher()` function to find the closing quote.
-
-However, If we don't find the quote then what we have to do is call the `getMatcher()` function to loop through and find the closing quote for us and return the full string and the number of index's from from current index whre the quote was found.
-
-From the `getMatcher()` function sometimes it will return a string with an `END_STATEMENT` (semicolon) at the end which we need to remove and to do so when we create the token we add:
-
-    getString[0:len(getString) - 1]
-
-This will remove the `;` from the string which would usually look something like this `"Ryan Maugin";` rather than `"Ryan Maugin"`.
-
-      # Identify any strings which are surrounded in '' or ""
+      # Identify any strings which are surrounded in  ""
       elif ('"') in word: 
 
-          # If there are two quotes this means there is no need to search for closing matcher (quote "")
-          if word.count('"') == 2: tokens.append("[STRING " + word[0:len(word) - 1] + "]")
-                
-          # If there is only one quote then we need to search for next one to close and form the string
+          # Call the getMatcher() method to get the full string
+          matcherReturn = self.getMatcher('"', source_index, source_code)
+
+          # If the string was in one source code item then we can just append it
+          if matcherReturn[1] == '': tokens.append("[STRING " + matcherReturn[0] + "]")
+
+          # If the string was spread out across multiple source code item
           else:
 
-              # Call the method and get the return response data
-              getMatcherMethod = self.getMatcher('"', source_index, source_code)  # Calls function
-              getString = getMatcherMethod[0]                                     # Gets the full string return
-              getIndexToSkip = getMatcherMethod[1]                                # Gets the index apart (index to skip)
-
-              # Check for STATEMENT_END at end of string
-              if getString[len(getString) - 1] == ";":
-              
-                  # Append string without STATEMENT_END and add the STATEMENT_END seperately as another token
-                  tokens.append("[STRING " + getString[0:len(getString) - 1] + "]") 
-                  tokens.append("[STATEMENT_END ;]")                                
-                  
-              else:
-                  
-                  # Simply append string token if there is no STATEMENT_END
-                  tokens.append("[STRING " + getString + "]")
-
-              # Skip a certain amount of indexes that have already been analysed to get string
-              source_index += getIndexToSkip
+              # Append the string token
+              tokens.append("[STRING " + matcherReturn[0] + "]")
                     
-              # Start loop again rather than run other checks and increments
+              # Check for a semicolon at the end of thee string and if there is one then add end statament
+              if ';' in matcherReturn[1]: tokens.append("[STATEMENT_END ;]")
+
+              # Skip all the already checked string items so there are no duplicates
+              source_index += matcherReturn[2]
+
+              # Skip every other check and loop again
               pass
 
 
@@ -169,38 +149,58 @@ What this function will do is loop from current source code index where the firs
 - `source_code` is the source code we are looping through to find matcher.
 
 **`return`** this will return:
-- The full string
-- Number of indexes at which second matcher was found at. This is used to skip all the checked indexes and not have to rechecks them. `Minus 1 from the index_tracker when returning it or else it skips the next source code item`
+- > Rewrite this
 
 **`Source code`**:
 
-        def getMatcher(self, matcher, current_index, source_code):
+    def getMatcher(self, matcher, current_index, source_code):
 
-          # This will track how much iterations it took to find the matcher
-          iterator_tracker = 0
+        # Check if matcher is in the same source_code item
+        if source_code[current_index].count('"') == 2:
 
-          # Will loop through source code from current index forward to find the matcher
-          for item in range(current_index, len(source_code)):
+            # this will partition the string and return a tuple like this
+            # ('word', '"', ';')
+            word = source_code[current_index].partition('"')[-1].partition('"'[0])
 
-              # Add 1 to iterator tracker everytime it loops through source code item and doesn't find matcher
-              iterator_tracker += 1
+            # This will return the string and any extra characters such as end statement
+            if word[2] != '': return [ '"' + word[0] + '"', '', word[2] ]
 
-              # This checks if the matcher is in the item being looped
-              if source_code[item].find(matcher):
+            # This will return just the string and empty fields that represent `undefined` or `nil`
+            else:  return [ '"' + word[0] + '"', '', '' ]
+        
+        else:
 
-                  # If the matcher was found then return the string and amount of indexes it was away from first matcher
-                  return [ " ".join(source_code[current_index:current_index + iterator_tracker]), iterator_tracker - 1]
+            # Cut off the parts of the source code behind the matcher
+            source_code = source_code[current_index:len(source_code)]
+
+            # This will keep track of the string as it is being built up
+            word = ""
+
+            # This will keep count of the interations
+            iter_count = 0
+
+            # This will loop through the source code to find each part of the string and matcher
+            for item in source_code:
+
+                # Increment the iteration count every iteration
+                iter_count += 1
+
+                # Append the word that has been found to the string
+                word += item + " "
+
+                # If the word has the matcher in it and it is not the first matcher
+                if matcher in item and iter_count != 1: 
+
+                    # return the whole string, iteration count and extra characters like a statement end
+                    return [
+                        '"' + word.partition('"')[-1].partition('"'[0])[0] + '"', # The string
+                        word.partition('"')[-1].partition('"'[0])[2], # The extra character
+                        iter_count
+                    ]
+
+                    # Break out the loop as the whole string was found
+                    break
                   
-**`Things to fix`**:
-This is not perfect and still has improvements that need to be done and some bugs are:
-
-- In order to work quote has to be at the beggining of the item like this `"Ryan` and not like this `("Ryan` or else it won't work.
-
-- There can only be one character at the end of the matching quote item or else it will output invalid tokens for example:
-
-  - `buzz"` would also be valid
-  - `fizz";` would be a valid
-  - `fizzbuzz";)` would be invalid
 
 
 # END STATEMENTS
