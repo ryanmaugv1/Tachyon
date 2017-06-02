@@ -19,11 +19,11 @@ class LexerTestCase(unittest.TestCase):
     lexerTestObject = src.lexer.Lexer()
 
 
-    # # # # # #
+    # 
     #
     #  TESTS for getMatcher() Method
     #
-    # # # # # #
+    #
 
     def test_get_matcher_method_with_two_item(self):
         """ Testing getMatcher() method
@@ -101,6 +101,36 @@ class LexerTestCase(unittest.TestCase):
         print("SUCCESS - Testing if getMatcher() can handle empty strings")
 
     
+    #
+    #
+    #  TESTS for Tokenize() Method
+    #
+    #
+
+    def test_tokenize_method_with_variable_decleration(self):
+
+        # Check that the tokenize() method can produce tokens for variable declaration source code
+        self.assertEqual(
+            self.lexerTestObject.tokenize('str name = "Ryan Maugin";'),
+            ['[DATATYPE str]', '[IDENTIFIER name]', '[OPERATOR =]', '[STRING "Ryan Maugin"]', '[STATEMENT_END ;]']
+        )
+
+        # Print success message if it doesn't fail
+        print("SUCCESS - Test that tokenize can return proper tokens for variable decleration code in tachyon")
+
+    def test_tokenize_method_with_if_statement(self):
+
+        # Check that the tokenize() method can produce tokens for a if statement source code
+        self.assertEqual(
+            self.lexerTestObject.tokenize('if name == "Ryan Maugin" { print name; }'),
+            [
+                '[IDENTIFIER if]', '[IDENTIFIER name]', '[COMPARISON_OPERATOR ==]', '[STRING "Ryan Maugin"]', '[SCOPE_DEFINER {]',
+                '[IDENTIFIER print]', '[IDENTIFIER name;]', '[STATEMENT_END ;]', '[SCOPE_DEFINER }]'
+            ]
+        )
+
+        # Print success message if it doesn't fail
+        print('SUCCESS - Test that tokenize method can return proper tokens for if statment in tachyon')
 
 
 if __name__ == '__main__':

@@ -158,11 +158,29 @@ class Lexer(object):
 
                     # Skip every other check and loop again
                     pass
-            
+                    
+
             # Checks for the end of a statement ';'
-            if ";" in word[len(word) - 1]: tokens.append("[STATEMENT_END ;]")
+            if ";" in word[len(word) - 1]: 
+
+                # Will hold the value of the last token which may have the end statemnt ';' still in it
+                last_token = tokens[source_index - 1]
+                
+                # If there is an end statement still in that token then ...
+                if last_token[len(tokens[source_index - 1]) - 2] == ';':
+
+                    # ... We remove the end_statement ';' from the token ...
+                    new = last_token[:len(tokens[source_index - 1]) - 2] + '' + last_token[len(tokens[source_index - 1]) - 1:]
+
+                    # ... and then we simply add the new made token to the place of the old one which had the end_statement ';'
+                    tokens[len(tokens) - 1] = new
+                
+                # Append the statement end token as a end stataemtn was found
+                tokens.append("[STATEMENT_END ;]")
+
             
             # Increment to the next word in tachyon source code
             source_index += 1
         
-        print(tokens) # TODO Change this to return statement
+        print(tokens) 
+        return tokens
