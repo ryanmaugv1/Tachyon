@@ -158,7 +158,7 @@ class Lexer(object):
 
                     # Skip every other check and loop again
                     pass
-                    
+
 
             # Checks for the end of a statement ';'
             if ";" in word[len(word) - 1]: 

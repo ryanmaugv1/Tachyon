@@ -149,7 +149,9 @@ What this function will do is loop from current source code index where the firs
 - `source_code` is the source code we are looping through to find matcher.
 
 **`return`** this will return:
-- > Rewrite this
+- The full string
+- Number of indexes at which second matcher was found at. This is used to skip all the checked indexes and not have to rechecks them.
+- The symbol at the end of string
 
 **`Source code`**:
 
@@ -195,19 +197,43 @@ What this function will do is loop from current source code index where the firs
                     return [
                         '"' + word.partition('"')[-1].partition('"'[0])[0] + '"', # The string
                         word.partition('"')[-1].partition('"'[0])[2], # The extra character
-                        iter_count
+                        iter_count - 1
                     ]
 
                     # Break out the loop as the whole string was found
                     break
                   
+**`Things to fix`**:
+This is not perfect and still has improvements that need to be done and some bugs are:
 
+- In order to work quote has to be at the beggining of the item like this `"Ryan` and not like this `("Ryan` or else it won't work.
+
+- There can only be one character at the end of the matching quote item or else it will output invalid tokens for example:
+
+  - `buzz"` would also be valid
+  - `fizz";` would be a valid
+  - `fizzbuzz";)` would be invalid
 
 # END STATEMENTS
 
 The way I analyse end statements is quite simple and the way I do this is by simply checking every already checked token for a ';' semicolon at the last index of a source code item to see if there was an end statement there. I do this like this:
 
     # Checks for the end of a statement ';'
-    if ";" in word[len(word) - 1]: tokens.append("[STATEMENT_END ;]")
+    if ";" in word[len(word) - 1]: 
+
+        # Will hold the value of the last token which may have the end statemnt ';' still in it
+        last_token = tokens[source_index - 1]
+                
+        # If there is an end statement still in that token then ...
+        if last_token[len(tokens[source_index - 1]) - 2] == ';':
+
+            # ... We remove the end_statement ';' from the token ...
+            new = last_token[:len(tokens[source_index - 1]) - 2] + '' + last_token[len(tokens[source_index - 1]) - 1:]
+
+            # ... and then we simply add the new made token to the place of the old one which had the end_statement ';'
+            tokens[len(tokens) - 1] = new
+                
+        # Append the statement end token as a end stataemtn was found
+        tokens.append("[STATEMENT_END ;]")
     
-The reason I make it only to check the last index is in order to prevent any errors where it will create an end statement if there was a semicolon inside an item and not at the end.
+However, I have to check the last item for an end statement too because if the last token was not a string token the end statement symbol (;) would have been added to it. Therefore, what I do is remove it and then update the last token.

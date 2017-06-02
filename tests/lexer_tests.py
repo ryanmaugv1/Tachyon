@@ -117,6 +117,7 @@ class LexerTestCase(unittest.TestCase):
 
         # Print success message if it doesn't fail
         print("SUCCESS - Test that tokenize can return proper tokens for variable decleration code in tachyon")
+        
 
     def test_tokenize_method_with_if_statement(self):
 
@@ -125,7 +126,7 @@ class LexerTestCase(unittest.TestCase):
             self.lexerTestObject.tokenize('if name == "Ryan Maugin" { print name; }'),
             [
                 '[IDENTIFIER if]', '[IDENTIFIER name]', '[COMPARISON_OPERATOR ==]', '[STRING "Ryan Maugin"]', '[SCOPE_DEFINER {]',
-                '[IDENTIFIER print]', '[IDENTIFIER name;]', '[STATEMENT_END ;]', '[SCOPE_DEFINER }]'
+                '[IDENTIFIER print]', '[IDENTIFIER name]', '[STATEMENT_END ;]', '[SCOPE_DEFINER }]'
             ]
         )
 
