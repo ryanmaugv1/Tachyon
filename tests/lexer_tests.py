@@ -117,7 +117,7 @@ class LexerTestCase(unittest.TestCase):
 
         # Print success message if it doesn't fail
         print("SUCCESS - Test that tokenize can return proper tokens for variable decleration code in tachyon")
-        
+
 
     def test_tokenize_method_with_if_statement(self):
 
