@@ -182,5 +182,4 @@ class Lexer(object):
             # Increment to the next word in tachyon source code
             source_index += 1
         
-        print(tokens) 
         return tokens

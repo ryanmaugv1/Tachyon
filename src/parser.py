@@ -9,4 +9,5 @@
 class Parser(object):
 
     def parser(self, token_stream):
-        print("------", token_stream)
+        
+        print(token_stream)
