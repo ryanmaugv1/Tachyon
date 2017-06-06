@@ -222,18 +222,18 @@ The way I analyse end statements is quite simple and the way I do this is by sim
     if ";" in word[len(word) - 1]: 
 
         # Will hold the value of the last token which may have the end statemnt ';' still in it
-        last_token = tokens[source_index - 1]
-                
+        last_token = tokens[source_index - 1][1]
+
         # If there is an end statement still in that token then ...
-        if last_token[len(tokens[source_index - 1]) - 2] == ';':
+        if last_token[len(last_token) - 1] == ';':
 
             # ... We remove the end_statement ';' from the token ...
-            new = last_token[:len(tokens[source_index - 1]) - 2] + '' + last_token[len(tokens[source_index - 1]) - 1:]
+            new = last_token[:len(last_token) - 1] + '' + last_token[len(last_token):]
 
             # ... and then we simply add the new made token to the place of the old one which had the end_statement ';'
-            tokens[len(tokens) - 1] = new
+            tokens[len(tokens) - 1][1] = new
                 
         # Append the statement end token as a end stataemtn was found
-        tokens.append("[STATEMENT_END ;]")
+        tokens.append(["STATEMENT_END", ";"])
     
 However, I have to check the last item for an end statement too because if the last token was not a string token the end statement symbol (;) would have been added to it. Therefore, what I do is remove it and then update the last token.

@@ -165,7 +165,7 @@ class Lexer(object):
 
                 # Will hold the value of the last token which may have the end statemnt ';' still in it
                 last_token = tokens[source_index - 1][1]
-                print(last_token[len(last_token) - 1])
+                
                 # If there is an end statement still in that token then ...
                 if last_token[len(last_token) - 1] == ';':
 
