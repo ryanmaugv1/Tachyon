@@ -112,7 +112,7 @@ class LexerTestCase(unittest.TestCase):
         # Check that the tokenize() method can produce tokens for variable declaration source code
         self.assertEqual(
             self.lexerTestObject.tokenize('str name = "Ryan Maugin";'),
-            ['[DATATYPE str]', '[IDENTIFIER name]', '[OPERATOR =]', '[STRING "Ryan Maugin"]', '[STATEMENT_END ;]']
+            [['DATATYPE', 'str'], ['IDENTIFIER', 'name'], ['OPERATOR', '='], ['STRING', '"Ryan Maugin"'], ['STATEMENT_END', ';']]
         )
 
         # Print success message if it doesn't fail
@@ -125,8 +125,8 @@ class LexerTestCase(unittest.TestCase):
         self.assertEqual(
             self.lexerTestObject.tokenize('if name == "Ryan Maugin" { print name; }'),
             [
-                '[IDENTIFIER if]', '[IDENTIFIER name]', '[COMPARISON_OPERATOR ==]', '[STRING "Ryan Maugin"]', '[SCOPE_DEFINER {]',
-                '[IDENTIFIER print]', '[IDENTIFIER name]', '[STATEMENT_END ;]', '[SCOPE_DEFINER }]'
+                ['IDENTIFIER', 'if'], ['IDENTIFIER', 'name'], ['COMPARISON_OPERATOR', '=='], ['STRING', '"Ryan Maugin"'], 
+                ['SCOPE_DEFINER', '{'], ['IDENTIFIER', 'print'], ['IDENTIFIER', 'name'], ['STATEMENT_END', ';'], ['SCOPE_DEFINER', '}']
             ]
         )
 

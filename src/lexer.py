@@ -124,7 +124,7 @@ class Lexer(object):
             elif word in "*-/+%=": tokens.append(["OPERATOR", word])
 
             # Identify all comparison symbols in source code
-            elif word in "==" or word in "!=" or word in ">" or word in "<": tokens.append(["COMPARISON_OPERATOR ", word])
+            elif word in "==" or word in "!=" or word in ">" or word in "<": tokens.append(["COMPARISON_OPERATOR", word])
 
             # Identify all scope definers '{ }' in source code
             elif word in "{}": tokens.append(["SCOPE_DEFINER", word])
@@ -141,10 +141,10 @@ class Lexer(object):
                 # Call the getMatcher() method to get the full string
                 matcherReturn = self.getMatcher('"', source_index, source_code)
 
-                # If the string was in one source code item then we can just append it
-                if matcherReturn[1] == '': tokens.append(["STRING", matcherReturn[0] ])
+                # If the string was in one source code item then we can just append it e.g '"Hello"'
+                if matcherReturn[1] == '': tokens.append(["STRING", matcherReturn[0]])
 
-                # If the string was spread out across multiple source code item
+                # If the string was spread out across multiple source code item e.g '"Hello', 'world"' 
                 else:
 
                     # Append the string token
@@ -164,16 +164,16 @@ class Lexer(object):
             if ";" in word[len(word) - 1]: 
 
                 # Will hold the value of the last token which may have the end statemnt ';' still in it
-                last_token = tokens[source_index - 1]
-                
+                last_token = tokens[source_index - 1][1]
+                print(last_token[len(last_token) - 1])
                 # If there is an end statement still in that token then ...
-                if last_token[len(tokens[source_index - 1]) - 2] == ';':
+                if last_token[len(last_token) - 1] == ';':
 
                     # ... We remove the end_statement ';' from the token ...
-                    new = last_token[:len(tokens[source_index - 1]) - 2] + '' + last_token[len(tokens[source_index - 1]) - 1:]
+                    new = last_token[:len(last_token) - 1] + '' + last_token[len(last_token):]
 
                     # ... and then we simply add the new made token to the place of the old one which had the end_statement ';'
-                    tokens[len(tokens) - 1] = new
+                    tokens[len(tokens) - 1][1] = new
                 
                 # Append the statement end token as a end stataemtn was found
                 tokens.append(["STATEMENT_END", ";"])
