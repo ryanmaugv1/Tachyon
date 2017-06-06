@@ -21,7 +21,7 @@ def _parser(tokens):
     Parser = parser.Parser()
 
     # Call the parser method and pass in the tokens as arguments
-    Parser.parser(tokens) 
+    Parser.parse(tokens) 
 
 
 

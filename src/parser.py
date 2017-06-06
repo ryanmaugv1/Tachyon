@@ -8,6 +8,13 @@
 
 class Parser(object):
 
-    def parser(self, token_stream):
-        
+    def parse(self, token_stream):
+        """ Parse
+
+        This will parse the tokens given as argument and turn the sequence of tokens into 
+        abstract syntax trees
+
+        Args:
+         token_stream (list) : The tokens produced by lexer
+        """
         print(token_stream)
