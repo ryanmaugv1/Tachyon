@@ -112,28 +112,28 @@ class Lexer(object):
             if word in "\n": pass
 
             # Identify all of the Data Types
-            elif word in self.DATATYPE: tokens.append("[DATATYPE " + word + "]")
+            elif word in self.DATATYPE: tokens.append(["DATATYPE", word])
 
             # Identify all the indentifiers which are all in 'KEYWWORDS' const
-            elif word in self.KEYWORDS: tokens.append("[IDENTIFIER " + word + "]")
+            elif word in self.KEYWORDS: tokens.append(["IDENTIFIER", word])
 
             # Identify all custom identifers like variable names in source code
-            elif re.match("[a-z]", word): tokens.append("[IDENTIFIER " + word + "]")
+            elif re.match("[a-z]", word): tokens.append(["IDENTIFIER", word])
 
             # Identify all aithmetic operations in source code
-            elif word in "*-/+%=": tokens.append("[OPERATOR " + word + "]")
+            elif word in "*-/+%=": tokens.append(["OPERATOR", word])
 
             # Identify all comparison symbols in source code
-            elif word in "==" or word in "!=" or word in ">" or word in "<": tokens.append("[COMPARISON_OPERATOR " + word + "]")
+            elif word in "==" or word in "!=" or word in ">" or word in "<": tokens.append(["COMPARISON_OPERATOR ", word])
 
             # Identify all scope definers '{ }' in source code
-            elif word in "{}": tokens.append("[SCOPE_DEFINER " + word + "]")
+            elif word in "{}": tokens.append(["SCOPE_DEFINER", word])
 
             # Identify all integer (number) values
-            elif re.match(".[0-9]", word): tokens.append("[INTEGER " + word + "]")
+            elif re.match(".[0-9]", word): tokens.append(["INTEGER", word])
 
             # Identifiy integer with a ';' at the end which terminates a statement and creates a token for the statement ender and number
-            elif re.match(".[0-9$;]", word): tokens.append("[INTEGER " + word[:-1] + "]") 
+            elif re.match(".[0-9$;]", word): tokens.append(["INTEGER", word[:-1] ]) 
 
             # Identify any strings which are surrounded in '' or ""
             elif ('"') in word: 
@@ -142,16 +142,16 @@ class Lexer(object):
                 matcherReturn = self.getMatcher('"', source_index, source_code)
 
                 # If the string was in one source code item then we can just append it
-                if matcherReturn[1] == '': tokens.append("[STRING " + matcherReturn[0] + "]")
+                if matcherReturn[1] == '': tokens.append(["STRING", matcherReturn[0] ])
 
                 # If the string was spread out across multiple source code item
                 else:
 
                     # Append the string token
-                    tokens.append("[STRING " + matcherReturn[0] + "]")
+                    tokens.append(["STRING", matcherReturn[0] ])
                     
                     # Check for a semicolon at the end of thee string and if there is one then add end statament
-                    if ';' in matcherReturn[1]: tokens.append("[STATEMENT_END ;]")
+                    if ';' in matcherReturn[1]: tokens.append(["STATEMENT_END", ";"])
 
                     # Skip all the already checked string items so there are no duplicates
                     source_index += matcherReturn[2]
@@ -176,7 +176,7 @@ class Lexer(object):
                     tokens[len(tokens) - 1] = new
                 
                 # Append the statement end token as a end stataemtn was found
-                tokens.append("[STATEMENT_END ;]")
+                tokens.append(["STATEMENT_END", ";"])
 
             
             # Increment to the next word in tachyon source code
