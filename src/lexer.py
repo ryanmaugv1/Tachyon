@@ -116,7 +116,10 @@ class Lexer(object):
             # Identify all custom identifers like variable names in source code
             elif re.match("[a-z]", word): tokens.append(["IDENTIFIER", word])
 
-            # Identify all aithmetic operations in source code
+            # Identify all custom identifers like variable names in source code which are camel cased or capitalised
+            elif re.match("[A-Z]", word): tokens.append(["IDENTIFIER", word])
+
+            # Identify all arithmetic operations in source code
             elif word in "*-/+%=": tokens.append(["OPERATOR", word])
 
             # Identify all comparison symbols in source code

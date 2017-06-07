@@ -29,7 +29,12 @@ class Parser(object):
         # Loop through each token
         while token_index < len(token_stream):
             
-            print(token_stream[token_index])
+            # Set the token values in variables for clearer and easier debugging and readability
+            token_type = token_stream[token_index][0]
+            token_value = token_stream[token_index][1]
+
+            if token_type == 'IDENTIFIER' and token_value == 'if':
+                self.parse_if_statement(token_stream)
 
             # Increment token index by 1 when a loop finishes
             token_index += 1
