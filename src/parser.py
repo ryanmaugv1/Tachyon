@@ -6,10 +6,12 @@
 #  Ryan Maugin <ryan.maugin@adacollege.org.uk>
 #
 
+import constants # for constants like tachyon keywords and dataypes
+
 class Parser(object):
 
     def parse(self, token_stream):
-        """ Parse
+        """ Parsing
 
         This will parse the tokens given as argument and turn the sequence of tokens into 
         abstract syntax trees
@@ -17,7 +19,20 @@ class Parser(object):
         Args:
          token_stream (list) : The tokens produced by lexer
         """
-        print(token_stream)
+
+        # Complete Abstract Syntax tree
+        source_ast = []
+        
+        # This will hold the token index we are parsing at
+        token_index = 0
+
+        # Loop through each token
+        while token_index < len(token_stream):
+            
+            print(token_stream[token_index])
+
+            # Increment token index by 1 when a loop finishes
+            token_index += 1
 
 
     def parse_if_statement(self, token_stream):
@@ -51,7 +66,7 @@ class Parser(object):
 
     
     def parse_print(self, token_stream):
-        """ Parsing Variable decleration
+        """ Parsing print
 
         This will parse through a variable decleration and create it's abstract tree and handle any
         syntax errors

@@ -7,13 +7,9 @@
 #
 
 import re # for performing regex expressions
+import constants # for constants like tachyon keywords and dataypes
 
 class Lexer(object):
-
-    # Reserved keywords for programming language
-    KEYWORDS = ["function", "class", "if", "true", "false", "nil", "print"]
-    DATATYPE = ["bool", "int", "str"]
-
 
     def getMatcher(self, matcher, current_index, source_code):
         """ Get Matcher
@@ -112,10 +108,10 @@ class Lexer(object):
             if word in "\n": pass
 
             # Identify all of the Data Types
-            elif word in self.DATATYPE: tokens.append(["DATATYPE", word])
+            elif word in constants.DATATYPE: tokens.append(["DATATYPE", word])
 
             # Identify all the indentifiers which are all in 'KEYWWORDS' const
-            elif word in self.KEYWORDS: tokens.append(["IDENTIFIER", word])
+            elif word in constants.KEYWORDS: tokens.append(["IDENTIFIER", word])
 
             # Identify all custom identifers like variable names in source code
             elif re.match("[a-z]", word): tokens.append(["IDENTIFIER", word])
@@ -165,7 +161,7 @@ class Lexer(object):
 
                 # Will hold the value of the last token which may have the end statemnt ';' still in it
                 last_token = tokens[source_index - 1][1]
-                
+
                 # If there is an end statement still in that token then ...
                 if last_token[len(last_token) - 1] == ';':
 
