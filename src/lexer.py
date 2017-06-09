@@ -114,10 +114,10 @@ class Lexer(object):
             elif word in constants.KEYWORDS: tokens.append(["IDENTIFIER", word])
 
             # Identify all custom identifers like variable names in source code
-            elif re.match("[a-z0-9]", word): tokens.append(["IDENTIFIER", word])
+            elif re.match("[a-z]", word): tokens.append(["IDENTIFIER", word])
 
             # Identify all custom identifers like variable names in source code which are camel cased or capitalised
-            elif re.match("[A-Z0-9]", word): tokens.append(["IDENTIFIER", word])
+            elif re.match("[A-Z]", word): tokens.append(["IDENTIFIER", word])
 
             # Identify all arithmetic operations in source code
             elif word in "*-/+%=": tokens.append(["OPERATOR", word])
@@ -128,11 +128,11 @@ class Lexer(object):
             # Identify all scope definers '{ }' in source code
             elif word in "{}": tokens.append(["SCOPE_DEFINER", word])
 
+            # Identifiy integer with a ';' at the end which terminates a statement and creates a token for the statement ender and number
+            elif re.match(".[0-9$;]", word): tokens.append(["INTEGER", word[:-1] ])
+
             # Identify all integer (number) values
             elif re.match(".[0-9]", word): tokens.append(["INTEGER", word])
-
-            # Identifiy integer with a ';' at the end which terminates a statement and creates a token for the statement ender and number
-            elif re.match(".[0-9$;]", word): tokens.append(["INTEGER", word[:-1] ]) 
 
             # Identify any strings which are surrounded in '' or ""
             elif ('"') in word: 

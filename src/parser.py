@@ -6,6 +6,7 @@
 #  Ryan Maugin <ryan.maugin@adacollege.org.uk>
 #
 
+from ast import literal_eval # To perform ast literal eval to figure out a strings data type
 import constants # for constants like tachyon keywords and datatypes
 
 class Parser(object):
@@ -19,6 +20,7 @@ class Parser(object):
         Args:
          token_stream (list) : The tokens produced by lexer
         """
+        print(token_stream)
 
         # Complete Abstract Syntax tree
         source_ast = []
@@ -86,7 +88,7 @@ class Parser(object):
 
             # This will get the variable type
             if index == 1:
-                
+
                 # This will check if the token for varibale type is valid
                 if item[1] in constants.DATATYPE: ast.append({ 'VariableDeclerator': [ {'type': item[1]} ] })
                 else: print('VARIBALE TYPE ERROR IN PARSER!')
@@ -101,6 +103,15 @@ class Parser(object):
 
                 # This will print an error if variable begins with a number
                 else: print('Illegal Variable Name "' + item[1] + '" variable name cannot begind with a number')
+
+            # This will check the variable value but will skip the equal sign
+            if index == 4:
+
+                # Check if the value is the same value as the datatype in decleration
+                if str(type(literal_eval(item[1]))) == "<class " + "'" + ast[0]['VariableDeclerator'][0]['type'] + "'>":
+                    print(ast[0]['VariableDeclerator'][0]['type'])
+                else:
+                    print("TypeError: Variable value does not conform to data type of " + str(type(literal_eval(item[1]))))
                 
 
             if item[1] == ';': break
