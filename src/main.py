@@ -10,7 +10,6 @@ import os
 import lexer
 import parser
 
-
 ##
 #  This will call the parser method inside of the parser class
 #  passing in the tokens to perform semantic and syntatic analysis
