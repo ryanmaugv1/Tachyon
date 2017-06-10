@@ -1,3 +1,4 @@
 // Place your settings in this file to overwrite default and user settings.
 {
+    "terminal.integrated.fontFamily": "Droid Sans Mono Slashed for powerline"
 }
