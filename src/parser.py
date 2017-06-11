@@ -11,6 +11,15 @@ import constants # for constants like tachyon keywords and datatypes
 
 class Parser(object):
 
+    def __init__(self, token_stream):
+        # Complete Abstract Syntax tree
+        self.source_ast = [{ 'main_scope': [] }]
+        # Symbol table fo variable semantical analysis
+        self.symbol_tree = []
+        # This will hold all the tokens
+        self.token_stream = token_stream
+
+    
     def parse(self, token_stream):
         """ Parsing
 
@@ -24,9 +33,6 @@ class Parser(object):
         print(token_stream)
         print('---------------------------------------------')
 
-        # Complete Abstract Syntax tree
-        source_ast = [{ 'main': [] }]
-
         # This will hold the token index we are parsing at
         token_index = 0
 
@@ -39,16 +45,16 @@ class Parser(object):
 
             # This will check for an if statement token
             #if token_type == 'IDENTIFIER' and token_value.lower() == 'if':
-            #    source_ast['main'][0].append(self.parse_if_statement(token_stream[token_index:len(token_stream)]))
+            #    source_ast['main_scope'][0].append(self.parse_if_statement(token_stream[token_index:len(token_stream)]))
 
             # This will parse for a vraible decleration token
             if token_type == 'DATATYPE' and token_value.lower() in constants.DATATYPE:
-                source_ast[0]['main'].append(self.parse_variable_decleration(token_stream[token_index:len(token_stream)]))
+                self.parse_variable_decleration(token_stream[token_index:len(token_stream)], token_index)
 
             # Increment token index by 1 when a loop finishes
             token_index += 1
         
-        print(source_ast)
+        print(self.source_ast)
 
 
     def parse_if_statement(self, token_stream):
@@ -65,8 +71,17 @@ class Parser(object):
         """
         print("IF STATEMENT")
 
+    
+    def find_variable_scope(self):
+        """ Find/set variable scope
 
-    def parse_variable_decleration(self, token_stream):
+        This will set or find the scope of a variable being declared or called
+        so that it can create a list of priorotised variables which should be called.
+        """
+        print('Find it by looping through source_ast and sorting through _scope tagged names')
+
+
+    def parse_variable_decleration(self, token_stream, found_at_index):
         """ Parsing Variable decleration
 
         This will parse through a variable decleration and create it's abstract tree and handle any
@@ -101,26 +116,32 @@ class Parser(object):
             if index == 2:
 
                 # This will check to make sure that the name of the doesn't start wih a number
-                if not item[1][0].isdigit():  ast[0]['VariableDeclerator'].append({ 'name': item[1] })
-
+                if not item[1][0].isdigit(): ast[0]['VariableDeclerator'].append({ 'name': item[1] })
                 # This will print an error if variable begins with a number
                 else: print('Illegal Variable Name "' + item[1] + '" variable name cannot begind with a number')
 
-            # This will check the variable value but will skip the equal sign
-            if index == 4:
+            
+            # This will check for equal sign
+            if index == 3: 
+                if item[1] == '=': pass
+                else: print("SyntaxError: An equal sign '=' was excpexted in variable decleration")
 
+            # This will check the variable value but will skip the equal sign
+            if index >= 4 and item[1] != ';':
+
+                # TODO Add the variable to the symbol tree
+                # TODO Modify this code to allow for more complex var declerations
                 # Check if the value is the same value as the datatype in decleration
                 if str(type(literal_eval(item[1]))) == "<class " + "'" + ast[0]['VariableDeclerator'][0]['type'] + "'>":
                     ast[0]['VariableDeclerator'].append({ 'value': item[1] })
-
-                # TODO If it is not the same then throw an exception not a print
-                else: print("TypeError: Variable value does not conform to data type of " + str(type(literal_eval(item[1]))))
+                else: 
+                    print("TypeError: Variable value does not conform to data type of " + str(type(literal_eval(item[1]))))
                 
             # If the for loop reaches the end statement then break because it is the end of the var decleration
             if item[1] == ';': break
         
         # Append this var declerating ast to the complete source ast
-        return ast
+        self.source_ast[0]['main_scope'].append(ast[0])
 
 
     def parse_print(self, token_stream):

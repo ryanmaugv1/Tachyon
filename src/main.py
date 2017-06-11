@@ -17,7 +17,7 @@ import parser
 def _parser(tokens):
 
     # Create an instance of the parser class
-    Parser = parser.Parser()
+    Parser = parser.Parser(tokens)
 
     # Call the parser method and pass in the tokens as arguments
     Parser.parse(tokens) 
