@@ -81,6 +81,13 @@ class Parser(object):
         """
         print('Find it by looping through source_ast and sorting through _scope tagged names')
 
+    
+    def does_var_exist(self, name):
+        """ Check to see if a variable exists """
+        for x in self.symbol_tree:
+            if x[0] == name: return True
+        return False
+
 
     def parse_variable_decleration(self, token_stream, found_at_index):
         """ Parsing Variable decleration
@@ -111,16 +118,23 @@ class Parser(object):
             
             # This will check for the variable name
             if index == 2:
-                # This will check to make sure that the name of the doesn't start wih a number
-                if not item[1][0].isdigit(): ast[0]['VariableDeclerator'].append({ 'name': item[1] })
-                # This will print an error if variable begins with a number
-                else: print('Illegal Variable Name "' + item[1] + '" variable name cannot begind with a number')
+                # This wll check if the variable name already exists
+                if self.does_var_exist(item[1]) == False:
+                    # This will check to make sure that the name of the doesn't start wih a number
+                    if not item[1][0].isdigit(): ast[0]['VariableDeclerator'].append({ 'name': item[1] })
+                    # This will print an error if variable begins with a number
+                    else: print('Illegal Variable Name "' + item[1] + '" variable name cannot begind with a number')
+                else:
+                    print('Error: Variable name "' + item[1] + '" is already defined!')
+                    quit()
 
             
             # This will check for equal sign
             if index == 3: 
                 if item[1] == '=': pass
-                else: print("SyntaxError: An equal sign '=' was excpexted in variable decleration")
+                else: 
+                    print("SyntaxError: An equal sign '=' was excpexted in variable decleration")
+                    quit()
 
             # This will check the variable value but will skip the equal sign
             if index >= 4 and item[1] != ';':
@@ -131,6 +145,7 @@ class Parser(object):
                     ast[0]['VariableDeclerator'].append({ 'value': item[1] })
                 else: 
                     print("TypeError: Variable value does not conform to data type of " + str(type(literal_eval(item[1]))))
+                    quit()
                 
             # If the for loop reaches the end statement then break because it is the end of the var decleration
             if item[1] == ';': break
