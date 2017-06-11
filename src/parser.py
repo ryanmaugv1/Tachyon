@@ -15,7 +15,7 @@ class Parser(object):
     
     def __init__(self, token_stream):
         # Complete Abstract Syntax tree
-        self.source_ast = [{ 'main_scope': [] }]
+        self.source_ast = { 'main_scope': [] }
         # Symbol table fo variable semantical analysis
         self.symbol_tree = []
         # This will hold all the tokens
@@ -122,7 +122,6 @@ class Parser(object):
 
         # Will hold the vraible decleration abstract syntax tree being built
         ast = []
-
         # Keeps track of the index within variable decleration
         index = 0
 
@@ -160,8 +159,8 @@ class Parser(object):
 
             # This will check the variable value but will skip the equal sign
             if index >= 4 and item[1] != ';':
-                # TODO Add the variable to the symbol tree
                 # TODO Modify this code to allow for more complex var declerations
+
                 # Check if the value is the same value as the datatype in decleration
                 if str(type(literal_eval(item[1]))) == "<class " + "'" + ast[0]['VariableDeclerator'][0]['type'] + "'>":
                     ast[0]['VariableDeclerator'].append({ 'value': item[1] })
@@ -175,7 +174,7 @@ class Parser(object):
             if item[1] == ';': break
         
         # Append this var declerating ast to the complete source ast and symbol table
-        self.source_ast[0]['main_scope'].append(ast[0])
+        self.source_ast['main_scope'].append(ast[0])
         self.symbol_tree.append( [ ast[0]['VariableDeclerator'][1]['name'], ast[0]['VariableDeclerator'][2]['value'] ] )
 
 
