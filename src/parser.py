@@ -55,6 +55,7 @@ class Parser(object):
             token_index += 1
         
         print(self.source_ast)
+        print(self.symbol_tree)
 
 
     def parse_if_statement(self, token_stream):
@@ -105,16 +106,11 @@ class Parser(object):
             # This will add one every loop to the index of the var decleration
             index += 1
 
-            # This will get the variable type
-            if index == 1:
-
-                # This will check if the token for varibale type is valid
-                if item[1] in constants.DATATYPE: ast.append({ 'VariableDeclerator': [ {'type': item[1]} ] })
-                else: print('VARIBALE TYPE ERROR IN PARSER!')
+            # This will get the variable type and add it to the AST
+            if index == 1: ast.append({ 'VariableDeclerator': [ {'type': item[1]} ]})
             
             # This will check for the variable name
             if index == 2:
-
                 # This will check to make sure that the name of the doesn't start wih a number
                 if not item[1][0].isdigit(): ast[0]['VariableDeclerator'].append({ 'name': item[1] })
                 # This will print an error if variable begins with a number
@@ -128,7 +124,6 @@ class Parser(object):
 
             # This will check the variable value but will skip the equal sign
             if index >= 4 and item[1] != ';':
-
                 # TODO Add the variable to the symbol tree
                 # TODO Modify this code to allow for more complex var declerations
                 # Check if the value is the same value as the datatype in decleration
@@ -140,8 +135,9 @@ class Parser(object):
             # If the for loop reaches the end statement then break because it is the end of the var decleration
             if item[1] == ';': break
         
-        # Append this var declerating ast to the complete source ast
+        # Append this var declerating ast to the complete source ast and symbol table
         self.source_ast[0]['main_scope'].append(ast[0])
+        self.symbol_tree.append( [ ast[0]['VariableDeclerator'][1]['name'], ast[0]['VariableDeclerator'][2]['value'] ] )
 
 
     def parse_print(self, token_stream):
