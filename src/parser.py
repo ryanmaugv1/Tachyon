@@ -11,6 +11,8 @@ import constants # for constants like tachyon keywords and datatypes
 
 class Parser(object):
 
+
+    
     def __init__(self, token_stream):
         # Complete Abstract Syntax tree
         self.source_ast = [{ 'main_scope': [] }]
@@ -18,6 +20,7 @@ class Parser(object):
         self.symbol_tree = []
         # This will hold all the tokens
         self.token_stream = token_stream
+
 
     
     def parse(self, token_stream):
@@ -32,6 +35,7 @@ class Parser(object):
         print('---------------------------------------------')
         print(token_stream)
         print('---------------------------------------------')
+        print("//////////////// DEBUG ZONE ////////////////")
 
         # This will hold the token index we are parsing at
         token_index = 0
@@ -54,8 +58,11 @@ class Parser(object):
             # Increment token index by 1 when a loop finishes
             token_index += 1
         
-        print(self.source_ast)
-        print(self.symbol_tree)
+        print("----------------------------------------------")
+        print("ABSTRACT SYNTAX TREE: ", self.source_ast)
+        print("SYMBOL TREE: ", self.symbol_tree)
+        print("----------------------------------------------")
+
 
 
     def parse_if_statement(self, token_stream):
@@ -73,6 +80,7 @@ class Parser(object):
         print("IF STATEMENT")
 
     
+
     def find_variable_scope(self):
         """ Find/set variable scope
 
@@ -82,13 +90,23 @@ class Parser(object):
         print('Find it by looping through source_ast and sorting through _scope tagged names')
 
     
+
     def does_var_exist(self, name):
-        """ Check to see if a variable exists """
+        """ Check to see if a variable exists 
+
+        This will perform semantical analysis by checking if a dclared variable already exists
+
+        Args:
+            name (str) : The name of the variable to check
+        Return:
+            bool :       'True' if it already exists and 'False' if it doesn't 
+        """
         for x in self.symbol_tree:
             if x[0] == name: return True
         return False
 
 
+    
     def parse_variable_decleration(self, token_stream, found_at_index):
         """ Parsing Variable decleration
 
@@ -118,12 +136,15 @@ class Parser(object):
             
             # This will check for the variable name
             if index == 2:
+                
                 # This wll check if the variable name already exists
                 if self.does_var_exist(item[1]) == False:
                     # This will check to make sure that the name of the doesn't start wih a number
                     if not item[1][0].isdigit(): ast[0]['VariableDeclerator'].append({ 'name': item[1] })
                     # This will print an error if variable begins with a number
                     else: print('Illegal Variable Name "' + item[1] + '" variable name cannot begind with a number')
+               
+                # if there was an error then print it and then quit
                 else:
                     print('Error: Variable name "' + item[1] + '" is already defined!')
                     quit()
@@ -132,6 +153,7 @@ class Parser(object):
             # This will check for equal sign
             if index == 3: 
                 if item[1] == '=': pass
+                # if there was an error then print it and then quit
                 else: 
                     print("SyntaxError: An equal sign '=' was excpexted in variable decleration")
                     quit()
@@ -143,6 +165,8 @@ class Parser(object):
                 # Check if the value is the same value as the datatype in decleration
                 if str(type(literal_eval(item[1]))) == "<class " + "'" + ast[0]['VariableDeclerator'][0]['type'] + "'>":
                     ast[0]['VariableDeclerator'].append({ 'value': item[1] })
+
+               # if there was an error then print it and then quit
                 else: 
                     print("TypeError: Variable value does not conform to data type of " + str(type(literal_eval(item[1]))))
                     quit()
@@ -153,6 +177,7 @@ class Parser(object):
         # Append this var declerating ast to the complete source ast and symbol table
         self.source_ast[0]['main_scope'].append(ast[0])
         self.symbol_tree.append( [ ast[0]['VariableDeclerator'][1]['name'], ast[0]['VariableDeclerator'][2]['value'] ] )
+
 
 
     def parse_print(self, token_stream):
