@@ -22,10 +22,16 @@ class ParserTestCase(unittest.TestCase):
     
     # 
     #
-    #  TESTS for parser_variable_decleration() method
+    #  TESTS for does_var_exist(self, name) method
     #
     #
-    
+
+    def test_does_var_exist_with_valid_case(self):
+
+        # Check that inputting a variable name to see if it exists or not
+        self.assertEqual(self.parserObject.does_var_exist('test'), True)
+        print('SUCCESS')
+
 
 if __name__ == '__main__':
     unittest.main()

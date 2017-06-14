@@ -48,8 +48,8 @@ class Parser(object):
             token_value = token_stream[token_index][1]
 
             # This will check for an if statement token
-            #if token_type == 'IDENTIFIER' and token_value.lower() == 'if':
-            #    source_ast['main_scope'][0].append(self.parse_if_statement(token_stream[token_index:len(token_stream)]))
+            if token_type == 'IDENTIFIER' and token_value.lower() == 'if':
+                self.parse_if_statement(token_stream[token_index:len(token_stream)])
 
             # This will parse for a vraible decleration token
             if token_type == 'DATATYPE' and token_value.lower() in constants.DATATYPE:
@@ -65,6 +65,24 @@ class Parser(object):
 
 
 
+    def get_variable_value(self, name):
+        """ Get the value of a variable
+
+        This will get the value of a variable if it exists and return it
+
+        Args:
+            name (string) : The name of the variable we are searching for
+
+        Returns:
+            bool  : Will return False if the variable does not exist
+            value : Will return the value of the 
+        """
+        for var in self.symbol_tree:
+            if var[0] == name: return var[1]
+        return False
+
+
+
     def parse_if_statement(self, token_stream):
         """ Parsing If Statement
 
@@ -77,7 +95,48 @@ class Parser(object):
         Returns:
             AST : The if statement abstract syntax tree
         """
-        print("IF STATEMENT")
+       
+        # This will hold the AST for the if statement
+        ast = { 'ConditionalStatement': [] }
+        # This will hold the index when looping through if statement tokens
+        index = 0
+
+        for item in token_stream:
+            
+            # This will add one every loop to the index of the var decleration
+            index += 1
+            # Check for the beggining of the statement body
+            if item[1] == '{': break
+
+            # Check and create the ast for the if statement condition
+            if index >= 2: 
+
+                # This will check the identifiers in the 
+                if item[0] == 'IDENTIFIER' and item[1] not in constants.KEYWORDS:
+
+                    # This will call the get variable value and store the value inside the getting_var value
+                    getting_var = self.get_variable_value(item[1]) 
+
+                    # This will act accordingly depending on output
+                    if getting_var != False:
+                        ast['ConditionalStatement'].append({'value': item[1]})
+                        print(getting_var)
+                    else: print('Unexpected Identifier "' + item[1] + '" could not be found')
+                
+                # This will check for a comparison operator
+                if item[0] == 'COMPARISON_OPERATOR':
+                    #TODO Create an add to the syntax tree
+                    ast['ConditionalStatement'].append({'comparison_operator': item[1]})
+                    print(item[1])
+
+                # This will check for an integer
+                if item[0] == 'INTEGER' or item[0] == 'STRING':
+                    #TODO Create an add to the syntax tree
+                    ast['ConditionalStatement'].append({'value': item[1]})
+                    print(item[1])
+                    
+                print(item)
+                print(ast)
 
     
 
