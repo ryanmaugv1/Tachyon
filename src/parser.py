@@ -116,25 +116,17 @@ class Parser(object):
 
                     # This will call the get variable value and store the value inside the getting_var value
                     getting_var = self.get_variable_value(item[1]) 
-
+                    
                     # This will act accordingly depending on output
-                    if getting_var != False:
-                        ast['ConditionalStatement'].append({'value': item[1]})
-                        print(getting_var)
+                    if getting_var != False: ast['ConditionalStatement'].append({'value': item[1]})
                     else: print('Unexpected Identifier "' + item[1] + '" could not be found')
                 
                 # This will check for a comparison operator
-                if item[0] == 'COMPARISON_OPERATOR':
-                    #TODO Create an add to the syntax tree
-                    ast['ConditionalStatement'].append({'comparison_operator': item[1]})
-                    print(item[1])
+                if item[0] == 'COMPARISON_OPERATOR': ast['ConditionalStatement'].append({'comparison_operator': item[1]})
 
                 # This will check for an integer
-                if item[0] == 'INTEGER' or item[0] == 'STRING':
-                    #TODO Create an add to the syntax tree
-                    ast['ConditionalStatement'].append({'value': item[1]})
-                    print(item[1])
-                    
+                if item[0] == 'INTEGER' or item[0] == 'STRING': ast['ConditionalStatement'].append({'value': item[1]})
+
                 print(item)
                 print(ast)
 
@@ -225,7 +217,7 @@ class Parser(object):
                     ast[0]['VariableDeclerator'].append({ 'value': item[1] })
 
                # if there was an error then print it and then quit
-                else: 
+                else:
                     print("TypeError: Variable value does not conform to data type of " + str(type(literal_eval(item[1]))))
                     quit()
                 

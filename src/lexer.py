@@ -122,6 +122,9 @@ class Lexer(object):
             # Identify all arithmetic operations in source code
             elif word in "*-/+%=": tokens.append(["OPERATOR", word])
 
+            # Identify all bianry operators
+            elif word == "&&" or word == "||": tokens.append(["BINARY_OPERATOR", word])
+
             # Identify all comparison symbols in source code
             elif word in "==" or word in "!=" or word in ">" or word in "<": tokens.append(["COMPARISON_OPERATOR", word])
 
