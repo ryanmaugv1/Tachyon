@@ -50,10 +50,11 @@ class Parser(object):
             # This will check for an if statement token
             if token_type == 'IDENTIFIER' and token_value.lower() == 'if':
                 parse_call = self.parse_if_statement(token_stream[token_index:len(token_stream)])
+                self.source_ast['main_scope'].append(parse_call)
 
             # This will parse for a vraible decleration token
             if token_type == 'DATATYPE' and token_value.lower() in constants.DATATYPE:
-                parse_call = self.parse_variable_decleration(token_stream[token_index:len(token_stream)], token_index)
+                parse_call = self.parse_variable_decleration(token_stream[token_index:len(token_stream)])
                 self.source_ast['main_scope'].append(parse_call[0])
                 self.symbol_tree.append([ parse_call[1], parse_call[2] ])
 
@@ -61,8 +62,8 @@ class Parser(object):
             token_index += 1
         
         print("----------------------------------------------")
-        print("ABSTRACT SYNTAX TREE: ", self.source_ast)
-        print("SYMBOL TREE: ", self.symbol_tree)
+        print("ABSTRACT SYNTAX TREE: \n", self.source_ast)
+        print("SYMBOL TREE: \n", self.symbol_tree)
         print("----------------------------------------------")
 
 
@@ -98,13 +99,16 @@ class Parser(object):
         Return:
             list : Array of dictionaries whihc is the AST
         """
+        ast = { 'body': [] }
         print('parse main body')
         
         for item in range(0, len(token_stream)):
             if token_stream[item][1] == '}': break
-            if token_stream[item][0] == 'DATATYPE' and token_stream[item][1].lower() in constants.DATATYPE:
-                self.parse_variable_decleration(token_stream[token_index:len(token_stream)], token_index)
 
+            if token_stream[item][0] == 'DATATYPE' and token_stream[item][1].lower() in constants.DATATYPE:
+               ast['body'].append(self.parse_variable_decleration(token_stream)[0])
+               
+        return ast
 
 
     def parse_if_statement(self, token_stream):
@@ -132,7 +136,7 @@ class Parser(object):
 
             # Check for the beggining of the statement body
             if item[1] == '{': 
-                self.parse_body(token_stream[index:len(token_stream)])
+                ast['ConditionalStatement'].append(self.parse_body(token_stream[index:len(token_stream)]))
                 break
 
             # Check and create the ast for the if statement condition
@@ -145,7 +149,7 @@ class Parser(object):
                     getting_var = self.get_variable_value(item[1]) 
 
                     # This will act accordingly depending on output
-                    if getting_var != False: ast['ConditionalStatement'].append({'value': item[1]})
+                    if getting_var != False: ast['ConditionalStatement'].append({'value': getting_var})
                     else: print('Unexpected Identifier "' + item[1] + '" could not be found')
                 
                 # This will check for a comparison operator
@@ -159,16 +163,7 @@ class Parser(object):
 
                 print(item)
                 print(ast)
-
-    
-
-    def find_variable_scope(self):
-        """ Find/set variable scope
-
-        This will set or find the scope of a variable being declared or called
-        so that it can create a list of priorotised variables which should be called.
-        """
-        print('Find it by looping through source_ast and sorting through _scope tagged names')
+        return ast
 
     
 
@@ -188,7 +183,7 @@ class Parser(object):
 
 
     
-    def parse_variable_decleration(self, token_stream, found_at_index):
+    def parse_variable_decleration(self, token_stream):
         """ Parsing Variable decleration
 
         This will parse through a variable decleration and create it's abstract tree and handle any

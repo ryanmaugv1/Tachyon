@@ -8,4 +8,5 @@
 
 # Reserved keywords for programming language
 KEYWORDS = ["function", "class", "if", "else", "true", "false", "nil", "print"]
+BUILT_IN_FUNCTIONS = ["print"]
 DATATYPE = ["bool", "int", "str"]

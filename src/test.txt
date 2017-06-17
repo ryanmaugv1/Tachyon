@@ -1,3 +1,5 @@
 int a = 11;
 str name = "Ryan Maugin The Boss";
-if a == 12 { print name; }
+if a == 12 { 
+    str inn = "LOL";
+}
