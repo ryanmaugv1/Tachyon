@@ -49,11 +49,13 @@ class Parser(object):
 
             # This will check for an if statement token
             if token_type == 'IDENTIFIER' and token_value.lower() == 'if':
-                self.parse_if_statement(token_stream[token_index:len(token_stream)])
+                parse_call = self.parse_if_statement(token_stream[token_index:len(token_stream)])
 
             # This will parse for a vraible decleration token
             if token_type == 'DATATYPE' and token_value.lower() in constants.DATATYPE:
-                self.parse_variable_decleration(token_stream[token_index:len(token_stream)], token_index)
+                parse_call = self.parse_variable_decleration(token_stream[token_index:len(token_stream)], token_index)
+                self.source_ast['main_scope'].append(parse_call[0])
+                self.symbol_tree.append([ parse_call[1], parse_call[2] ])
 
             # Increment token index by 1 when a loop finishes
             token_index += 1
@@ -80,6 +82,28 @@ class Parser(object):
         for var in self.symbol_tree:
             if var[0] == name: return var[1]
         return False
+    
+
+
+    def parse_body(self, token_stream):
+        """ Parse Body
+
+        This method will parse the body of a conditional statement like a conditional,
+        recursive or function in tachyon and create it's own abstract tree which will be fed into
+        the AST being created in methid this methid was called from
+
+        Args:
+            token_stream (list) : List of tokens starting from where the body code block starts
+
+        Return:
+            list : Array of dictionaries whihc is the AST
+        """
+        print('parse main body')
+        
+        for item in range(0, len(token_stream)):
+            if token_stream[item][1] == '}': break
+            if token_stream[item][0] == 'DATATYPE' and token_stream[item][1].lower() in constants.DATATYPE:
+                self.parse_variable_decleration(token_stream[token_index:len(token_stream)], token_index)
 
 
 
@@ -105,8 +129,11 @@ class Parser(object):
             
             # This will add one every loop to the index of the var decleration
             index += 1
+
             # Check for the beggining of the statement body
-            if item[1] == '{': break
+            if item[1] == '{': 
+                self.parse_body(token_stream[index:len(token_stream)])
+                break
 
             # Check and create the ast for the if statement condition
             if index >= 2: 
@@ -116,7 +143,7 @@ class Parser(object):
 
                     # This will call the get variable value and store the value inside the getting_var value
                     getting_var = self.get_variable_value(item[1]) 
-                    
+
                     # This will act accordingly depending on output
                     if getting_var != False: ast['ConditionalStatement'].append({'value': item[1]})
                     else: print('Unexpected Identifier "' + item[1] + '" could not be found')
@@ -126,6 +153,9 @@ class Parser(object):
 
                 # This will check for an integer
                 if item[0] == 'INTEGER' or item[0] == 'STRING': ast['ConditionalStatement'].append({'value': item[1]})
+
+                # This will check for a binary operator
+                if item[0] == 'BINARY_OPERATOR': ast['ConditionalStatement'].append({'binary_operator': item[1]})
 
                 print(item)
                 print(ast)
@@ -225,8 +255,7 @@ class Parser(object):
             if item[1] == ';': break
         
         # Append this var declerating ast to the complete source ast and symbol table
-        self.source_ast['main_scope'].append(ast[0])
-        self.symbol_tree.append( [ ast[0]['VariableDeclerator'][1]['name'], ast[0]['VariableDeclerator'][2]['value'] ] )
+        return [ast[0], ast[0]['VariableDeclerator'][1]['name'], ast[0]['VariableDeclerator'][2]['value']]
 
 
 
