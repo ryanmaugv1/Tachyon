@@ -100,14 +100,20 @@ class Parser(object):
             list : Array of dictionaries whihc is the AST
         """
         ast = { 'body': [] }
+        index = 0
         print('parse main body')
         
         for item in range(0, len(token_stream)):
+            index += 1
             if token_stream[item][1] == '}': break
 
             if token_stream[item][0] == 'DATATYPE' and token_stream[item][1].lower() in constants.DATATYPE:
-               ast['body'].append(self.parse_variable_decleration(token_stream)[0])
-               
+                ast['body'].append(self.parse_variable_decleration(token_stream)[0])
+
+            if token_stream[item][0] == 'IDENTIFIER' and token_stream[item][1].lower() == 'if':
+                print('ran')
+                ast['body'].append(self.parse_if_statement(token_stream[index:len(token_stream)]))
+
         return ast
 
 

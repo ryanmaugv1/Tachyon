@@ -131,11 +131,12 @@ class Lexer(object):
             # Identify all scope definers '{ }' in source code
             elif word in "{}": tokens.append(["SCOPE_DEFINER", word])
 
-            # Identifiy integer with a ';' at the end which terminates a statement and creates a token for the statement ender and number
-            elif re.match(".[0-9$;]", word): tokens.append(["INTEGER", word[:-1] ])
-
             # Identify all integer (number) values
-            elif re.match(".[0-9]", word): tokens.append(["INTEGER", word])
+            elif re.match(".[0-9]", word): 
+                
+                # This will check if there is an end statement at the end of an integer and remove it if there is
+                if word[len(word) - 1] == ';': tokens.append(["INTEGER", word[:-1]])
+                else: tokens.append(["INTEGER", word])
 
             # Identify any strings which are surrounded in '' or ""
             elif ('"') in word: 
