@@ -1,5 +1,7 @@
 int a = 11;
 str name = "Ryan Maugin The Boss";
 if a == 12 { 
-    str inn = "LOL";
+    if name == "Ryan" {
+        str just = "do it";
+    }
 }
