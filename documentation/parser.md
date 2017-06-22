@@ -29,3 +29,10 @@ Class Variables, what they contain & why they are needed:
     - Modify symbol tree to add the variables scope too, so that a variable can only be called within the tachyon code if is within a specific scope.
 
 > ### **parse_print()**
+
+
+
+# Notes
+    if str(type(literal_eval(item[1]))) == "<class " + "'" + ast[0]['VariableDeclerator'][0]['type'] + "'>":
+
+    print("TypeError: Variable value does not conform to data type of " + str(type(literal_eval(item[1]))))

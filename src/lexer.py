@@ -8,6 +8,7 @@
 
 import re # for performing regex expressions
 import constants # for constants like tachyon keywords and datatypes
+#FIXME import src.constants ------ to fix running tests error
 
 class Lexer(object):
 
