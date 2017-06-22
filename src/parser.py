@@ -122,8 +122,30 @@ class Parser(object):
         
 
     def parse_if_statement(self, token_index, token_stream):
-        print('IF STATEMENT')
+        """ Parsing If Statement
 
+        This will parse if statement token stream that matcher is found pattern.
+
+        Args:
+            token_index (int)   : This will hold the index where the decleration pattern starts 
+            token_stream (list) : The token_stream from token index to end of source code tokens
+        """
+        
+        # The if statement AST
+        ast = { 'ConditionalStatement': [ {'condition': []}, {'body': []} ] }
+        # This will hold the amount of tokens that have been checked
+        tokens_checked = 0
+
+        for token in range(1, len(token_stream) - 1):
+            tokens_checked += 1
+
+            # This will parse the body of the if statement when the open brace is found
+            if token_stream[token][1] == "{": 
+                print(ast)
+                break
+           
+            # This will parse through the condition
+            ast['ConditionalStatement'][0]['condition'].append(token_stream[token][1])
 
 
     def error_message(self, token_index, error_message):
