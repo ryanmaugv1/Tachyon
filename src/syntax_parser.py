@@ -6,7 +6,6 @@
 #  Ryan Maugin <ryan.maugin@adacollege.org.uk>
 #
 
-from ast import literal_eval # To perform ast literal eval to figure out a strings data type
 import constants # for constants like tachyon keywords and datatypes
 
 class SyntaxParser(object):
