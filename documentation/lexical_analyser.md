@@ -237,3 +237,7 @@ The way I analyse end statements is quite simple and the way I do this is by sim
         tokens.append(["STATEMENT_END", ";"])
     
 However, I have to check the last item for an end statement too because if the last token was not a string token the end statement symbol (;) would have been added to it. Therefore, what I do is remove it and then update the last token.
+
+# **Bugs to fix**
+
+- Entering a number like '1', '9' or '3' cause a mess up in the lexer but naything longer than one decimal such as '10' or '287' is fine.

@@ -1,7 +1,9 @@
 int a = 11;
 str name = "Ryan Maugin The Boss";
+bool isMale = True;
+int num = 10 + 51;
 
-if a == 12 { 
+if a == 21 {
     if name == "Ryan" {
         str just = "do it";
     }

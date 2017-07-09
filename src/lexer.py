@@ -115,10 +115,9 @@ class Lexer(object):
             elif word in constants.KEYWORDS: tokens.append(["IDENTIFIER", word])
 
             # Identify all custom identifers like variable names in source code
-            elif re.match("[a-z]", word): tokens.append(["IDENTIFIER", word])
-
-            # Identify all custom identifers like variable names in source code which are camel cased or capitalised
-            elif re.match("[A-Z]", word): tokens.append(["IDENTIFIER", word])
+            elif re.match("[a-z]", word) or re.match("[A-Z]", word): 
+                if word[len(word) - 1] != ';': tokens.append(["IDENTIFIER", word])
+                else: tokens.append(["IDENTIFIER", word[0:len(word) - 1]])
 
             # Identify all arithmetic operations in source code
             elif word in "*-/+%=": tokens.append(["OPERATOR", word])
@@ -171,7 +170,7 @@ class Lexer(object):
 
                 # If there is an end statement still in that token then ...
                 if last_token[len(last_token) - 1] == ';':
-
+    
                     # ... We remove the end_statement ';' from the token ...
                     new = last_token[:len(last_token) - 1] + '' + last_token[len(last_token):]
 
