@@ -79,6 +79,7 @@ class SyntaxParser(object):
             # This will pase the second token which will be the name of the var
             if x == 1 and token_type == "IDENTIFIER": ast['VariableDecleration'].append({ "name": token_value })
 
+            
             # This will parse the 3rd token which adds the value of the variable
             if x == 3 and token_stream[x + 1][0] == "STATEMENT_END":
                 #TODO If identifier as value then search through symbol tree method
@@ -86,18 +87,66 @@ class SyntaxParser(object):
                 try: ast['VariableDecleration'].append({ "value": int(token_value) })
                 except ValueError: ast['VariableDecleration'].append({ "value": token_value })
             
-            # TODO Handle concat and arithmetics to declare a variable
+           
             # This will parse any variable declerations which have concatenation or arithmetics
-            # elif x >= 3:
-            #     for valItem in range(tokens_checked, len(token_stream)):
-            #         if token_stream[valItem][0] == "STATEMENT_END": break
+            elif x >= 3:
 
-            #         # do something
+                value_list = [] # Holds the list of ints and perands that will be passed to equation parser
 
-            #         tokens_checked += 1
-            #     break
+                for equation_item in range(x, len(token_stream)):
+                    # If there is an end statement then break because the var decl is done
+                    if token_stream[equation_item][0] == "STATEMENT_END": break
 
-            tokens_checked += 1
+                    # Try to append item as int not string if you can
+                    try:               value_list.append(int(token_stream[equation_item][1]))
+                    except ValueError: value_list.append(token_stream[equation_item][1])
+
+                    tokens_checked += 1 # Indent the tokens checked within this for loop
+
+                # Call the equation parser and append value of successful or try tring concat parser if an error occurs
+                try:    ast['VariableDecleration'].append({ "value": self.equation_parser(value_list) })
+                except: print("Use string concat var value parsing")
+                break                   # Break out of the current var parsing loop since we just parsed everything
+
+            tokens_checked += 1         # Indent within overall for loop
         
         print(ast)
         self.token_index += tokens_checked
+    
+
+
+    def equation_parser(self, equation):
+        """ Equation parsing
+
+        This will parse equations such as 10 * 10 which comes in as an array with nums
+        and operands
+
+        args:
+            equation (list) : List of the ints and operands in order
+        returns:
+            value (int)     : The value of the equation 
+        """
+        total = 0 # Holds equation value
+
+        for item in range(0, len(equation)):
+            
+            # Add first value to total as a starting int to perform calculatios on
+            if item == 0:
+                total += equation[item]
+                pass
+
+            # This will check every operator and perform the right calculations based on total
+            # and the number that is after the operator
+            if item % 2 == 1:
+                if equation[item] == "+": total += equation[item + 1]
+                elif equation[item] == "-": total += equation[item + 1]
+                elif equation[item] == "/": total /= equation[item + 1]
+                elif equation[item] == "*": total *= equation[item + 1]
+                elif equation[item] == "%": total %= equation[item + 1]
+                else: print("Invalid Operator")
+
+            # Skip every number since we already check and use them
+            elif item % 2 == 0: pass
+        
+        return total
+        
