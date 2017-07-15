@@ -2,7 +2,7 @@ int a = 11;
 str name = "Ryan Maugin The Boss";
 bool isMale = True;
 int num = 10 * 10 + 10;
-str full_name = last_name + " " + last_name;
+str full_name = last_name " " + last_name;
 
 if a == 21 {
     if name == "Ryan" {

@@ -76,7 +76,7 @@ class SyntaxParser(object):
             # This will parse the first token which will be the var type
             if x == 0: ast['VariableDecleration'].append({ "type": token_value })
 
-            # This will pase the second token which will be the name of the var
+            # This will parse the second token which will be the name of the var
             if x == 1 and token_type == "IDENTIFIER": ast['VariableDecleration'].append({ "name": token_value })
 
             
@@ -107,7 +107,7 @@ class SyntaxParser(object):
                 try: ast['VariableDecleration'].append({ "value": self.equation_parser(value_list) })
                 except:
                     try:    ast['VariableDecleration'].append({ "value": self.concatenation_parser(value_list) })
-                    except: print("ERROR: Variable decleration is invalid!")
+                    except: self.send_error_message("Invalid variable decleration!", self.token_index + tokens_checked)
                 break                   # Break out of the current var parsing loop since we just parsed everything
 
             tokens_checked += 1         # Indent within overall for loop
@@ -145,7 +145,8 @@ class SyntaxParser(object):
                 elif equation[item] == "/": total /= equation[item + 1]
                 elif equation[item] == "*": total *= equation[item + 1]
                 elif equation[item] == "%": total %= equation[item + 1]
-                else: print("Invalid Operator")
+                else: self.send_error_message("Error parsing equation, check that you are using correct operand",
+                                              self.token_index)
 
             # Skip every number since we already check and use them
             elif item % 2 == 0: pass
@@ -193,7 +194,8 @@ class SyntaxParser(object):
                 elif current_value == ",": 
                     full_string += " " + concatenation_list[item + 1]
 
-                else: print("Error finding concatenation operand!")
+                else: self.send_error_message("Error parsing equation, check that you are using correct operand",
+                                              self.token_index)
             
             # This will skip value as it is already being added and dealt with when getting the operand
             if item % 2 == 0: pass
@@ -218,3 +220,11 @@ class SyntaxParser(object):
         for var in self.symbol_tree:
             if var[0] == name: return var[1]
         return False
+
+
+
+    def send_error_message(self, message, token_index):
+        print("------------------------ ERROR FOUND ------------------------")
+        print(token_index, ": ", message)
+        print("-------------------------------------------------------------")
+        quit()
