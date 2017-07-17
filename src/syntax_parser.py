@@ -17,6 +17,8 @@ class SyntaxParser(object):
         self.source_ast = { 'main_scope': [] }
         # Symbol table fo variable semantical analysis
         self.symbol_tree = [ ['last_name', 'Maugin'], ['test', 'test101'] ]
+        # This will hold all error messages
+        self.error_messages = []
         # This will hold all the tokens
         self.token_stream = token_stream
         # This will hold the token index we are parsing at
@@ -41,10 +43,20 @@ class SyntaxParser(object):
             token_type = token_stream[self.token_index][0]
             token_value = token_stream[self.token_index][1]
             
+            # This will find the token pattern for a variable decleration
             if token_type == "DATATYPE":
                 self.variable_decleration_parsing(token_stream[self.token_index:len(token_stream)])
+                
+            # This will find the token pattern for an if statement
+            elif token_type == "IDENTIFIER" and token_value == "if":
+                print("IF STATEMENT FOUND")
 
             self.token_index += 1
+        
+        # Check if there were any errors and if so display them all
+        if self.error_messages != []: self.send_error_message(self.error_messages)
+        
+        print(self.source_ast)
 
 
     
@@ -78,7 +90,6 @@ class SyntaxParser(object):
 
             # This will parse the second token which will be the name of the var
             if x == 1 and token_type == "IDENTIFIER": ast['VariableDecleration'].append({ "name": token_value })
-
             
             # This will parse the 3rd token which adds the value of the variable
             if x == 3 and token_stream[x + 1][0] == "STATEMENT_END":
@@ -107,12 +118,12 @@ class SyntaxParser(object):
                 try: ast['VariableDecleration'].append({ "value": self.equation_parser(value_list) })
                 except:
                     try:    ast['VariableDecleration'].append({ "value": self.concatenation_parser(value_list) })
-                    except: self.send_error_message("Invalid variable decleration!", self.token_index + tokens_checked)
+                    except: self.error_messages.append(["Invalid variable decleration!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
                 break                   # Break out of the current var parsing loop since we just parsed everything
 
             tokens_checked += 1         # Indent within overall for loop
         
-        print(ast)
+        self.source_ast['main_scope'].append(ast)
         self.token_index += tokens_checked
     
 
@@ -145,8 +156,8 @@ class SyntaxParser(object):
                 elif equation[item] == "/": total /= equation[item + 1]
                 elif equation[item] == "*": total *= equation[item + 1]
                 elif equation[item] == "%": total %= equation[item + 1]
-                else: self.send_error_message("Error parsing equation, check that you are using correct operand",
-                                              self.token_index)
+                else: self.error_messages.append(["Error parsing equation, check that you are using correct operand",
+                                                 equation])
 
             # Skip every number since we already check and use them
             elif item % 2 == 0: pass
@@ -194,8 +205,8 @@ class SyntaxParser(object):
                 elif current_value == ",": 
                     full_string += " " + concatenation_list[item + 1]
 
-                else: self.send_error_message("Error parsing equation, check that you are using correct operand",
-                                              self.token_index)
+                else: self.error_messages.append(["Error parsing equation, check that you are using correct operand",
+                                                 concatenation_list])
             
             # This will skip value as it is already being added and dealt with when getting the operand
             if item % 2 == 0: pass
@@ -223,8 +234,10 @@ class SyntaxParser(object):
 
 
 
-    def send_error_message(self, message, token_index):
-        print("------------------------ ERROR FOUND ------------------------")
-        print(token_index, ": ", message)
-        print("-------------------------------------------------------------")
+    def send_error_message(self, error_list):
+        print("------------------------ %s ERROR'S FOUND ------------------------" % len(error_list))
+        for error in range(0, len(error_list)):
+            print("%s)  %s" % (error, error_list[error][0]))
+            print('    ' + '\033[91m' + " ".join(str(x) for x in error_list[error][1]) + '\033[0m')
+        print("-----------------------------------------------------------------")
         quit()
