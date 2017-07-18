@@ -7,6 +7,7 @@
 #
 
 import constants # for constants like tachyon keywords and datatypes
+from ast import literal_eval # for getting type of variable decleration of value
 
 class SyntaxParser(object):
 
@@ -73,7 +74,7 @@ class SyntaxParser(object):
         tokens_checked = 0                   # Number of token checked that made up the var decl
 
         for x in range(0, len(token_stream)):
-            
+    
             # Create variables for identifying token type and value more easily
             token_type = token_stream[x][0]
             token_value = token_stream[x][1]
@@ -81,28 +82,46 @@ class SyntaxParser(object):
             # Skip the '=' operator in var decl
             if x == 2 and token_type == "OPERATOR" and token_value == "=":
                 pass
+            # This will handle error detection for making sure the '=' is found
+            if x == 2 and token_type != "OPERATOR" and token_value != "=":
+                self.error_messages.append(["Variable Decleration Missing '='.", self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
 
             # If a statement end is found then break out parsing
             if token_stream[x][0] == "STATEMENT_END": break
-            
+
             # This will parse the first token which will be the var type
             if x == 0: ast['VariableDecleration'].append({ "type": token_value })
 
             # This will parse the second token which will be the name of the var
-            if x == 1 and token_type == "IDENTIFIER": ast['VariableDecleration'].append({ "name": token_value })
-            
-            # This will parse the 3rd token which adds the value of the variable
+            if x == 1 and token_type == "IDENTIFIER":
+                
+                # Check if a variable has already been named the same and is so send an error
+                if self.get_variable_value(token_value) != False:
+                    self.error_messages.append(["Variable '%s' already exists and cannot be defined again!" % token_value, self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
+                else: 
+                    ast['VariableDecleration'].append({ "name": token_value })
+
+            # Error handling for variable name to make sure naming convention is acceptable
+            if x == 1 and token_type != "IDENTIFIER":
+                self.error_messages.append(["Invalid Variable Name '%s'" % token_value, self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
+
+            # This will parse the 3rd token which is the value of the variable
             if x == 3 and token_stream[x + 1][0] == "STATEMENT_END":
-                #TODO If identifier as value then search through symbol tree method
-                # Add value as a number not a string if it is an int or else add it as a string
-                try: ast['VariableDecleration'].append({ "value": int(token_value) })
-                except ValueError: ast['VariableDecleration'].append({ "value": token_value })
-            
-           
+
+                # Check if the value matches the variable defined type
+                if type(eval(token_value)) == eval(token_stream[0][1]):
+                    # Add value as a number not a string if it is an int or else add it as a string
+                    try: ast['VariableDecleration'].append({ "value": int(token_value) })
+                    except ValueError: ast['VariableDecleration'].append({ "value": token_value })
+                else:
+                    self.error_messages.append(["Variable value does not match defined type!", 
+                                                self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
+
             # This will parse any variable declerations which have concatenation or arithmetics
             elif x >= 3:
 
-                value_list = [] # Holds the list of ints and perands that will be passed to equation parser
+                # Holds the list of ints and perands that will be passed to equation parser
+                value_list = []
 
                 for equation_item in range(x, len(token_stream)):
                     # If there is an end statement then break because the var decl is done
@@ -114,18 +133,25 @@ class SyntaxParser(object):
 
                     tokens_checked += 1 # Indent the tokens checked within this for loop
 
-                # Call the equation parser and append value of successful or try tring concat parser if an error occurs
-                try: ast['VariableDecleration'].append({ "value": self.equation_parser(value_list) })
+                # Call the equation parser and append value returned or try concat parser if an error occurs
+                try: ast['VariableDecleration'].append({ "value": self.equation_parser(value_list)})
                 except:
                     try:    ast['VariableDecleration'].append({ "value": self.concatenation_parser(value_list) })
                     except: self.error_messages.append(["Invalid variable decleration!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
                 break                   # Break out of the current var parsing loop since we just parsed everything
 
             tokens_checked += 1         # Indent within overall for loop
-        
+
+        try: ast['VariableDecleration'][0] 
+        except: self.error_messages.append(["Invalid variable decleration coud not set variable type!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+        try: ast['VariableDecleration'][1]
+        except: self.error_messages.append(["Invalid variable decleration coud not set variable name!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+        try: ast['VariableDecleration'][2]
+        except: self.error_messages.append(["Invalid variable decleration coud not set variable value!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+
         self.source_ast['main_scope'].append(ast)
         self.token_index += tokens_checked
-    
+
 
 
     def equation_parser(self, equation):
