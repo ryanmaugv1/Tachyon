@@ -7,12 +7,11 @@
 #
 
 import constants # for constants like tachyon keywords and datatypes
-from ast import literal_eval # for getting type of variable decleration of value
 
 class SyntaxParser(object):
 
 
-    
+
     def __init__(self, token_stream):
         # Complete Abstract Syntax tree
         self.source_ast = { 'main_scope': [] }
@@ -26,7 +25,7 @@ class SyntaxParser(object):
         self.token_index = 0
 
 
-    
+
     def parse(self, token_stream):
         """ Parsing
 
@@ -50,14 +49,12 @@ class SyntaxParser(object):
                 
             # This will find the token pattern for an if statement
             elif token_type == "IDENTIFIER" and token_value == "if":
-                print("IF STATEMENT FOUND")
+                self.conditional_statement_parser(token_stream[self.token_index:len(token_stream)])
 
             self.token_index += 1
         
         # Check if there were any errors and if so display them all
         if self.error_messages != []: self.send_error_message(self.error_messages)
-        
-        print(self.source_ast)
 
 
     
@@ -98,10 +95,10 @@ class SyntaxParser(object):
                 # Check if a variable has already been named the same and is so send an error
                 if self.get_variable_value(token_value) != False:
                     self.error_messages.append(["Variable '%s' already exists and cannot be defined again!" % token_value, self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
-                else: 
+                else:
                     ast['VariableDecleration'].append({ "name": token_value })
 
-            # Error handling for variable name to make sure naming convention is acceptable
+            # Error handling for variable name to make sure the naming convention is acceptable
             if x == 1 and token_type != "IDENTIFIER":
                 self.error_messages.append(["Invalid Variable Name '%s'" % token_value, self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
 
@@ -142,6 +139,8 @@ class SyntaxParser(object):
 
             tokens_checked += 1         # Indent within overall for loop
 
+        # Last case error validation checking if all needed var decl elements are in ast such as:
+        # var type, name and value
         try: ast['VariableDecleration'][0] 
         except: self.error_messages.append(["Invalid variable decleration coud not set variable type!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
         try: ast['VariableDecleration'][1]
@@ -149,8 +148,25 @@ class SyntaxParser(object):
         try: ast['VariableDecleration'][2]
         except: self.error_messages.append(["Invalid variable decleration coud not set variable value!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
 
+        print(ast)
         self.source_ast['main_scope'].append(ast)
         self.token_index += tokens_checked
+
+
+
+    def conditional_statement_parser(self, token_stream):
+        """ Conditional Statement Parser
+
+        This will parse conditional statements like 'if else' and create an
+        abstract sytax tree for it.
+
+        args:
+            token_stream: tokens which make up the conditional statement
+        """
+        
+        ast = {'ConditionalStatement': []}
+
+        print('Conditional statement parsing')
 
 
 
@@ -261,6 +277,16 @@ class SyntaxParser(object):
 
 
     def send_error_message(self, error_list):
+        """ Send Error Messages
+
+        This will simply send all the found error messages within the source code
+        and return a list of error messages and tokens of which part of the source code
+        caused that error
+
+        args:
+            error_list (list) : List with error message and tokens
+        """
+        
         print("------------------------ %s ERROR'S FOUND ------------------------" % len(error_list))
         for error in range(0, len(error_list)):
             print("%s)  %s" % (error, error_list[error][0]))
