@@ -7,11 +7,15 @@ This is a performance focused language which tries to be an all in one with mult
 # Goals
 - **Front-end**
     - [x] Create Lexical analyzer
-    - [ ] Create Parser `current`
+    - [ ] Create Parser `40%`
 
 - **Backend**
     - [ ] Code genration
     - [ ] Optimisation
+    
+- **Extra**
+    - [ ] Tachyon IDE
+    - [ ] Linter & Editor plugins
 
 # Author
 
