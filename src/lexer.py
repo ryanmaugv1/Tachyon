@@ -126,7 +126,7 @@ class Lexer(object):
             elif word == "&&" or word == "||": tokens.append(["BINARY_OPERATOR", word])
 
             # Identify all comparison symbols in source code
-            elif word in "==" or word in "!=" or word in ">" or word in "<": tokens.append(["COMPARISON_OPERATOR", word])
+            elif word in "==" or word in "!=" or word in ">" or word in "<" or word in "<=" or word in ">=": tokens.append(["COMPARISON_OPERATOR", word])
 
             # Identify all scope definers '{ }' in source code
             elif word in "{}": tokens.append(["SCOPE_DEFINER", word])

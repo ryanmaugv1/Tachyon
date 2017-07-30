@@ -183,7 +183,7 @@ class SyntaxParser(object):
             if token_type == 'IDENTIFIER' and  token_value == 'if':  pass
 
             # This will check for the first value and add it to the AST
-            if x == 1 or x == 3 and token_type in allowed_conditional_token_types:
+            if x == 1 and token_type in allowed_conditional_token_types:
                 # This will check for an identifier (var) and then check if it exists so it can add the value to it
                 if self.get_variable_value(token_value) != False:
                     ast['ConditionalStatement'].append( {'value1': self.get_variable_value(token_value)} )
@@ -194,12 +194,70 @@ class SyntaxParser(object):
             if x == 2 and token_type == 'COMPARISON_OPERATOR':
                 ast['ConditionalStatement'].append( {'comparison_type': token_value} )
 
-        print(ast)
+            # This will check for the second value and add it to the AST
+            if x == 3 and token_type in allowed_conditional_token_types:
+                # This will check for an identifier (var) and then check if it exists so it can add the value to it
+                if self.get_variable_value(token_value) != False:
+                    ast['ConditionalStatement'].append( {'value2': self.get_variable_value(token_value)} )
+                else:
+                    ast['ConditionalStatement'].append( {'value2': token_value} )
 
         # Get condition statament details
         comparison_type = ast['ConditionalStatement'][1]['comparison_type']
         values          = [ ast['ConditionalStatement'][0]['value1'], ast['ConditionalStatement'][2]['value2'] ]
 
+        # Check if condition is true or false and add result to AST
+        if self.perform_conditional_checks(comparison_type, values, tokens_checked):
+            ast['ConditionalStatement'].append( {'evaluatesTo': True} )
+        else:
+            ast['ConditionalStatement'].append( {'evaluatesTo': False} )
+
+        print(ast)
+
+    
+
+    def perform_conditional_checks(self, comparison_type, values, tokens_checked):
+        """ Perform Conditional Checks
+
+        This will perform the condtitional checks and see whether the condition evaluates
+        to true or false
+
+        args:
+            comparison_type (str) : The comparison operator e.g ==, < or >=
+            values         (list) : The values that comparison will be applied on
+        return:
+            boolean               : True or False based on condition evaluation
+        """
+
+        if comparison_type == '==':
+            if values[0] == values[1]: return True
+            else: return False
+        elif comparison_type == '!=':
+            if values[0] != values[1]: return False
+        elif comparison_type == '>':
+            try:
+                if int(values[0]) > int(values[1]): return True
+                else: return False
+            except: self.error_messages.append(["ERROR: Cannot perform comparison check '>' on string values",
+                                               self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+        elif comparison_type == '<':
+            try:
+                if int(values[0]) < int(values[1]): return True
+                else: return False
+            except: self.error_messages.append(["ERROR: Cannot perform comparison check '<' on string values",
+                                               self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+        elif comparison_type == '>=':
+            try:
+                if int(values[0]) >= int(values[1]): return True
+                else: return False
+            except: self.error_messages.append(["ERROR: Cannot perform comparison check '>=' on string values",
+                                               self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+        elif comparison_type == '<=':
+            try:
+                if int(values[0]) <= int(values[1]): return True
+                else: return False
+            except: self.error_messages.append(["ERROR: Cannot perform comparison check '<=' on string values",
+                                               self.token_stream[self.token_index:self.token_index + tokens_checked] ])
 
 
     def equation_parser(self, equation):
