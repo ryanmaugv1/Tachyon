@@ -1,6 +1,6 @@
 #
 #  Tachyon
-#  syntatic_parsing.py
+#  Parser.py
 #
 #  Created on 03/06/17
 #  Ryan Maugin <ryan.maugin@adacollege.org.uk>
@@ -8,7 +8,7 @@
 
 import constants # for constants like tachyon keywords and datatypes
 
-class SyntaxParser(object):
+class Parser(object):
 
 
 

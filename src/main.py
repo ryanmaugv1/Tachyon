@@ -8,7 +8,7 @@
 
 import os
 import lexer
-import syntax_parser
+import parser
 
 ##
 #  This will call the parser method inside of the parser class
@@ -17,7 +17,7 @@ import syntax_parser
 def _parser(tokens):
 
     # Create an instance of the parser class
-    Parser = syntax_parser.SyntaxParser(tokens)
+    Parser = parser.Parser(tokens)
 
     # Call the parser method and pass in the tokens as arguments
     Parser.parse(tokens) 
