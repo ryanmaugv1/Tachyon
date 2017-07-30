@@ -16,7 +16,7 @@ class SyntaxParser(object):
         # Complete Abstract Syntax tree
         self.source_ast = { 'main_scope': [] }
         # Symbol table fo variable semantical analysis
-        self.symbol_tree = [ ['last_name', 'Maugin'], ['test', 'test101'] ]
+        self.symbol_tree = [ ['last_name', 'Maugin'], ['test', 'test101']]
         # This will hold all error messages
         self.error_messages = []
         # This will hold all the tokens
@@ -163,10 +163,42 @@ class SyntaxParser(object):
         args:
             token_stream: tokens which make up the conditional statement
         """
-        
+
+        tokens_checked = 0
         ast = {'ConditionalStatement': []}
 
-        print('Conditional statement parsing')
+        # This loop will parse the condition e.g. if 12 < 11
+        for x in range(0, len(token_stream)):
+            tokens_checked += 1
+
+            # Simplification variables that will improve readbility
+            token_type  = token_stream[x][0]
+            token_value = token_stream[x][1]
+            allowed_conditional_token_types = ['INTEGER', 'STRING', 'IDENTIFIER']
+
+            # Break out of loop at the end of the condition
+            if token_type == 'SCOPE_DEFINER' and token_value == '{': break
+
+            # Pass if token is the 'if' identifier as it has already been checked
+            if token_type == 'IDENTIFIER' and  token_value == 'if':  pass
+
+            # This will check for the first value and add it to the AST
+            if x == 1 or x == 3 and token_type in allowed_conditional_token_types:
+                # This will check for an identifier (var) and then check if it exists so it can add the value to it
+                if self.get_variable_value(token_value) != False:
+                    ast['ConditionalStatement'].append( {'value1': self.get_variable_value(token_value)} )
+                else:
+                    ast['ConditionalStatement'].append( {'value1': token_value} )
+
+            # This will check for the comparison operator and add it to the AST
+            if x == 2 and token_type == 'COMPARISON_OPERATOR':
+                ast['ConditionalStatement'].append( {'comparison_type': token_value} )
+
+        print(ast)
+
+        # Get condition statament details
+        comparison_type = ast['ConditionalStatement'][1]['comparison_type']
+        values          = [ ast['ConditionalStatement'][0]['value1'], ast['ConditionalStatement'][2]['value2'] ]
 
 
 
