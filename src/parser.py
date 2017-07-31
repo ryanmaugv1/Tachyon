@@ -214,6 +214,21 @@ class Parser(object):
 
         print(ast)
 
+
+
+    def parse_body(self, token_stream):
+        """ Parse body
+
+        This will parse the body of conditional, iteration, functions and more in order
+        to return a body ast like this --> {'body': []}
+
+        args:
+            token_stream (list) : tokens which make up the body
+        returns:
+             ast       (object) : Abstract Syntax Tree of the body
+        """
+        print('Parsing body')
+
     
 
     def perform_conditional_checks(self, comparison_type, values, tokens_checked):
