@@ -148,9 +148,11 @@ class Parser(object):
         try: ast['VariableDecleration'][2]
         except: self.error_messages.append(["Invalid variable decleration coud not set variable value!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
 
-        print(ast)
         self.source_ast['main_scope'].append(ast)
         self.token_index += tokens_checked
+
+        return ast # Return is only used within body parsing to create body ast
+
 
 
 
@@ -208,11 +210,10 @@ class Parser(object):
 
         # Check if condition is true or false and add result to AST
         if self.perform_conditional_checks(comparison_type, values, tokens_checked):
-            ast['ConditionalStatement'].append( {'evaluatesTo': True} )
-        else:
-            ast['ConditionalStatement'].append( {'evaluatesTo': False} )
+            ast['ConditionalStatement'].append(self.parse_body(token_stream[tokens_checked:len(token_stream)]))
 
         print(ast)
+        return ast # Return is only used within body parsing to create body ast
 
 
 
@@ -227,7 +228,33 @@ class Parser(object):
         returns:
              ast       (object) : Abstract Syntax Tree of the body
         """
-        print('Parsing body')
+        
+        ast = {'body': []}
+        tokens_checked = 0
+
+        # Loop through each token to find a pattern to parse
+        while tokens_checked < len(token_stream):
+            
+            # Set the token values in variables for clearer and easier debugging and readability
+            token_type = token_stream[tokens_checked][0]
+            token_value = token_stream[tokens_checked][1]
+            
+            # This will find the token pattern for a variable decleration
+            if token_type == "DATATYPE":
+                ast['body'].append(self.variable_decleration_parsing(token_stream[tokens_checked:len(token_stream)]))
+                
+            # This will find the token pattern for an if statement
+            elif token_type == "IDENTIFIER" and token_value == "if":
+                ast['body'].append(self.conditional_statement_parser(token_stream[tokens_checked:len(token_stream)]))
+
+            elif token_type == "SCOPE_DEFINER" and token_value == "}": break
+
+            tokens_checked += 1
+        
+        print('-----------------')
+        print(token_stream)
+        print('-----------------')
+        return ast
 
     
 

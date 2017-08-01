@@ -1,11 +1,9 @@
 int a = 11;
-str name = "Ryan Maugin The Boss";
+str name = "Ryan Maugin";
 bool isMale = True;
 int num = 10 * 10 + 10;
 str full_name = last_name + " " + last_name;
 
-if 10 > 21 {
-    if "Ryan" == "Ryan" {
-        str just = "do it";
-    }
+if 30 > 21 {
+    str just = "do it";
 }
