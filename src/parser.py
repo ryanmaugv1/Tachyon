@@ -51,12 +51,26 @@ class Parser(object):
             elif token_type == "IDENTIFIER" and token_value == "if":
                 self.conditional_statement_parser(token_stream[self.token_index:len(token_stream)], False)
 
+            # This will find the pattern for a buil-in function call
+            elif token_type == "IDENTIFER" and token_value in constants.BUILT_IN_FUNCTIONS:
+                self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], False)
+
             self.token_index += 1
         
         # Check if there were any errors and if so display them all
         if self.error_messages != []: self.send_error_message(self.error_messages)
 
         print(self.source_ast)
+    
+
+
+    def parse_built_in_function(self, token_stream, isInBody):
+        ast = {'PrebuiltFunction': []}
+        tokens_checked = 0
+
+        print("BUILT-IN FUNCTION")
+        
+        return [ast, tokens_checked]
 
 
     
@@ -264,6 +278,11 @@ class Parser(object):
                 condition_parsing = self.conditional_statement_parser(token_stream[tokens_checked:len(token_stream)], True)
                 ast['body'].append(condition_parsing[0])
                 tokens_checked += condition_parsing[1] - 1 # minus one to not skip extra token
+
+            elif token_stream[tokens_checked][0] == 'IDENTIFIER' and token_stream[tokens_checked][1] in constants.BUILT_IN_FUNCTIONS:
+                built_in_func_parse = self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], True)
+                ast['body'].append(built_in_func_parse[0])
+                tokens_checked += built_in_func_parse[1]
 
             tokens_checked += 1
         
