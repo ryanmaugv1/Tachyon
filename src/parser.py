@@ -45,20 +45,22 @@ class Parser(object):
             
             # This will find the token pattern for a variable decleration
             if token_type == "DATATYPE":
-                self.variable_decleration_parsing(token_stream[self.token_index:len(token_stream)])
+                self.variable_decleration_parsing(token_stream[self.token_index:len(token_stream)], False)
                 
             # This will find the token pattern for an if statement
             elif token_type == "IDENTIFIER" and token_value == "if":
-                self.conditional_statement_parser(token_stream[self.token_index:len(token_stream)])
+                self.conditional_statement_parser(token_stream[self.token_index:len(token_stream)], False)
 
             self.token_index += 1
         
         # Check if there were any errors and if so display them all
         if self.error_messages != []: self.send_error_message(self.error_messages)
 
+        print(self.source_ast)
+
 
     
-    def variable_decleration_parsing(self, token_stream):
+    def variable_decleration_parsing(self, token_stream, isInBody):
         """ Variable Decleration Parsing
 
         This method will parse variable declerations and add themto the source AST
@@ -148,15 +150,18 @@ class Parser(object):
         try: ast['VariableDecleration'][2]
         except: self.error_messages.append(["Invalid variable decleration coud not set variable value!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
 
-        self.source_ast['main_scope'].append(ast)
+        # If this is being run to parse inside a body then there is no need to add it to the source ast
+        # as it will be added to the body of statement being parsed
+        if not isInBody:
+            self.source_ast['main_scope'].append(ast)
         self.token_index += tokens_checked
 
-        return ast # Return is only used within body parsing to create body ast
+        return [ast, tokens_checked] # Return is only used within body parsing to create body ast
 
 
 
 
-    def conditional_statement_parser(self, token_stream):
+    def conditional_statement_parser(self, token_stream, isNested):
         """ Conditional Statement Parser
 
         This will parse conditional statements like 'if else' and create an
@@ -204,20 +209,33 @@ class Parser(object):
                 else:
                     ast['ConditionalStatement'].append( {'value2': token_value} )
 
+        # Increment global token index for tokens checked in condition
+        self.token_index += tokens_checked
+
         # Get condition statament details
         comparison_type = ast['ConditionalStatement'][1]['comparison_type']
         values          = [ ast['ConditionalStatement'][0]['value1'], ast['ConditionalStatement'][2]['value2'] ]
 
         # Check if condition is true or false and add result to AST
         if self.perform_conditional_checks(comparison_type, values, tokens_checked):
-            ast['ConditionalStatement'].append(self.parse_body(token_stream[tokens_checked:len(token_stream)]))
+            # This will get the body tokens and the tokens checked that make up the body to skip them
+            get_body_return = self.get_statement_body(token_stream[tokens_checked:len(token_stream)])
 
-        print(ast)
-        return ast # Return is only used within body parsing to create body ast
+            # If it nested then call parse_body with nested parameter of true else false
+            if isNested == True: self.parse_body(get_body_return[0], ast, True)
+            else: self.parse_body(get_body_return[0], ast, False)
+
+            tokens_checked += get_body_return[1]
+        else:
+            # This will get the body tokens and skip them without adding them to the AST because condition is false
+            get_body_return = self.get_statement_body(token_stream[tokens_checked:len(token_stream)])
+            tokens_checked += get_body_return[1]
+
+        return [ast, tokens_checked] # Return is only used within body parsing to create body ast
 
 
 
-    def parse_body(self, token_stream):
+    def parse_body(self, token_stream, statement_ast, isNested):
         """ Parse body
 
         This will parse the body of conditional, iteration, functions and more in order
@@ -234,28 +252,64 @@ class Parser(object):
 
         # Loop through each token to find a pattern to parse
         while tokens_checked < len(token_stream):
-            
-            # Set the token values in variables for clearer and easier debugging and readability
-            token_type = token_stream[tokens_checked][0]
-            token_value = token_stream[tokens_checked][1]
-            
-            # This will find the token pattern for a variable decleration
-            if token_type == "DATATYPE":
-                ast['body'].append(self.variable_decleration_parsing(token_stream[tokens_checked:len(token_stream)]))
-                
-            # This will find the token pattern for an if statement
-            elif token_type == "IDENTIFIER" and token_value == "if":
-                ast['body'].append(self.conditional_statement_parser(token_stream[tokens_checked:len(token_stream)]))
 
-            elif token_type == "SCOPE_DEFINER" and token_value == "}": break
+            # This will parse variable declerations within the body 
+            if token_stream[tokens_checked][0] == "DATATYPE":
+                var_decl_parse = self.variable_decleration_parsing(token_stream[tokens_checked:len(token_stream)], True)
+                ast['body'].append(var_decl_parse[0])
+                tokens_checked += var_decl_parse[1]
+            
+            # This will parse nested conditional statements within the body
+            elif token_stream[tokens_checked][0] == 'IDENTIFIER' and token_stream[tokens_checked][1] == 'if':
+                condition_parsing = self.conditional_statement_parser(token_stream[tokens_checked:len(token_stream)], True)
+                ast['body'].append(condition_parsing[0])
+                tokens_checked += condition_parsing[1] - 1 # minus one to not skip extra token
 
             tokens_checked += 1
         
-        print('-----------------')
-        print(token_stream)
-        print('-----------------')
-        return ast
+        # Form the full ast with the statement and body combined and then add it to the source ast
+        statement_ast['ConditionalStatement'].append(ast)
+        # If the statments is not nested then add it or else don;t because parent will be added containing the child
+        if not isNested: self.source_ast['main_scope'].append(statement_ast)
 
+
+    
+    def get_statement_body(self, token_stream):
+        """ Get Statement Body 
+        
+        This will get the tokens that make up the body of a statement  and return 
+        the tokens
+        
+        args:
+            token_stream (list): This will hold the tokens after the scope definer
+        return:
+            tokens_list  (list): Returns tokens that make up the body for statement
+        """
+
+        nesting_count = 1
+        tokens_checked = 0
+        body_tokens = []
+
+        for token in token_stream:
+            
+            tokens_checked += 1
+
+            # Simpliies & Increases readabilty of toke type and value
+            token_value = token[1]
+            token_type  = token[0] 
+
+            # Keeps track of the opening and closing scope definers '}' and '{'
+            if token_type == "SCOPE_DEFINER" and token_value == "{": nesting_count += 1
+            elif token_type == "SCOPE_DEFINER" and token_value == "}": nesting_count -= 1
+            
+            # Checks whether the closing scope definer is found to finish creating body tokens
+            if nesting_count == 0: break
+            else: body_tokens.append(token)
+        
+        # Increment token index so it doesn't have to be done in the body_parser method
+        self.token_index += tokens_checked
+
+        return [body_tokens, tokens_checked]
     
 
     def perform_conditional_checks(self, comparison_type, values, tokens_checked):

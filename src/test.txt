@@ -5,5 +5,8 @@ int num = 10 * 10 + 10;
 str full_name = last_name + " " + last_name;
 
 if 30 > 21 {
-    str just = "do it";
+    str xex = "jtag";
+    if "ryan" == "ryan" {
+        str lol = "laugh out loud";
+    }
 }
