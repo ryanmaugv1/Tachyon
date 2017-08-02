@@ -49,10 +49,12 @@ class Parser(object):
                 
             # This will find the token pattern for an if statement
             elif token_type == "IDENTIFIER" and token_value == "if":
+                print(self.token_index)
                 self.conditional_statement_parser(token_stream[self.token_index:len(token_stream)], False)
+                print(self.token_index)
 
             # This will find the pattern for a buil-in function call
-            elif token_type == "IDENTIFER" and token_value in constants.BUILT_IN_FUNCTIONS:
+            elif token_type == "IDENTIFIER" and token_value in constants.BUILT_IN_FUNCTIONS:
                 self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], False)
 
             self.token_index += 1
@@ -68,8 +70,9 @@ class Parser(object):
         ast = {'PrebuiltFunction': []}
         tokens_checked = 0
 
-        print("BUILT-IN FUNCTION")
-        
+        print('---------')
+        print(token_stream)
+
         return [ast, tokens_checked]
 
 
@@ -324,9 +327,6 @@ class Parser(object):
             # Checks whether the closing scope definer is found to finish creating body tokens
             if nesting_count == 0: break
             else: body_tokens.append(token)
-        
-        # Increment token index so it doesn't have to be done in the body_parser method
-        self.token_index += tokens_checked
 
         return [body_tokens, tokens_checked]
     

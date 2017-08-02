@@ -10,3 +10,5 @@ if 30 > 21 {
         str lol = "laugh out loud";
     }
 }
+
+print "Hello" ;
