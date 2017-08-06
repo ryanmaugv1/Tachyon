@@ -49,9 +49,7 @@ class Parser(object):
                 
             # This will find the token pattern for an if statement
             elif token_type == "IDENTIFIER" and token_value == "if":
-                print(self.token_index)
                 self.conditional_statement_parser(token_stream[self.token_index:len(token_stream)], False)
-                print(self.token_index)
 
             # This will find the pattern for a buil-in function call
             elif token_type == "IDENTIFIER" and token_value in constants.BUILT_IN_FUNCTIONS:
@@ -62,16 +60,46 @@ class Parser(object):
         # Check if there were any errors and if so display them all
         if self.error_messages != []: self.send_error_message(self.error_messages)
 
-        print(self.source_ast)
+        return self.source_ast
     
 
 
     def parse_built_in_function(self, token_stream, isInBody):
+        """ Parse Built-in Function 
+        
+        This is will parse built in methods and their parameters to form AST
+        """
+
         ast = {'PrebuiltFunction': []}
         tokens_checked = 0
 
-        print('---------')
-        print(token_stream)
+        for token in range(0, len(token_stream)):
+            
+            if token == 0:
+                ast['PrebuiltFunction'].append( {'type': token_stream[token][1]} )
+            if token == 1 and token_stream[token][0] in ['INTEGER', 'STRING', 'IDENTIFIER']:
+
+                # If the argument passed is a variable (identifier) then try get value
+                if token_stream[token][0] == 'IDENTIFIER':
+                    # Get value and handle any errors
+                    value = self.get_variable_value(token_stream[token][1])
+                    if value != False: 
+                        ast['PrebuiltFunction'].append( {'arguments': [value]} )
+                    else: 
+                        self.error_messages.append([ "Variable '%s' does not exist" % token_stream[tokens_checked][1], 
+                                                    token_stream[0:tokens_checked + 1] ])
+
+                # TODO Allow for concatenation and equation parsing
+                else: ast['PrebuiltFunction'].append( {'arguments': [token_stream[token][1]]} )
+
+            tokens_checked += 1
+        
+        print(ast)
+
+        # If it's being parsed within a body don't ass the ast to the source ast
+        if not isInBody: self.source_ast['main_scope'].append(ast)
+        # Increase token index to make up for tokens checked
+        self.token_index += tokens_checked 
 
         return [ast, tokens_checked]
 
