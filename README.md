@@ -7,10 +7,10 @@ This is a performance focused language which tries to be an all in one with mult
 # Goals
 - **Front-end**
     - [x] Create Lexical analyzer
-    - [ ] Create Parser `40%`
+    - [x] Create Parser `90%`
 
 - **Backend**
-    - [ ] Code genration
+    - [ ] Code genration `current`
     - [ ] Optimisation
     
 - **Extra**
