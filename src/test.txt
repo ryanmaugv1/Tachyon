@@ -11,4 +11,4 @@ if 30 > 21 {
     }
 }
 
-print "Hello world" ;
+print full_name ;

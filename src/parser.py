@@ -116,6 +116,7 @@ class Parser(object):
 
         ast = { 'VariableDecleration': [] }  # The abstract syntax tree for var decl
         tokens_checked = 0                   # Number of token checked that made up the var decl
+        var_exists = True
 
         for x in range(0, len(token_stream)):
     
@@ -143,6 +144,7 @@ class Parser(object):
                 if self.get_variable_value(token_value) != False:
                     self.error_messages.append(["Variable '%s' already exists and cannot be defined again!" % token_value, self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
                 else:
+                    var_exists = False # Set var exists to False so that it can be added
                     ast['VariableDecleration'].append({ "name": token_value })
 
             # Error handling for variable name to make sure the naming convention is acceptable
@@ -199,6 +201,10 @@ class Parser(object):
         # as it will be added to the body of statement being parsed
         if not isInBody:
             self.source_ast['main_scope'].append(ast)
+
+        # Add varible name and value to symbol tree and increase token index
+        if not var_exists:
+            self.symbol_tree.append( [ast['VariableDecleration'][1]['name'], ast['VariableDecleration'][2]['value']] )
         self.token_index += tokens_checked
 
         return [ast, tokens_checked] # Return is only used within body parsing to create body ast
