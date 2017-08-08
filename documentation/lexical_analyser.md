@@ -240,4 +240,4 @@ However, I have to check the last item for an end statement too because if the l
 
 # **Bugs to fix**
 
-- Entering a number like '1', '9' or '3' cause a mess up in the lexer but naything longer than one decimal such as '10' or '287' is fine.
+
