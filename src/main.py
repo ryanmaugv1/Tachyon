@@ -9,6 +9,7 @@
 import os
 import lexer
 import parser
+import objgen
 
 def main():
     
@@ -37,6 +38,13 @@ def main():
 
     # Call the parser method and pass in the tokens as arguments
     source_ast = Parser.parse(tokens)
+
+    # --------------------------------------
+    # Object Generation
+    # --------------------------------------
+
+    # Create an instance of the Object Generator (objgen) class
+    object_generator = objgen.ObjectGenerator(source_ast)
 
 main()
 
