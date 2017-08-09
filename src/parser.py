@@ -93,8 +93,6 @@ class Parser(object):
                 else: ast['PrebuiltFunction'].append( {'arguments': [token_stream[token][1]]} )
 
             tokens_checked += 1
-        
-        print(ast)
 
         # If it's being parsed within a body don't ass the ast to the source ast
         if not isInBody: self.source_ast['main_scope'].append(ast)
