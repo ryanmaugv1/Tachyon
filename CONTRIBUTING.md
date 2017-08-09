@@ -32,10 +32,10 @@ When making contributions the guidelines are to:
   - **Variable Decleration**
   - **Concatenation**
   - **Arithmetics**
-  - **Conditional Statements** `<-- current`
-  - Built-in function calling
-- Optimisation
-- Code Generation
+  - **Conditional Statements**
+  - **Built-in function calling**
+- **Optimisation**
+- **Code Generation** `<-- current`
 - CG Optimsation
 - Adding new features to language
 
