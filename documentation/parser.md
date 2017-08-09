@@ -1,7 +1,10 @@
-
 # **Parser**
 
-> ## **Class Parser**
+> This documentation file for parser will soon be populated with clear pictures from notebook where all documentation has been done in detail with diagrams.
+
+---
+
+## Class Parser
 
 The parser class will handle all the syntatic and symentic analysis of the the parsing for the code. It will also raise errors when syntax errors are found.
 
@@ -18,21 +21,3 @@ Class Variables, what they contain & why they are needed:
 - `token_stream`
 
     This will hold the tokens that have just been produced by the lexical analyser which the parser will use to turn into an Abstract Syntax Tree (AST) and Symbol Trees so that syntatic and semantical analysis can be performed.
-
-> ### **parse_if_statement()**
-
-
-> ### **parse_variable_decleration()**
-
-- **`Todo`**
-    - Allow for more complex variable declerations like: `int ans = 12 + 1;` rather than simple one value variable declerations like this: `int ans = 13;`.
-    - Modify symbol tree to add the variables scope too, so that a variable can only be called within the tachyon code if is within a specific scope.
-
-> ### **parse_print()**
-
-
-
-# Notes
-    if str(type(literal_eval(item[1]))) == "<class " + "'" + ast[0]['VariableDeclerator'][0]['type'] + "'>":
-
-    print("TypeError: Variable value does not conform to data type of " + str(type(literal_eval(item[1]))))

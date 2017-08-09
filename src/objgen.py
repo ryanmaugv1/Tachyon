@@ -6,6 +6,8 @@
 #  Ryan Maugin <ryan.maugin@adacollege.org.uk>
 #
 
+from Objects.varObject import VaribleObject
+
 class ObjectGenerator():
 
 
@@ -32,7 +34,8 @@ class ObjectGenerator():
         for ast in self.source_ast:
             # This will check check if the current AST dict is of which type
             if self.check_ast('VariableDecleration', ast):
-                print('var')
+                genvar = VaribleObject(ast)
+                genvar.transpile()
 
             if self.check_ast('ConditionalStatement', ast):
                 print('condition')
