@@ -14,7 +14,7 @@ class ObjectGenerator():
         self.source_ast  = source_ast['main_scope']
         # This will hold the executable string of transplied tachyon code to python
         self.exec_string = ""
-        
+
 
 
     def object_definer(self):
