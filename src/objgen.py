@@ -20,9 +20,9 @@ class ObjectGenerator():
     def object_definer(self):
         """ Object Definer 
         
-        This method will find all the different objects and call all the objects
-        and pass in the ast dictionary to them to get a python string of code back
-        which transpiles the tachyon source code into python
+        This method will find all the different ast objects within the ast dictionary
+        and call all the objects and pass in the ast dictionary to get a python 
+        string of code back which is the tachyon code transpiled into python
         
         returns:
             python_code (str) : This will written a string of python code
