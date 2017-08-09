@@ -15,8 +15,7 @@ class ObjectGenerator():
         # This will contain all the AST's in forms of dictionaries to help with creating AST object
         self.source_ast  = source_ast['main_scope']
         # This will hold the executable string of transplied tachyon code to python
-        self.exec_string = ""
-
+        self.exec_string = """"""
 
 
     def object_definer(self):
@@ -35,7 +34,7 @@ class ObjectGenerator():
             # This will check check if the current AST dict is of which type
             if self.check_ast('VariableDecleration', ast):
                 genvar = VaribleObject(ast)
-                genvar.transpile()
+                self.exec_string += genvar.transpile() + '\n'
 
             if self.check_ast('ConditionalStatement', ast):
                 print('condition')
@@ -43,6 +42,7 @@ class ObjectGenerator():
             if self.check_ast('PrebuiltFunction', ast):
                 print('prebuilt')
 
+        print(self.exec_string)
 
 
     def check_ast(self, astName, ast):

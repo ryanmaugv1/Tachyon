@@ -490,7 +490,7 @@ class Parser(object):
             # This will skip value as it is already being added and dealt with when getting the operand
             if item % 2 == 0: pass
 
-        return full_string
+        return '"' + full_string + '"'
 
 
 
