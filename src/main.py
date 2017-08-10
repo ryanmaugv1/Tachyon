@@ -47,7 +47,7 @@ def main():
     object_generator = objgen.ObjectGenerator(source_ast)
 
     # Call the object definer to get python exec() string
-    exec_string = object_generator.object_definer()
+    exec_string = object_generator.object_definer(False)
 
 main()
 

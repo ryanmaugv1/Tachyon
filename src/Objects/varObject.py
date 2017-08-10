@@ -6,7 +6,7 @@
 #  Ryan Maugin <ryan.maugin@adacollege.org.uk>
 #
 
-class VaribleObject():
+class VariableObject():
 
     def __init__(self, ast):
         # The ast will hold the dictionary version of the ast which is like a blueprint

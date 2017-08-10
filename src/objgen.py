@@ -6,7 +6,10 @@
 #  Ryan Maugin <ryan.maugin@adacollege.org.uk>
 #
 
-from Objects.varObject import VaribleObject
+# Import all the objects
+from Objects.varObject       import VariableObject
+from Objects.conditionObject import ConditionObject
+
 
 class ObjectGenerator():
 
@@ -18,7 +21,7 @@ class ObjectGenerator():
         self.exec_string = """"""
 
 
-    def object_definer(self):
+    def object_definer(self, isGettingBody):
         """ Object Definer 
         
         This method will find all the different ast objects within the ast dictionary
@@ -31,18 +34,18 @@ class ObjectGenerator():
         
         # Iterate through all ast dictionaries
         for ast in self.source_ast:
+            
             # This will check check if the current AST dict is of which type
             if self.check_ast('VariableDecleration', ast):
-                genvar = VaribleObject(ast)
-                self.exec_string += genvar.transpile() + '\n'
+                gen_var = VariableObject(ast)
+                self.exec_string += gen_var.transpile() + '\n'
 
             if self.check_ast('ConditionalStatement', ast):
-                print('condition')
+                gen_condition = ConditionObject(ast)
+                self.exec_string += gen_condition.transpile() + '\n'
 
             if self.check_ast('PrebuiltFunction', ast):
                 print('prebuilt')
-
-        print(self.exec_string)
 
 
     def check_ast(self, astName, ast):
