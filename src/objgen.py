@@ -34,18 +34,22 @@ class ObjectGenerator():
         
         # Iterate through all ast dictionaries
         for ast in self.source_ast:
-            
-            # This will check check if the current AST dict is of which type
+
+            # Create dictionary var object and append exec string global exec string
             if self.check_ast('VariableDecleration', ast):
                 gen_var = VariableObject(ast)
                 self.exec_string += gen_var.transpile() + '\n'
 
+            # Create dictionary condition object and append exec string global exec string
             if self.check_ast('ConditionalStatement', ast):
-                gen_condition = ConditionObject(ast)
+                gen_condition = ConditionObject(ast, 1)
                 self.exec_string += gen_condition.transpile() + '\n'
 
+            # Create dictionary builtin object and append exec string global exec string
             if self.check_ast('PrebuiltFunction', ast):
                 print('prebuilt')
+
+        print(self.exec_string)
 
 
     def check_ast(self, astName, ast):

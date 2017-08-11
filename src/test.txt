@@ -7,7 +7,9 @@ str full_name = last_name + " " + last_name;
 if 30 > 21 {
     str xex = "jtag";
     if "ryan" == "ryan" {
-        str lol = "laugh out loud";
+        if "sick" == "sick" {
+            str lol = "laugh out loud";
+        }
     }
 }
 

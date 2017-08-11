@@ -19,3 +19,7 @@ class BodyObject():
     def __init__(self, bod_ast):
         # This will hold the body ast dictionaries
         self.bod_ast = bod_ast
+
+
+    def transpile(self):
+        print('transpile')

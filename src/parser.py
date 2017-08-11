@@ -98,7 +98,7 @@ class Parser(object):
         if not isInBody: self.source_ast['main_scope'].append(ast)
         # Increase token index to make up for tokens checked
         self.token_index += tokens_checked 
-
+        
         return [ast, tokens_checked]
 
 
