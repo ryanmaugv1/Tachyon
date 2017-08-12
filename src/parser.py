@@ -275,10 +275,7 @@ class Parser(object):
             if isNested == True: self.parse_body(get_body_return[0], ast, True)
             else: self.parse_body(get_body_return[0], ast, False)
 
-            tokens_checked += get_body_return[1]
-        else:
-            # This will get the body tokens and skip them without adding them to the AST because condition is false
-            get_body_return = self.get_statement_body(token_stream[tokens_checked:len(token_stream)])
+            # Add the amount tokens we checked in body 
             tokens_checked += get_body_return[1]
 
         return [ast, tokens_checked] # Return is only used within body parsing to create body ast
@@ -379,31 +376,31 @@ class Parser(object):
 
         if comparison_type == '==':
             if values[0] == values[1]: return True
-            else: return False
+            else: return True
         elif comparison_type == '!=':
-            if values[0] != values[1]: return False
+            if values[0] != values[1]: return True
         elif comparison_type == '>':
             try:
                 if int(values[0]) > int(values[1]): return True
-                else: return False
+                else: return True
             except: self.error_messages.append(["ERROR: Cannot perform comparison check '>' on string values",
                                                self.token_stream[self.token_index:self.token_index + tokens_checked] ])
         elif comparison_type == '<':
             try:
                 if int(values[0]) < int(values[1]): return True
-                else: return False
+                else: return True
             except: self.error_messages.append(["ERROR: Cannot perform comparison check '<' on string values",
                                                self.token_stream[self.token_index:self.token_index + tokens_checked] ])
         elif comparison_type == '>=':
             try:
                 if int(values[0]) >= int(values[1]): return True
-                else: return False
+                else: return True
             except: self.error_messages.append(["ERROR: Cannot perform comparison check '>=' on string values",
                                                self.token_stream[self.token_index:self.token_index + tokens_checked] ])
         elif comparison_type == '<=':
             try:
                 if int(values[0]) <= int(values[1]): return True
-                else: return False
+                else: return True
             except: self.error_messages.append(["ERROR: Cannot perform comparison check '<=' on string values",
                                                self.token_stream[self.token_index:self.token_index + tokens_checked] ])
 
