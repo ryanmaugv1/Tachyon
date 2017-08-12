@@ -49,5 +49,7 @@ def main():
     # Call the object definer to get python exec() string
     exec_string = object_generator.object_definer(False)
 
+    print(exec_string)
+
 main()
 

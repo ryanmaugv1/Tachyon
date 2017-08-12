@@ -7,7 +7,7 @@
 #
 
 import objgen
-from Objects.varObject       import VariableObject
+from Objects.varObject import VariableObject
 
 class ConditionObject():
 
@@ -74,10 +74,10 @@ class ConditionObject():
                 # The second nested statament only needs 1 indent not 2
                 if nesting_count == 2: 
                     # Add the content of conditional statement with correct indentation
-                    body_exec_string += "   " + condition_obj.transpile() + "\n"
+                    body_exec_string += "   " + condition_obj.transpile()
                 else: 
                     # Add the content of conditional statement with correct indentation
-                    body_exec_string += ("   " * (nesting_count - 1)) + condition_obj.transpile() + "\n"
+                    body_exec_string += ("   " * (nesting_count - 1)) + condition_obj.transpile()
                     
             # This will parse built-in within the body
             if self.check_ast('PrebuiltFunction', ast):

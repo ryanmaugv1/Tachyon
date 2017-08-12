@@ -9,7 +9,7 @@
 # Import all the objects
 from Objects.varObject       import VariableObject
 from Objects.conditionObject import ConditionObject
-
+from Objects.builtinObject   import BuiltInFunctionObject
 
 class ObjectGenerator():
 
@@ -18,7 +18,7 @@ class ObjectGenerator():
         # This will contain all the AST's in forms of dictionaries to help with creating AST object
         self.source_ast  = source_ast['main_scope']
         # This will hold the executable string of transplied tachyon code to python
-        self.exec_string = """"""
+        self.exec_string = ""
 
 
     def object_definer(self, isGettingBody):
@@ -47,9 +47,10 @@ class ObjectGenerator():
 
             # Create dictionary builtin object and append exec string global exec string
             if self.check_ast('PrebuiltFunction', ast):
-                print('prebuilt')
+                gen_builtin = BuiltInFunctionObject(ast)
+                self.exec_string += gen_builtin.transpile() + "\n"
 
-        print(self.exec_string)
+        return self.exec_string
 
 
     def check_ast(self, astName, ast):

@@ -59,8 +59,7 @@ class Parser(object):
         
         # Check if there were any errors and if so display them all
         if self.error_messages != []: self.send_error_message(self.error_messages)
-
-        print(self.source_ast)
+        
         return self.source_ast
     
 
