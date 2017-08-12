@@ -59,7 +59,7 @@ class Parser(object):
         
         # Check if there were any errors and if so display them all
         if self.error_messages != []: self.send_error_message(self.error_messages)
-        
+
         return self.source_ast
     
 
@@ -69,7 +69,6 @@ class Parser(object):
         
         This is will parse built in methods and their parameters to form AST
         """
-
         ast = {'PrebuiltFunction': []}
         tokens_checked = 0
 
@@ -312,7 +311,7 @@ class Parser(object):
                 tokens_checked += condition_parsing[1] - 1 # minus one to not skip extra token
 
             elif token_stream[tokens_checked][0] == 'IDENTIFIER' and token_stream[tokens_checked][1] in constants.BUILT_IN_FUNCTIONS:
-                built_in_func_parse = self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], True)
+                built_in_func_parse = self.parse_built_in_function(token_stream[tokens_checked:len(token_stream)], True)
                 ast['body'].append(built_in_func_parse[0])
                 tokens_checked += built_in_func_parse[1]
 

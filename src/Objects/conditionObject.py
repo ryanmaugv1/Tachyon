@@ -7,7 +7,8 @@
 #
 
 import objgen
-from Objects.varObject import VariableObject
+from Objects.varObject     import VariableObject
+from Objects.builtinObject import BuiltInFunctionObject
 
 class ConditionObject():
 
@@ -81,7 +82,8 @@ class ConditionObject():
                     
             # This will parse built-in within the body
             if self.check_ast('PrebuiltFunction', ast):
-                print('body - prebuilt')
+                gen_builtin = BuiltInFunctionObject(ast)
+                body_exec_string += ("   " * nesting_count) + gen_builtin.transpile() + "\n"
         
         return body_exec_string
 

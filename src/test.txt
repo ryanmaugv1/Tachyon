@@ -9,8 +9,9 @@ if 30 > 21 {
     if "ryan" == "ryan" {
         if "sick" == "sick" {
             str lol = "laugh out loud";
+            print lol ;
         }
     }
 }
 
-print full_name ;
+print "This is Tachyon!";
