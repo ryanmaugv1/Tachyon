@@ -6,12 +6,14 @@ str full_name = last_name + " " + last_name;
 
 if 30 > 21 {
     str xex = "jtag";
-    if "ryan" == "ryan" {
-        if "sick" == "sick" {
+    if name == "Ryan Maugin" {
+        if "sick" != "happy" {
             str lol = "laugh out loud";
-            print lol ;
+            print lol;
         }
     }
 }
 
 print "This is Tachyon!";
+
+

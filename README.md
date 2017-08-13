@@ -4,17 +4,23 @@
 
 This is a performance focused language which tries to be an all in one with multiple ways to do everything like defining a function could be done using syntax of many different languages but has a distinct and explicit syntax for itself.
 
-# Goals
+# Tachyon Code Preview `v1.0`
+
+> A preview of the syntax which tachyon supports in version `1.0`
+
+![Tacyon Syntax v1](./documentation/img/v1-syntax.png)
+
+# Roadmap
 - **Front-end**
     - [x] Create Lexical analyzer
-    - [x] Create Parser `90%`
+    - [x] Create Parser
 
 - **Backend**
-    - [ ] Code genration `current`
+    - [x] Code genration
     - [ ] Optimisation
     
 - **Extra**
-    - [ ] Tachyon IDE
+    - [ ] Tachyon IDE `current`
     - [ ] Linter & Editor plugins
 
 # Author

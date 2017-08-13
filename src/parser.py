@@ -56,7 +56,7 @@ class Parser(object):
                 self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], False)
 
             self.token_index += 1
-        
+
         # Check if there were any errors and if so display them all
         if self.error_messages != []: self.send_error_message(self.error_messages)
 

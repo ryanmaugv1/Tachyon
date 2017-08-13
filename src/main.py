@@ -16,7 +16,7 @@ def main():
     # This variable will hold the contents of the source code
     content = ""
     # Open source code file and get it's content
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/test.txt", "r") as file:
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/test.tn", "r") as file:
         # Append the contents of the file to the content variable
         content = file.read()
     
