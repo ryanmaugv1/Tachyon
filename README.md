@@ -17,10 +17,11 @@ This is a performance focused language which tries to be an all in one with mult
 
 - **Backend**
     - [x] Code genration
-    - [ ] Optimisation
+    - [ ] Optimisation `current`
     
 - **Extra**
-    - [ ] Tachyon IDE `current`
+    - [ ] Write all docmentations in detail
+    - [ ] Tachyon IDE
     - [ ] Linter & Editor plugins
 
 # Author
