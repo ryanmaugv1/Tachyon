@@ -67,7 +67,11 @@ class Parser(object):
     def parse_built_in_function(self, token_stream, isInBody):
         """ Parse Built-in Function 
         
-        This is will parse built in methods and their parameters to form AST
+        This will parse built in methods and their parameters to form an AST
+
+        args:
+            token_stream (list) : The tokens produced by lexer
+            isInBody     (bool) : This will hold True if this function is being run from body parsing
         """
         ast = {'PrebuiltFunction': []}
         tokens_checked = 0
@@ -105,7 +109,8 @@ class Parser(object):
     def variable_decleration_parsing(self, token_stream, isInBody):
         """ Variable Decleration Parsing
 
-        This method will parse variable declerations and add themto the source AST
+        This method will parse variable declerations and add them to the source AST or
+        return them if variable decleration is being parsed for body of a statement
 
         Args:
             token_stream (list) : The token stream starting from where var decleration was found
@@ -216,7 +221,11 @@ class Parser(object):
         abstract sytax tree for it.
 
         args:
-            token_stream: tokens which make up the conditional statement
+            token_stream (list) : tokens which make up the conditional statement
+            isNested     (bool) : True the conditional statement is being parsed within another conditional statement
+        return:
+            ast          (dict)  : The condtion ast without the body
+            tokens_checked (int) : The count of tokens checked that made up the condition statement
         """
 
         tokens_checked = 0
@@ -287,7 +296,9 @@ class Parser(object):
         to return a body ast like this --> {'body': []}
 
         args:
-            token_stream (list) : tokens which make up the body
+            token_stream  (list) : tokens which make up the body
+            statement_ast (dict) : The condition of the body being parsed
+            isNested      (bool) : If the condition being parsed is nested
         returns:
              ast       (object) : Abstract Syntax Tree of the body
         """
@@ -327,7 +338,7 @@ class Parser(object):
     def get_statement_body(self, token_stream):
         """ Get Statement Body 
         
-        This will get the tokens that make up the body of a statement  and return 
+        This will get the tokens that make up the body of a statement and return 
         the tokens
         
         args:
@@ -366,8 +377,9 @@ class Parser(object):
         to true or false
 
         args:
-            comparison_type (str) : The comparison operator e.g ==, < or >=
-            values         (list) : The values that comparison will be applied on
+            comparison_type (str)  : The comparison operator e.g ==, < or >=
+            values          (list) : The values that comparison will be applied on
+            token_checked   (int) : For displaying the error messages tokens
         return:
             boolean               : True or False based on condition evaluation
         """
@@ -406,8 +418,8 @@ class Parser(object):
     def equation_parser(self, equation):
         """ Equation parsing
 
-        This will parse equations such as 10 * 10 which comes in as an array with nums
-        and operands
+        This will parse equations such as 10 * 10 which is passed in as an array with 
+        numbers and operands.
 
         args:
             equation (list) : List of the ints and operands in order
@@ -445,7 +457,7 @@ class Parser(object):
         """ Concatenaion Parser
 
         This will parse concatenation of strings and variables with string values or integer
-        values to concatenate arithmetics to strings e.g. "Ryan is ", 10 + 6, "!"
+        values to concatenate arithmetics to strings together e.g. "Ryan " + last_name;
 
         args:
             concatenation_list (list) : Array with all items needed seperated to perform concatenation
