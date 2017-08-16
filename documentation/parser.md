@@ -41,6 +41,11 @@ This will parse the tokens given as argument and turn the sequence of tokens int
 - `token_stream (list)`
     - The tokens produced by lexer
 
+**Returns**
+
+- `source_ast (dict)`
+    - This will return the full source code ast
+
 ---
 
 ## `parse_built_in_function()`
@@ -53,6 +58,13 @@ This will parse built in methods and their parameters to form an AST.
 - `isInBody (bool)`
     - This will hold True if this function is being run from body parsing
 
+**Returns**
+
+- `ast (dict)`
+    - The condtion ast without the body
+- `tokens_checked (int)`
+    - The count of tokens checked that made up the condition statement
+
 ---
 
 ## `variable_decleration_parsing()`
@@ -62,6 +74,13 @@ This method will parse variable declerations and add them to the source AST or r
 **Arguments**
 - `token_stream (list)`
     - The token stream starting from where the variable decleration was found
+
+**Returns**
+
+- `ast (dict)`
+    - The condtion ast without the body
+- `tokens_checked (int)`
+    - The count of tokens checked that made up the condition statement
 
 ---
 

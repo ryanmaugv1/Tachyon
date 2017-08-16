@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 #
 #  Tachyon
 #  main.py
@@ -16,7 +18,7 @@ def main():
     
     path     = os.getcwd() # Holds path this script was executed from
     fileName = sys.argv[1] # Holds the name of the file the user wants to compile
-    content = ""           # This variable will hold the contents of the source code
+    content  = ""           # This variable will hold the contents of the source code
 
     try:
         # Open source code file and get it's content and save it to the 'contents' var
@@ -31,6 +33,7 @@ def main():
 
     # Create an instance of the lexer class
     lex = lexer.Lexer()
+    
     # Call lexer method to perform lexical analysis on code
     tokens = lex.tokenize(content)
 
