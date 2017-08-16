@@ -16,15 +16,31 @@ import objgen
 
 def main():
     
-    path     = os.getcwd() # Holds path this script was executed from
-    fileName = sys.argv[1] # Holds the name of the file the user wants to compile
     content  = ""           # This variable will hold the contents of the source code
+    path     = os.getcwd() # Holds path this script was executed from
 
+    # Holds the name of the file the user wants to compile
+    try: fileName = sys.argv[1]
+    except:
+        print("[ERROR] Expected 1 Argument Containing File Name to be Run e.g 'tachyon main.tn'")
+        return
+
+    # Check if the file extension is correct
+    if fileName[len(fileName) - 3:len(fileName)] != ".tn":
+        print("[ERROR] File extension not recognised please make sure extension is '.tn'")
+        return # quit programme
+
+    # Check to make sure that only one argument is passed
     try:
-        # Open source code file and get it's content and save it to the 'contents' var
+        print('[ERROR] Expected 1 argument found 2 (' + sys.argv[1] + ", " + sys.argv[2] + ')')
+        return # quit programme
+    except: pass
+
+    # Open source code file and get it's content and save it to the 'contents' var
+    try:
         with open(path + "/" + fileName, "r") as file:
             content = file.read()
-    except:
+    except: 
         print('Cannot find "' + fileName + '"')
     
     # --------------------------------------
@@ -33,7 +49,7 @@ def main():
 
     # Create an instance of the lexer class
     lex = lexer.Lexer()
-    
+
     # Call lexer method to perform lexical analysis on code
     tokens = lex.tokenize(content)
 
