@@ -7,18 +7,23 @@
 #
 
 import os
+import sys
 import lexer
 import parser
 import objgen
 
 def main():
     
-    # This variable will hold the contents of the source code
-    content = ""
-    # Open source code file and get it's content
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/test.tn", "r") as file:
-        # Append the contents of the file to the content variable
-        content = file.read()
+    path     = os.getcwd() # Holds path this script was executed from
+    fileName = sys.argv[1] # Holds the name of the file the user wants to compile
+    content = ""           # This variable will hold the contents of the source code
+
+    try:
+        # Open source code file and get it's content and save it to the 'contents' var
+        with open(path + "/" + fileName, "r") as file:
+            content = file.read()
+    except:
+        print('Cannot find "' + fileName + '"')
     
     # --------------------------------------
     #  LEXER
