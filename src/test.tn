@@ -13,7 +13,3 @@ if 30 > 21 {
         }
     }
 }
-
-print "This is Tachyon!";
-
-

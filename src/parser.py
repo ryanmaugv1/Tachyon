@@ -73,6 +73,9 @@ class Parser(object):
         args:
             token_stream (list) : The tokens produced by lexer
             isInBody     (bool) : This will hold True if this function is being run from body parsing
+        returns:
+            ast          (dict) : The condtion ast without the body
+            tokens_checked (int): The count of tokens checked that made up the condition statement
         """
         ast = {'PrebuiltFunction': []}
         tokens_checked = 0
@@ -86,6 +89,7 @@ class Parser(object):
 
                 # If the argument passed is a variable (identifier) then try get value
                 if token_stream[token][0] == 'IDENTIFIER':
+
                     # Get value and handle any errors
                     value = self.get_variable_value(token_stream[token][1])
                     if value != False: 
@@ -95,7 +99,13 @@ class Parser(object):
                                                     token_stream[0:tokens_checked + 1] ])
 
                 # TODO Allow for concatenation and equation parsing
-                else: ast['PrebuiltFunction'].append( {'arguments': [token_stream[token][1]]} )
+                else: 
+                    ast['PrebuiltFunction'].append( {'arguments': [token_stream[token][1]]} )
+
+            # This will throw an error if argument passed in is not a permitted token type 
+            elif token == 1 and token_stream[token][0] not in ['INTEGER', 'STRING', 'IDENTIFIER']: 
+                self.error_messages.append([ "Invalid argument type of %s expected string, identifier or primitive data type" % token_stream[token][0], 
+                                              token_stream[0:tokens_checked + 1] ])
 
             tokens_checked += 1
 
