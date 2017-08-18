@@ -46,6 +46,20 @@ This will parse the tokens given as argument and turn the sequence of tokens int
 - `source_ast (dict)`
     - This will return the full source code ast
 
+This method tries to identifiy a pattern of tokens that make up a parse tree for example a variable would be recognised if the parse method stumbled across a datatype token (`['DATATYPE', 'str']`) it would know it is a variable decleration and call the `variable_decleration_parsing()` passing in the token stream from where the data type was found with the rest of the tokens and will also pass in false because this parsing isn't called from a body statement parser. This is how it looks in code:
+
+    if token_type == "DATATYPE":
+        self.variable_decleration_parsing(token_stream[self.token_index:len(token_stream)], False)
+          
+This is then repeated for for all the tokens in the source code to find patterns and create AST's from them. Once all this is done the method checkd for an error messages like such:
+
+    if self.error_messages != []: 
+        self.send_error_message(self.error_messages)
+        
+This checks if the error message array is empty and if so no errors occured during parsing but if there is then error messages will all be displayed in hierachy order from first to last.
+
+Finally, the method then returns the `source_ast` so that it can then be used by the ObjectGenerator (`objgen.py`) to make the Objects for the different AST's and transpile them into python.
+
 ---
 
 ## `parse_built_in_function()`
@@ -64,6 +78,46 @@ This will parse built in methods and their parameters to form an AST.
     - The condtion ast without the body
 - `tokens_checked (int)`
     - The count of tokens checked that made up the condition statement
+
+This methold will be called from the `parser()` or `parse_body()` method which will loop through the first token till it finds an `END_STATEMENT` token type which means it can then return the formed AST.
+
+The method firstly starts off by creating two variables which are:
+
+- **ast**
+    - Which holds the AST e.g. `{'PrebuiltFunction': [{'type': 'print'}, {'param': ['Hello']}]}`
+- **tokens_checked**
+    - This variable holds the amount of tokens checked which make up the builtin function.
+
+Next, I loop through each token passed in the `token_stream` and check for 3 token types and values at different indexes such as:
+
+- The Prebuilt function type which is basically the name of the function e.g `print "Ryan";` the type will be `print` and this token has to be at token index 1.
+
+      if token == 0:
+          ast['PrebuiltFunction'].append( {'type': token_stream[token][1]} )
+
+- At token index 2 I look for the parameter that is being passed in which has to be either a value like `string`, `int` or `bool` etc. Inside this check I also perform various operations lie getting the value of a variable if the the value passed is an `IDENTIFIER` (var) type.
+
+      if token == 1 and token_stream[token][0] in ['INTEGER', 'STRING', 'IDENTIFIER']:
+      
+          # If the argument passed is a variable (identifier) then try get value
+          if token_stream[token][0] == 'IDENTIFIER':
+              # Get value and handle any errors
+               value = self.get_variable_value(token_stream[token][1])
+              if value != False: 
+                  ast['PrebuiltFunction'].append( {'arguments': [value]} )
+              else: 
+                  self.error_messages.append([ "Variable '%s' does not exist" % token_stream[tokens_checked][1], token_stream[0:tokens_checked + 1] ])
+                  
+          else: 
+              ast['PrebuiltFunction'].append( {'arguments': [token_stream[token][1]]} )
+
+- Finally at the 3rd index I will be looking for a `STATEMENT_END` token type so that I know I can break out the loop so I don't check any more tokens. 
+
+    `if token_stream[token][0] == "STATEMENT_END": break`
+    
+Once these checks are done and we hve exitted the loop I check whether this method was run from inside a body and if not then append the ast to the `source_ast` and increase `token_index` by adding the tokens checked count to it.
+
+If the method is run with the `isInBody` being `True` then it will not append to the `source_ast` and will return it instead.
 
 ---
 
@@ -111,7 +165,7 @@ This will parse the body of conditional, iteration, functions and more in order 
 - `token_stream (list)`
     - Tokens which make up the body
 - `statement_ast (dict)`
-    - The condition of the body being parsed
+    - The condition of the body being parsed so the whole ast can be formed in this method and added to `source_ast`
 - `isNested (bool)`
     - If the condition being parsed is nested
 
