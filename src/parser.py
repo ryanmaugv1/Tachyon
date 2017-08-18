@@ -81,10 +81,17 @@ class Parser(object):
         tokens_checked = 0
 
         for token in range(0, len(token_stream)):
+
+            tokens_checked += 1
+
+            # Break out of loop whn statement end is found
+            if token_stream[token][0] == "STATEMENT_END": break
             
+            # This will get the builtin function name 
             if token == 0:
                 ast['PrebuiltFunction'].append( {'type': token_stream[token][1]} )
                 
+            # This will get the parameter
             if token == 1 and token_stream[token][0] in ['INTEGER', 'STRING', 'IDENTIFIER']:
 
                 # If the argument passed is a variable (identifier) then try get value
@@ -106,8 +113,6 @@ class Parser(object):
             elif token == 1 and token_stream[token][0] not in ['INTEGER', 'STRING', 'IDENTIFIER']: 
                 self.error_messages.append([ "Invalid argument type of %s expected string, identifier or primitive data type" % token_stream[token][0], 
                                               token_stream[0:tokens_checked + 1] ])
-
-            tokens_checked += 1
 
         # If it's being parsed within a body don't ass the ast to the source ast
         if not isInBody: self.source_ast['main_scope'].append(ast)

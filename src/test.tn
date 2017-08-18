@@ -4,6 +4,8 @@ bool isMale = True;
 int num = 10 * 10 + 10;
 str full_name = last_name + " " + last_name;
 
+print "Ryan";
+
 if 30 > 21 {
     str xex = "jtag";
     if name == "Ryan Maugin" {
