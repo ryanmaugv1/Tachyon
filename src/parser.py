@@ -81,6 +81,7 @@ class Parser(object):
             
             if token == 0:
                 ast['PrebuiltFunction'].append( {'type': token_stream[token][1]} )
+                
             if token == 1 and token_stream[token][0] in ['INTEGER', 'STRING', 'IDENTIFIER']:
 
                 # If the argument passed is a variable (identifier) then try get value
@@ -487,8 +488,10 @@ class Parser(object):
             if item % 2 == 1:
                 if current_value == "+": 
                     # This checks if the value being checked is a string or a variable
-                    if concatenation_list[item + 1][0] != '"': full_string += self.get_variable_value(concatenation_list[item + 1])
-                    else: full_string += concatenation_list[item + 1][1:len(concatenation_list[item + 1]) - 1]
+                    if concatenation_list[item + 1][0] != '"': 
+                        full_string += self.get_variable_value(concatenation_list[item + 1])
+                    else: 
+                        full_string += concatenation_list[item + 1][1:len(concatenation_list[item + 1]) - 1]
                         
                 elif current_value == ",": 
                     full_string += " " + concatenation_list[item + 1]
