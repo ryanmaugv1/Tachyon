@@ -224,6 +224,7 @@ class Parser(object):
         # Add varible name and value to symbol tree and increase token index
         if not var_exists:
             self.symbol_tree.append( [ast['VariableDecleration'][1]['name'], ast['VariableDecleration'][2]['value']] )
+            
         self.token_index += tokens_checked
 
         return [ast, tokens_checked] # Return is only used within body parsing to create body ast
