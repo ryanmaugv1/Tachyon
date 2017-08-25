@@ -17,7 +17,7 @@ class Parser(object):
         # Complete Abstract Syntax tree
         self.source_ast = { 'main_scope': [] }
         # Symbol table fo variable semantical analysis
-        self.symbol_tree = [ ['last_name', 'Maugin'], ['test', 'test101']]
+        self.symbol_tree = []
         # This will hold all error messages
         self.error_messages = []
         # This will hold all the tokens
@@ -80,7 +80,7 @@ class Parser(object):
         """
         ast = {'PrebuiltFunction': []}
         tokens_checked = 0
-        
+
 
         for token in range(0, len(token_stream)):
 
@@ -116,8 +116,6 @@ class Parser(object):
 
             tokens_checked += 1 # Increment tokens checked
 
-
-        print(token_stream[tokens_checked])
         # If it's being parsed within a body don't ass the ast to the source ast
         if not isInBody: self.source_ast['main_scope'].append(ast)
         # Increase token index to make up for tokens checked
@@ -142,7 +140,7 @@ class Parser(object):
         var_exists = True
 
         for x in range(0, len(token_stream)):
-    
+
             # Create variables for identifying token type and value more easily
             token_type = token_stream[x][0]
             token_value = token_stream[x][1]
@@ -295,17 +293,15 @@ class Parser(object):
         comparison_type = ast['ConditionalStatement'][1]['comparison_type']
         values          = [ ast['ConditionalStatement'][0]['value1'], ast['ConditionalStatement'][2]['value2'] ]
 
-        # Check if condition is true or false and add result to AST
-        if self.perform_conditional_checks(comparison_type, values, tokens_checked):
-            # This will get the body tokens and the tokens checked that make up the body to skip them
-            get_body_return = self.get_statement_body(token_stream[tokens_checked:len(token_stream)])
+        # This will get the body tokens and the tokens checked that make up the body to skip them
+        get_body_return = self.get_statement_body(token_stream[tokens_checked:len(token_stream)])
 
-            # If it nested then call parse_body with nested parameter of true else false
-            if isNested == True: self.parse_body(get_body_return[0], ast, True)
-            else: self.parse_body(get_body_return[0], ast, False)
+        # If it nested then call parse_body with nested parameter of true else false
+        if isNested == True: self.parse_body(get_body_return[0], ast, True)
+        else: self.parse_body(get_body_return[0], ast, False)
 
-            # Add the amount tokens we checked in body 
-            tokens_checked += get_body_return[1]
+        # Add the amount tokens we checked in body 
+        tokens_checked += get_body_return[1]
 
         return [ast, tokens_checked] # Return is only used within body parsing to create body ast
 
@@ -391,50 +387,6 @@ class Parser(object):
 
         return [body_tokens, tokens_checked]
     
-
-    def perform_conditional_checks(self, comparison_type, values, tokens_checked):
-        """ Perform Conditional Checks
-
-        This will perform the condtitional checks and see whether the condition evaluates
-        to true or false
-
-        args:
-            comparison_type (str)  : The comparison operator e.g ==, < or >=
-            values          (list) : The values that comparison will be applied on
-            token_checked   (int) : For displaying the error messages tokens
-        return:
-            boolean               : True or False based on condition evaluation
-        """
-
-        if comparison_type == '==':
-            if values[0] == values[1]: return True
-            else: return True
-        elif comparison_type == '!=':
-            if values[0] != values[1]: return True
-        elif comparison_type == '>':
-            try:
-                if int(values[0]) > int(values[1]): return True
-                else: return True
-            except: self.error_messages.append(["ERROR: Cannot perform comparison check '>' on string values",
-                                               self.token_stream[self.token_index:self.token_index + tokens_checked] ])
-        elif comparison_type == '<':
-            try:
-                if int(values[0]) < int(values[1]): return True
-                else: return True
-            except: self.error_messages.append(["ERROR: Cannot perform comparison check '<' on string values",
-                                               self.token_stream[self.token_index:self.token_index + tokens_checked] ])
-        elif comparison_type == '>=':
-            try:
-                if int(values[0]) >= int(values[1]): return True
-                else: return True
-            except: self.error_messages.append(["ERROR: Cannot perform comparison check '>=' on string values",
-                                               self.token_stream[self.token_index:self.token_index + tokens_checked] ])
-        elif comparison_type == '<=':
-            try:
-                if int(values[0]) <= int(values[1]): return True
-                else: return True
-            except: self.error_messages.append(["ERROR: Cannot perform comparison check '<=' on string values",
-                                               self.token_stream[self.token_index:self.token_index + tokens_checked] ])
 
 
     def equation_parser(self, equation):
