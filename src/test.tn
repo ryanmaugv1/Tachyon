@@ -2,9 +2,7 @@ int a = 11;
 str name = "Ryan Maugin";
 bool isMale = True;
 int num = 10 * 10 + 10;
-str full_name = last_name + " " + last_name;
-
-print "Ryan";
+str full_name = name + " " + name;
 
 if 30 > 21 {
     str xex = "jtag";

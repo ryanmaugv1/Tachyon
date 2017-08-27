@@ -29,10 +29,8 @@ class Parser(object):
 
     def parse(self, token_stream):
         """ Parsing
-
         This will parse the tokens given as argument and turn the sequence of tokens into 
         abstract syntax trees
-
         Args:
          token_stream (list) : The tokens produced by lexer
         """
@@ -52,7 +50,7 @@ class Parser(object):
             elif token_type == "IDENTIFIER" and token_value == "if":
                 self.conditional_statement_parser(token_stream[self.token_index:len(token_stream)], False)
 
-            # This will find the pattern for a buil-in function call
+            # This will find the pattern for a buil-in function call
             elif token_type == "IDENTIFIER" and token_value in constants.BUILT_IN_FUNCTIONS:
                 self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], False)
 
@@ -61,7 +59,6 @@ class Parser(object):
         # Check if there were any errors and if so display them all
         if self.error_messages != []: self.send_error_message(self.error_messages)
 
-        print(self.source_ast)
         return self.source_ast
     
 
@@ -70,7 +67,6 @@ class Parser(object):
         """ Parse Built-in Function 
         
         This will parse built in methods and their parameters to form an AST
-
         args:
             token_stream (list) : The tokens produced by lexer
             isInBody     (bool) : This will hold True if this function is being run from body parsing
@@ -116,7 +112,7 @@ class Parser(object):
 
             tokens_checked += 1 # Increment tokens checked
 
-        # If it's being parsed within a body don't ass the ast to the source ast
+        # If it's being parsed within a body don't ass the ast to the source ast
         if not isInBody: self.source_ast['main_scope'].append(ast)
         # Increase token index to make up for tokens checked
         self.token_index += tokens_checked 
@@ -127,10 +123,8 @@ class Parser(object):
     
     def variable_decleration_parsing(self, token_stream, isInBody):
         """ Variable Decleration Parsing
-
         This method will parse variable declerations and add them to the source AST or
         return them if variable decleration is being parsed for body of a statement
-
         Args:
             token_stream (list) : The token stream starting from where var decleration was found
         """
@@ -165,7 +159,7 @@ class Parser(object):
                 if self.get_variable_value(token_value) != False:
                     self.error_messages.append(["Variable '%s' already exists and cannot be defined again!" % token_value, self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
                 else:
-                    var_exists = False # Set var exists to False so that it can be added
+                    var_exists = False # Set var exists to False so that it can be added
                     ast['VariableDecleration'].append({ "name": token_value })
 
             # Error handling for variable name to make sure the naming convention is acceptable
@@ -181,8 +175,7 @@ class Parser(object):
                     try: ast['VariableDecleration'].append({ "value": int(token_value) })
                     except ValueError: ast['VariableDecleration'].append({ "value": token_value })
                 else:
-                    self.error_messages.append(["Variable value does not match defined type!", 
-                                                self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
+                    self.error_messages.append(["Variable value does not match defined type!", self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
 
             # This will parse any variable declerations which have concatenation or arithmetics
             elif x >= 3:
@@ -212,18 +205,17 @@ class Parser(object):
         # Last case error validation checking if all needed var decl elements are in ast such as:
         # var type, name and value
         try: ast['VariableDecleration'][0] 
-        except: self.error_messages.append(["Invalid variable decleration coud not set variable type!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+        except: self.error_messages.append(["Invalid variable decleration could not set variable type!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
         try: ast['VariableDecleration'][1]
-        except: self.error_messages.append(["Invalid variable decleration coud not set variable name!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+        except: self.error_messages.append(["Invalid variable decleration could not set variable name!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
         try: ast['VariableDecleration'][2]
-        except: self.error_messages.append(["Invalid variable decleration coud not set variable value!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+        except: self.error_messages.append(["Invalid variable decleration could not set variable value!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
 
         # If this is being run to parse inside a body then there is no need to add it to the source ast
         # as it will be added to the body of statement being parsed
         if not isInBody:
             self.source_ast['main_scope'].append(ast)
 
-        # Add varible name and value to symbol tree and increase token index
         if not var_exists:
             self.symbol_tree.append( [ast['VariableDecleration'][1]['name'], ast['VariableDecleration'][2]['value']] )
 
@@ -236,10 +228,8 @@ class Parser(object):
 
     def conditional_statement_parser(self, token_stream, isNested):
         """ Conditional Statement Parser
-
         This will parse conditional statements like 'if else' and create an
         abstract sytax tree for it.
-
         args:
             token_stream (list) : tokens which make up the conditional statement
             isNested     (bool) : True the conditional statement is being parsed within another conditional statement
@@ -309,10 +299,8 @@ class Parser(object):
 
     def parse_body(self, token_stream, statement_ast, isNested):
         """ Parse body
-
         This will parse the body of conditional, iteration, functions and more in order
         to return a body ast like this --> {'body': []}
-
         args:
             token_stream  (list) : tokens which make up the body
             statement_ast (dict) : The condition of the body being parsed
@@ -391,10 +379,8 @@ class Parser(object):
 
     def equation_parser(self, equation):
         """ Equation parsing
-
         This will parse equations such as 10 * 10 which is passed in as an array with 
         numbers and operands.
-
         args:
             equation (list) : List of the ints and operands in order
         returns:
@@ -429,10 +415,8 @@ class Parser(object):
 
     def concatenation_parser(self, concatenation_list):
         """ Concatenaion Parser
-
         This will parse concatenation of strings and variables with string values or integer
         values to concatenate arithmetics to strings together e.g. "Ryan " + last_name;
-
         args:
             concatenation_list (list) : Array with all items needed seperated to perform concatenation
         return:
@@ -448,20 +432,33 @@ class Parser(object):
 
             # Add the first item to the string
             if item == 0:
-                
                 # This checks if the value being checked is a string or a variable
                 # If it is a string then just add it without the surrounding quotes
-                if current_value[0] == '"': full_string += current_value[1:len(current_value) - 1]
+                if current_value[0] == '"': 
+                    full_string += current_value[1:len(current_value) - 1]
                 # If it isn't a string then get the variable value and append it
-                else: full_string += self.get_variable_value(current_value)
+                else:
+                    var_value = self.get_variable_value(current_value)
+                    if var_value != False:
+                        full_string += var_value[1:len(var_value) - 1]
+                    else:
+                        self.error_messages.append(['Cannot find variable "%s" because it was never created' % concatenation_list[item + 1], concatenation_list])
                 pass
             
             # This will check for the concatenation operator
             if item % 2 == 1:
+
                 if current_value == "+": 
                     # This checks if the value being checked is a string or a variable
                     if concatenation_list[item + 1][0] != '"': 
-                        full_string += self.get_variable_value(concatenation_list[item + 1])
+
+                        # This will get the variable value and check if it exists if so then it adds it to the full string
+                        var_value = self.get_variable_value(concatenation_list[item + 1])
+                        if var_value != False:
+                            full_string += var_value[1:len(var_value) - 1]
+                        else:
+                            self.error_messages.append(['Cannot find variable "%s" because it was never created' % concatenation_list[item + 1], concatenation_list])
+
                     else: 
                         full_string += concatenation_list[item + 1][1:len(concatenation_list[item + 1]) - 1]
                         
@@ -474,16 +471,16 @@ class Parser(object):
             # This will skip value as it is already being added and dealt with when getting the operand
             if item % 2 == 0: pass
 
+        #print('"' + full_string + '"')
+
         return '"' + full_string + '"'
 
 
 
     def get_variable_value(self, name):
         """ Get Variable Value
-
         This will get the value of a variable from the symbol tree and return the value
         if the variable exists or an error if it doesn't
-
         args:
             name (string)  : The name which we will search for in symbol tree
         returns:
@@ -499,11 +496,9 @@ class Parser(object):
 
     def send_error_message(self, error_list):
         """ Send Error Messages
-
         This will simply send all the found error messages within the source code
         and return a list of error messages and tokens of which part of the source code
         caused that error
-
         args:
             error_list (list) : List with error message and tokens
         """

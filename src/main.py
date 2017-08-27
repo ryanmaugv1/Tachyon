@@ -1,12 +1,5 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-#
-#  Tachyon
-#  main.py
-#
-#  Created on 27/05/17
-#  Ryan Maugin <ryan.maugin@adacollege.org.uk>
-#
+#!/usr/local/bin/python3
+# -*- coding: utf-8 -*- c
 
 import os
 import sys
