@@ -90,12 +90,12 @@ The method firstly starts off by creating two variables which are:
 
 Next, I loop through each token passed in the `token_stream` and check for 3 token types and values at different indexes such as:
 
-- The Prebuilt function type which is basically the name of the function e.g `print "Ryan";` the type will be `print` and this token has to be at token index 1.
+- The Prebuilt function type which is the name of the function e.g `print "Ryan";` the type will be `print` and this token has to be at token index 1.
 
       if token == 0:
           ast['PrebuiltFunction'].append( {'type': token_stream[token][1]} )
 
-- At token index 2 I look for the parameter that is being passed in which has to be either a value like `string`, `int` or `bool` etc. Inside this check I also perform various operations lie getting the value of a variable if the the value passed is an `IDENTIFIER` (var) type.
+- At token index 2, I look for the parameter that is being passed in which has to be either a value like `string`, `int` or `bool` etc. Inside this check I also perform various operations lie getting the value of a variable if the the value passed is an `IDENTIFIER` (var) type.
 
       if token == 1 and token_stream[token][0] in ['INTEGER', 'STRING', 'IDENTIFIER']:
       
@@ -128,6 +128,8 @@ This method will parse variable declerations and add them to the source AST or r
 **Arguments**
 - `token_stream (list)`
     - The token stream starting from where the variable decleration was found
+- `isInBody (bool)`
+    - This will declare whether the var decleration is being parsed within a statement body.
 
 **Returns**
 
@@ -135,6 +137,32 @@ This method will parse variable declerations and add them to the source AST or r
     - The condtion ast without the body
 - `tokens_checked (int)`
     - The count of tokens checked that made up the condition statement
+
+To parse variable declerations what we do is get a list passed in as a parameter where the variable decleration starts. We also get a boolean value for `isInBody` to know if this variable decleration is parsed within a body.
+
+Next I loop through all the tokens inside the `token_stream` and create a variable AST dictionary with the variable type, nam e and value until I find a `STATEMENT_END`token which means that the variable decleration is finished so I can then break out the loop.
+
+Within the for loop I check for these things:
+
+> `if x == 2 and token_type == "OPERATOR" and token_value == "=":`
+This checks if the second token is a token of type `OPERATOR` and has the value of `=` and if so then we just `pass` but if not the we throw an error saying that the variable decleration is missing an equal sign (`=`).
+
+> `if token_stream[x][0] == "STATEMENT_END":`
+This will look for an `STATEMENT_END` token and when found will break out the loop as it is an indicator that the variable decleration is finished.
+
+> `if x == 0:`
+This will check for the type of the variable like `str`, `int` or `bool` etc. This won't need error detection as it will initiate the variable decleration parser so any else statement would never evaluate to true.
+
+> `if x == 1 and token_type == "IDENTIFIER":`
+This will get the name of the variable and inside will perform semantics check to make sure that a variable doesn't already exist with the same name.
+
+> `if x == 3 and token_stream[x + 1][0] == "STATEMENT_END":`
+This will parse the variable value if has only one token that makes up it's value or else the next example below is the one that will be called. What happens in this method is that the type assigned will be checked to make sure it matches declared type and then add the value to the AST.
+
+> `elif x >= 3:`
+This does the same as the above however it will handle variable value assignments that don't have just one simply value passed in but rather things like concatenation and equations e.g `int a = 10 + 10;`.
+
+Once, I have broken out the loop I do some error checking to make sure that all the AST values needed are there or else I generate an error. I then check if the method was called with the parameter `isInBody` being `True` so I know whether to append the AST to the `source_ast` or not. I also perform some semantics validation by checking if the variable already exists by calling the `get_variable_value` method inside the loop when I find the name which should either return `False` or the value of the variable. Finally I simply increment the `token_index` by the number of tokens I checked through to make up the variable decleration and then return the `AST` and `tokens_checked` value.
 
 ---
 
@@ -189,24 +217,6 @@ This will get the tokens that make up the body of a statement and return the tok
 
 ---
 
-## `perform_conditional_checks()`
-
-This will perform the condtitional checks and see whether the condition evaluates to true or false.
-
-**Arguments**
-- `comparison_type (str)`
-    - The comparison operator e.g ==, < or >=
-- `values (list)`
-    - The values that comparison will be applied on
-- `token_checked (int)`
-    - For displaying the error messages tokens
-
-**Returns**
-- `boolean`
-    - True or False based on condition evaluation
-
----
-
 ## `equation_parser()`
 
 This will parse equations such as 10 * 10 which is passed in as an array with numbers and operands.
@@ -218,6 +228,8 @@ This will parse equations such as 10 * 10 which is passed in as an array with nu
 **Returns**
 - `value (int)`
     - The value of the equation 
+
+This method work in a very simple manner and what it does is simply get the first integer and add it to a varibale called `total`. It then checks every even list item in `equation` argument which should be a arithmetics operator and if it is found then perform that arithmetic operation using the `total` and the integer after the arithmetic operator found.
 
 ---
 
@@ -235,6 +247,33 @@ This will parse concatenation of strings and variables with string values or int
 - `error (list)` 
     - Return False with an error message in a list
 
+This method will use the `concatenation_list` argument which is a list of token values that look like this `['"Ryan"', "+", "last_name"]`. It will loop through each of the list items and perform the concatenation by adding everything to a empty string in rder to form it. It is easy to differ from a string and a variable because a string will be surrounded in quotes whereas variable aren't.
+
+      if item == 0:
+          if current_value[0] == '"': 
+              full_string += current_value[1:len(current_value) - 1]
+          else: 
+              full_string += self.get_variable_value(current_value)
+          pass
+
+Next, I simply check if every even number apart from 0 is a `+` to make sure the concatenation follows correct syntax and then if it is it will automatically add the next list item to the `full_string` variable. This step is repeated until the concatenation is complete and there are no more `+` operators. This is done with the following code:
+
+    if item % 2 == 1:
+        if current_value == "+": 
+            # This checks if the value being checked is a string or a variable
+            if concatenation_list[item + 1][0] != '"': 
+                full_string += self.get_variable_value(concatenation_list[item + 1])
+            else: 
+                full_string += concatenation_list[item + 1][1:len(concatenation_list[item + 1]) - 1]
+                        
+        elif current_value == ",": 
+            full_string += " " + concatenation_list[item + 1]
+
+        else: 
+          self.error_messages.append(["Error parsing equation, check that you are using correct operand",concatenation_list])
+          
+Finally, I just return the full string.
+
 ---
 
 ## `get_variable_value()`
@@ -251,6 +290,8 @@ This will get the value of a variable from the symbol tree and return the value 
 - `error (bool)`
     - Sends back False if it was not found
 
+This method is simple as all it does is simply use the passed in argument `name` to loop through the `symbol_table` 2d array to see if it can find another variable with the same name and if it does will return `True` or `False` if it doesn't.
+
 ---
 
 ## `send_error_message()`
@@ -260,5 +301,18 @@ This will simply send all the found error messages within the source codeand ret
 **Arguments**
 - `error_list (list)`
     - List with error message and tokens
+
+This method will loop through each error message in the `error_message` global variable and print out every error with a descripttion along with the tokens which cause the error. It looks something like this:
+
+    1. Variable `test` is not defined
+    ['IDENTIFIER', 'print'] ['IDENTIFIER', 'test'] ['STATEMENT_END', ';']
+    print test;
+    
+The error messages are stored as 2d arrays with every list item being a list with 2 list items which is first the description and then the tokens which make up the error, like such:
+
+    [
+    ['Variable `test` is not defined', ['IDENTIFIER', 'print'] ['IDENTIFIER', 'test'] ['STATEMENT_END', ';']],
+    ...
+    ]
 
 ---
