@@ -12,12 +12,21 @@ This is a performance focused language which tries to be an all in one with mult
 
 # Installation
 
-**Mac & Linux**
+**Mac**
 1. Clone this repo into `~/Users/mac/Library` using `git clone https://github.com/RyanMaugin/Tachyon.git Tachyon`.
 2. Once installed go inside the Tachyon folder by entering `cd Tachyon` in your terminal.
 3. Run the `setup.py` script using `python3 setup.py`.
+4. If that doesn't work, try `python setup.py`s
 4. Your done! You can run tachyon code by using the following command `tachyon fileName.tn`.
 
+**Linux**
+1. Enter the following: 
+	```cd ~/Users/mac/Library
+	git clone https://github.com/RyanMaugin/Tachyon.git Tachyon```
+2. Once installed go inside the Tachyon folder by entering `cd Tachyon` in your terminal.
+3. Run the `setup.py` script using `python3 setup.py`.
+4. If that doesn't work, maybe try `python setup.py`.
+5. Your done! You can run tachyon code by using the following command `tachyon fileName.tn`.
 **Windows Coming Soon!**
 
 # Roadmap
