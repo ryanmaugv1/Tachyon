@@ -14,18 +14,17 @@ import src.parser
 
 class ParserTestCase(unittest.TestCase):
     """ Tests for parser methods """
-
-    # Create parser instance to test on
-    parserObject = src.parser.Parser([['DATATYPE', 'int'], ['IDENTIFIER', 'a'], ['OPERATOR', '='], ['INTEGER', '11'], ['STATEMENT_END', ';'], 
-                                      ['DATATYPE', 'str'], ['IDENTIFIER', 'name'], ['OPERATOR', '='], ['STRING', '"Ryan Maugin The Boss"'], ['STATEMENT_END', ';']])
-
     
-    # 
-    #
-    #  TESTS for does_var_exist(self, name) method
-    #
-    #
+    # --------------------------------------------------
+    #  TESTS for parser() method
+    # --------------------------------------------------
 
+    def test_parser_method_with_variable_decleration(self):
+
+        # Create parser instance to test on
+        parserObject = src.parser.Parser([['DATATYPE', 'int'], ['IDENTIFIER', 'a'], ['OPERATOR', '='], ['INTEGER', '11'], ['STATEMENT_END', ';']]).parse()
+
+        self.assertEqual(parserObject, )
 
 if __name__ == '__main__':
     unittest.main()

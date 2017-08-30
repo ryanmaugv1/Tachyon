@@ -18,8 +18,6 @@ class Parser(object):
         self.source_ast = { 'main_scope': [] }
         # Symbol table fo variable semantical analysis
         self.symbol_tree = []
-        # This will hold all error messages
-        self.error_messages = []
         # This will hold all the tokens
         self.token_stream = token_stream
         # This will hold the token index we are parsing at
@@ -55,9 +53,6 @@ class Parser(object):
                 self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], False)
 
             self.token_index += 1
-
-        # Check if there were any errors and if so display them all
-        if self.error_messages != []: self.send_error_message(self.error_messages)
 
         return self.source_ast
     
@@ -98,8 +93,8 @@ class Parser(object):
                     if value != False: 
                         ast['PrebuiltFunction'].append( {'arguments': [value]} )
                     else: 
-                        self.error_messages.append([ "Variable '%s' does not exist" % token_stream[tokens_checked][1], 
-                                                    token_stream[0:tokens_checked + 1] ])
+                        self.send_error_message("Variable '%s' does not exist" % token_stream[tokens_checked][1], 
+                                                    token_stream[0:tokens_checked + 1])
 
                 # TODO Allow for concatenation and equation parsing
                 else: 
@@ -107,8 +102,8 @@ class Parser(object):
 
             # This will throw an error if argument passed in is not a permitted token type 
             elif token == 1 and token_stream[token][0] not in ['INTEGER', 'STRING', 'IDENTIFIER']: 
-                self.error_messages.append([ "Invalid argument type of %s expected string, identifier or primitive data type" % token_stream[token][0], 
-                                              token_stream[0:tokens_checked + 1] ])
+                self.send.error_message.append("Invalid argument type of %s expected string, identifier or primitive data type" % token_stream[token][0], 
+                                              token_stream[0:tokens_checked + 1])
 
             tokens_checked += 1 # Increment tokens checked
 
@@ -144,7 +139,7 @@ class Parser(object):
                 pass
             # This will handle error detection for making sure the '=' is found
             if x == 2 and token_type != "OPERATOR" and token_value != "=":
-                self.error_messages.append(["Variable Decleration Missing '='.", self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
+                self.send_error_message("Variable Decleration Missing '='.", self.token_stream[self.token_index:self.token_index + tokens_checked + 2])
 
             # If a statement end is found then break out parsing
             if token_stream[x][0] == "STATEMENT_END": break
@@ -157,14 +152,14 @@ class Parser(object):
                 
                 # Check if a variable has already been named the same and is so send an error
                 if self.get_variable_value(token_value) != False:
-                    self.error_messages.append(["Variable '%s' already exists and cannot be defined again!" % token_value, self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
+                    self.send_error_message("Variable '%s' already exists and cannot be defined again!" % token_value, self.token_stream[self.token_index:self.token_index + tokens_checked + 1])
                 else:
                     var_exists = False # Set var exists to False so that it can be added
                     ast['VariableDecleration'].append({ "name": token_value })
 
             # Error handling for variable name to make sure the naming convention is acceptable
             if x == 1 and token_type != "IDENTIFIER":
-                self.error_messages.append(["Invalid Variable Name '%s'" % token_value, self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
+                self.send_error_message("Invalid Variable Name '%s'" % token_value, self.token_stream[self.token_index:self.token_index + tokens_checked + 1] )
 
             # This will parse the 3rd token which is the value of the variable
             if x == 3 and token_stream[x + 1][0] == "STATEMENT_END":
@@ -175,7 +170,7 @@ class Parser(object):
                     try: ast['VariableDecleration'].append({ "value": int(token_value) })
                     except ValueError: ast['VariableDecleration'].append({ "value": token_value })
                 else:
-                    self.error_messages.append(["Variable value does not match defined type!", self.token_stream[self.token_index:self.token_index + tokens_checked + 1] ])
+                    self.send_error_message("Variable value does not match defined type!", self.token_stream[self.token_index:self.token_index + tokens_checked + 1])
 
             # This will parse any variable declerations which have concatenation or arithmetics
             elif x >= 3:
@@ -197,19 +192,19 @@ class Parser(object):
                 try: ast['VariableDecleration'].append({ "value": self.equation_parser(value_list)})
                 except:
                     try:    ast['VariableDecleration'].append({ "value": self.concatenation_parser(value_list) })
-                    except: self.error_messages.append(["Invalid variable decleration!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+                    except: self.send_error_message("Invalid variable decleration!", self.token_stream[self.token_index:self.token_index + tokens_checked] )
                 break                   # Break out of the current var parsing loop since we just parsed everything
 
             tokens_checked += 1         # Indent within overall for loop
 
-        # Last case error validation checking if all needed var decl elements are in ast such as:
+        # Last case error validation checking if all needed var decl elements are in the ast such as:
         # var type, name and value
         try: ast['VariableDecleration'][0] 
-        except: self.error_messages.append(["Invalid variable decleration could not set variable type!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+        except: self.send_error_message("Invalid variable decleration could not set variable type!", self.token_stream[self.token_index:self.token_index + tokens_checked] )
         try: ast['VariableDecleration'][1]
-        except: self.error_messages.append(["Invalid variable decleration could not set variable name!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+        except: self.send_error_message("Invalid variable decleration could not set variable name!", self.token_stream[self.token_index:self.token_index + tokens_checked] )
         try: ast['VariableDecleration'][2]
-        except: self.error_messages.append(["Invalid variable decleration could not set variable value!", self.token_stream[self.token_index:self.token_index + tokens_checked] ])
+        except: self.send_error_message("Invalid variable decleration could not set variable value!", self.token_stream[self.token_index:self.token_index + tokens_checked] )
 
         # If this is being run to parse inside a body then there is no need to add it to the source ast
         # as it will be added to the body of statement being parsed
@@ -403,8 +398,7 @@ class Parser(object):
                 elif equation[item] == "/": total /= equation[item + 1]
                 elif equation[item] == "*": total *= equation[item + 1]
                 elif equation[item] == "%": total %= equation[item + 1]
-                else: self.error_messages.append(["Error parsing equation, check that you are using correct operand",
-                                                 equation])
+                else: self.sned_error_message("Error parsing equation, check that you are using correct operand", equation)
 
             # Skip every number since we already check and use them
             elif item % 2 == 0: pass
@@ -442,7 +436,7 @@ class Parser(object):
                     if var_value != False:
                         full_string += var_value[1:len(var_value) - 1]
                     else:
-                        self.error_messages.append(['Cannot find variable "%s" because it was never created' % concatenation_list[item + 1], concatenation_list])
+                        self.sned_error_message('Cannot find variable "%s" because it was never created' % concatenation_list[item + 1], concatenation_list)
                 pass
             
             # This will check for the concatenation operator
@@ -457,7 +451,7 @@ class Parser(object):
                         if var_value != False:
                             full_string += var_value[1:len(var_value) - 1]
                         else:
-                            self.error_messages.append(['Cannot find variable "%s" because it was never created' % concatenation_list[item + 1], concatenation_list])
+                            self.sned_error_message('Cannot find variable "%s" because it was never created' % concatenation_list[item + 1], concatenation_list)
 
                     else: 
                         full_string += concatenation_list[item + 1][1:len(concatenation_list[item + 1]) - 1]
@@ -465,8 +459,8 @@ class Parser(object):
                 elif current_value == ",": 
                     full_string += " " + concatenation_list[item + 1]
 
-                else: self.error_messages.append(["Error parsing equation, check that you are using correct operand",
-                                                 concatenation_list])
+                else: 
+                    self.send_error_messages("Error parsing equation, check that you are using correct operand",concatenation_list)
             
             # This will skip value as it is already being added and dealt with when getting the operand
             if item % 2 == 0: pass
@@ -494,7 +488,7 @@ class Parser(object):
 
 
 
-    def send_error_message(self, error_list):
+    def send_error_message(self, msg, error_list):
         """ Send Error Messages
         This will simply send all the found error messages within the source code
         and return a list of error messages and tokens of which part of the source code
@@ -503,9 +497,8 @@ class Parser(object):
             error_list (list) : List with error message and tokens
         """
         
-        print("------------------------ %s ERROR'S FOUND ------------------------" % len(error_list))
-        for error in range(0, len(error_list)):
-            print("%s)  %s" % (error, error_list[error][0]))
-            print('    ' + '\033[91m' + " ".join(str(x) for x in error_list[error][1]) + '\033[0m')
+        print("------------------------ ERROR FOUND ----------------------------")
+        print(" " + msg)
+        print('\033[91m', "".join(str(r) for v in error_list for r in (v[1] + " ") ) , '\033[0m')
         print("-----------------------------------------------------------------")
         quit()

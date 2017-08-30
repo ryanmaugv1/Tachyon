@@ -7,7 +7,8 @@
 #
 
 import re # for performing regex expressions
-import src.constants # for constants like tachyon keywords and datatypes
+import constants # for constants like tachyon keywords and datatypes
+#FIXME import src.constants ------ to fix running tests error
 
 class Lexer(object):
 
@@ -108,10 +109,10 @@ class Lexer(object):
             if word in "\n": pass
 
             # Identify all of the Data Types
-            elif word in src.constants.DATATYPE: tokens.append(["DATATYPE", word])
+            elif word in constants.DATATYPE: tokens.append(["DATATYPE", word])
 
             # Identify all the indentifiers which are all in 'KEYWWORDS' const
-            elif word in src.constants.KEYWORDS: tokens.append(["IDENTIFIER", word])
+            elif word in constants.KEYWORDS: tokens.append(["IDENTIFIER", word])
 
             # Identify all custom identifers like variable names in source code
             elif re.match("[a-z]", word) or re.match("[A-Z]", word): 
