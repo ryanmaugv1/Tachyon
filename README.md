@@ -33,6 +33,9 @@ This is a performance focused language which tries to be an all in one with mult
     - [ ] Write all docmentations in detail
     - [ ] Tachyon IDE
     - [ ] Linter & Editor plugins
+    
+# Want to make your own programming langauge?
+I have created a youtube tutorial on how to recreate this language from scratch all in python you can find it [here](https://www.youtube.com/playlist?list=PLP7hn9TNf1CEl8A8jQfZSRYcgUIqBhIJU)
 
 # Author
 
