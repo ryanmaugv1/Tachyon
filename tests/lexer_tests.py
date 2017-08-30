@@ -20,11 +20,9 @@ class LexerTestCase(unittest.TestCase):
     lexerTestObject = src.lexer.Lexer()
 
 
-    # 
-    #
+    # --------------------------------------
     #  TESTS for getMatcher() Method
-    #
-    #
+    # --------------------------------------
 
     def test_get_matcher_method_with_two_item(self):
         """ Testing getMatcher() method
@@ -49,7 +47,7 @@ class LexerTestCase(unittest.TestCase):
         )
 
         # This will print out if the test was successful in logs when running test
-        print("SUCCESS - Testing getMatcher() method with two words")
+        print("SUCCESS - getMatcher() method with two words")
 
     
     def test_get_matcher_method_with_sentence(self):
@@ -61,7 +59,7 @@ class LexerTestCase(unittest.TestCase):
         )
 
         # Print success message to logs if it doesn't fail
-        print("SUCCESS - Testing if getMatcher() method can handle a sentence")
+        print("SUCCESS - getMatcher() method can handle a sentence")
 
 
     def test_get_matcher_method_single_word_handling(self):
@@ -74,7 +72,7 @@ class LexerTestCase(unittest.TestCase):
         )
 
         # Print success message if no errors occur
-        print('SUCCESS - Testing if getMatcher() can handle single word')
+        print('SUCCESS - getMatcher() can handle single word')
 
 
     def test_get_matcher_method_without_extra_characters(self):
@@ -87,7 +85,7 @@ class LexerTestCase(unittest.TestCase):
         )
 
         # Print success message if no errors occur
-        print("SUCCESS - Testing if getMatcher() can handle standalone string with no extra characters")
+        print("SUCCESS - getMatcher() can handle standalone string with no extra characters")
 
     
     def test_get_matcher_method_with_empty_string(self):
@@ -99,14 +97,12 @@ class LexerTestCase(unittest.TestCase):
         )
 
         # Print success message if no errors occur
-        print("SUCCESS - Testing if getMatcher() can handle empty strings")
+        print("SUCCESS - getMatcher() can handle empty strings")
 
     
-    #
-    #
+    # --------------------------------------
     #  TESTS for Tokenize() Method
-    #
-    #
+    # --------------------------------------
 
     def test_tokenize_method_with_variable_decleration(self):
 
@@ -117,7 +113,7 @@ class LexerTestCase(unittest.TestCase):
         )
 
         # Print success message if it doesn't fail
-        print("SUCCESS - Test that tokenize can return proper tokens for variable decleration code in tachyon")
+        print("SUCCESS - Tokenize can return proper tokens for variable decleration code in tachyon")
 
 
     def test_tokenize_method_with_if_statement(self):
@@ -131,8 +127,42 @@ class LexerTestCase(unittest.TestCase):
             ]
         )
 
-        # Print success message if it doesn't fail
-        print('SUCCESS - Test that tokenize method can return proper tokens for if statment in tachyon')
+        print('SUCCESS - Tokenize method can return proper tokens for if statment in tachyon')
+
+
+    def test_tokenize_method_with_print_statement(self):
+
+        # Check that the tokenize method can handle the tokenization of print statements
+        self.assertEqual(
+            self.lexerTestObject.tokenize('print "Ryan Maugin";'),
+            [ ['IDENTIFIER', 'print'], ['STRING', '"Ryan Maugin"'], ['STATEMENT_END', ';'] ]
+        )
+
+        print('SUCCESS - Tokenize method can handle print statements')
+
+
+    def test_tokenize_method_with_concatenation_in_variable_assignment(self):
+
+        # Check that the tokenize methid can handle concatenation in variable value assignments
+        self.assertEqual(
+            self.lexerTestObject.tokenize('str name = first_name + last_name;'),
+            [ ['DATATYPE', 'str'], ['IDENTIFIER', 'name'], ['OPERATOR', '='], ['IDENTIFIER', 'first_name'], ['OPERATOR', '+'], 
+              ['IDENTIFIER', 'last_name'], ['STATEMENT_END', ';'] ]
+        )
+
+        print('SUCCESS - Tokenize method can handle concatenation value assignments in variable declerations')
+
+
+    def test_tokenize_method_with_arithmetics_in_variable_decleration(self):
+
+        # Check that the tokenize method can handle arithmetics in variable value assignments
+        self.assertEqual(
+            self.lexerTestObject.tokenize('int total = 10 * 10;'),
+            [ ['DATATYPE', 'int'], ['IDENTIFIER', 'total'], ['OPERATOR', '='], ['INTEGER', '10'], ['OPERATOR', '*'],
+              ['INTEGER', '10'], ['STATEMENT_END', ';'] ]
+        )
+
+        print('SUCCESS - Tokenize method can handle arithmetics value assignments in variable declerations')
 
 
 if __name__ == '__main__':
