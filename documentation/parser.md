@@ -168,6 +168,8 @@ Once, I have broken out the loop I do some error checking to make sure that all 
 
 ## `conditional_statement_parser()`
 
+> Conditional statement only support **one** condition checking and not two.
+
 This will parse conditional statements like 'if else' and create an abstract sytax tree for it.
 
 **Arguments**
@@ -182,6 +184,10 @@ This will parse conditional statements like 'if else' and create an abstract syt
     - The condtion ast without the body
 - `tokens_checked (int)`
     - The count of tokens checked that made up the condition statement
+
+What this method does is handle the parsing of conditional statements by tying in all the methods needed for thise which are `parse_body` and `get_statement_body`. The way conditions and the body of that conditional statement is parsed is seperate. 
+
+The way the condition is parsed is simply by looping through the conditional statement getting the `first_value` followed by the `comparison_type` and finally the `second_value`. Once we got that the for loop should get a opening scope definer (`{`) which will then break and handle the parsing of the body seperately which is explained in more detail by the `parse_body` and `get_statement_body` documentation.
 
 ---
 
@@ -201,6 +207,8 @@ This will parse the body of conditional, iteration, functions and more in order 
 - `ast (object)`
     - Abstract Syntax Tree of the body
 
+This method performs exactly what the `parse` method does but instead does for the bodies of statements only. The reason for this is because all the parse methods being called will return the AST & checked index count which is then used to append to a body ast which looks like this `{'body': []}` rather than the global `source_ast` variable. Once that's done and all the body AST's have been generated and added to the body AST it appends it to the `statement_ast` parameter which was passed in and appends it to the `source_ast` if the statement body being parsed wasn't nested because if it was then that wouldn't be the fulle conditional statement AST to add.
+
 ---
 
 ## `get_statement_body()`
@@ -214,6 +222,8 @@ This will get the tokens that make up the body of a statement and return the tok
 **Returns**
 - `tokens_list (list)`
     - Returns tokens that make up the body for statement
+
+What this method does is it gets passed a token stream which will always start from an opening scope definer such as `{` and from there it collects all of the body tokens for the statement e.g `Conditional Statement` or `Repetetive Statement`. It also acknowledges nesting because in order to break out the loop when it's collecting the body tokens it needs to find a closing scope definer such as `}` but if there is nesting then there would be errors which is why it also does nesting count. 
 
 ---
 
