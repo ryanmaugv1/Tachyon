@@ -8,6 +8,8 @@
 
 import os
 import platform
+import os.path
+
 
 class Setup():
 
@@ -62,23 +64,19 @@ class Setup():
         os.system("ln -s " + os.getcwd() + "/src/main.py /usr/local/bin/tachyon")
         print("| Create Symbolic Link to Script                    [√]|")
         #print(os.getcwd() + "/src/main.py")
-
+        
+        
+    def getCurrentDir():
+        return abspath("./");
 
 if __name__ == "__main__":
+    # Check the directory. Maybe do a mv?
+    if getCurrentDir() != "~/Users/mac/Library/Tachyon":
+        print ("You were supposed to clone this into '~/Users/mac/Library'. Continue? (y/n)")
+        ans = input ("You were supposed to clone this into '~/Users/mac/Library'. Continue? (y/n)")
+        # Exit if answer is not yes. Should do a do..while loop.
+        if ans.lower() != 'y':
+            sys.exit()
+            
     installer = Setup()
     installer.setup()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
