@@ -73,11 +73,10 @@ class Setup():
         This method will install the tachyon language on a windows 
         """
         # Don't think windows needs executable premissions.
-
-        # Add customised directory to the $PATH
-        os.system('set PATH=%PATH%;' + os.getcwd())
-        print("| Add Customised Directory to $PATH                 [X]|")
-
+        print ("| Set path variable:                                  |")
+        print ("| Note: please consult the TROUBLESHOOTING.md for     |")
+        print ("| Setting the path variable. You need to do that      |")
+        print( "| before you can use tachyon                          |")
         # Create a symbolic link to the script
         self.win_create_bat()
         print("| Create Script to run script                       [X]|")
