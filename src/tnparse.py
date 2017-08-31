@@ -9,7 +9,7 @@
 
 import constants # for constants like tachyon keywords and datatypes
 
-class Parser(object):
+class Parse(object):
 
 
 
@@ -28,6 +28,7 @@ class Parser(object):
 
 
     def parse(self, token_stream):
+        print ("Hi")
         """ Parsing
         This will parse the tokens given as argument and turn the sequence of tokens into 
         abstract syntax trees

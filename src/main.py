@@ -4,7 +4,7 @@
 import os
 import sys
 import lexer
-import parser
+import tnparse
 import objgen
 
 def main():
@@ -20,8 +20,8 @@ def main():
 
     # Check if the file extension is correct
     if fileName[len(fileName) - 3:len(fileName)] != ".tn":
-        print("[ERROR] File extension not recognised please make sure extension is '.tn'")
-        return # quit programme
+        print("[WARNING] File extension not recognised please make sure extension is '.tn'")
+        # Don't quit. Just accept it, and carry on.
 
     # Check to make sure that only one argument is passed
     try:
@@ -44,17 +44,17 @@ def main():
     lex = lexer.Lexer()
 
     # Call lexer method to perform lexical analysis on code
-    tokens = lex.tokenize(content)
+    tn_tokens = lex.tokenize(content)
 
     # --------------------------------------
     #  PARSER
     # --------------------------------------
 
     # Create an instance of the parser class
-    Parser = parser.Parser(tokens)
+    parser_p = tnparse.Parse(tn_tokens)
 
     # Call the parser method and pass in the tokens as arguments
-    source_ast = Parser.parse(tokens)
+    source_ast = parser_p.parse(tn_tokens)
 
     # --------------------------------------
     # Object Generation

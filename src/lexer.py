@@ -5,9 +5,14 @@
 #  Created on 26/05/17
 #  Ryan Maugin <ryan.maugin@adacollege.org.uk>
 #
+try:
+    import re # for performing regex expressions
+    from src.constants import *# for constants like tachyon keywords and datatypes
 
-import re # for performing regex expressions
-import src.constants # for constants like tachyon keywords and datatypes
+except ImportError:
+    # Chances are, this was accessed by using `python main.py`
+    from constants import *
+
 
 class Lexer(object):
 
@@ -108,10 +113,10 @@ class Lexer(object):
             if word in "\n": pass
 
             # Identify all of the Data Types
-            elif word in src.constants.DATATYPE: tokens.append(["DATATYPE", word])
+            elif word in DATATYPE: tokens.append(["DATATYPE", word])
 
             # Identify all the indentifiers which are all in 'KEYWWORDS' const
-            elif word in src.constants.KEYWORDS: tokens.append(["IDENTIFIER", word])
+            elif word in KEYWORDS: tokens.append(["IDENTIFIER", word])
 
             # Identify all custom identifers like variable names in source code
             elif re.match("[a-z]", word) or re.match("[A-Z]", word): 
@@ -182,5 +187,4 @@ class Lexer(object):
             
             # Increment to the next word in tachyon source code
             source_index += 1
-        
         return tokens
