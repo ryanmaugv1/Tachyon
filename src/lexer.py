@@ -125,6 +125,9 @@ class Lexer(object):
             # Identify all bianry operators
             elif word == "&&" or word == "||": tokens.append(["BINARY_OPERATOR", word])
 
+            # Identifies seperators mainly used in for loops
+            elif word == "::": tokens.append(["SEPERATOR", word])
+
             # Identify all comparison symbols in source code
             elif word in "==" or word in "!=" or word in ">" or word in "<" or word in "<=" or word in ">=": tokens.append(["COMPARISON_OPERATOR", word])
 

@@ -3,6 +3,7 @@ str name = "Ryan Maugin";
 bool isMale = True;
 int num = 10 * 10 + 10;
 str full_name = name + " " + name;
+str gang;
 
 if 30 > 21 {
     str xex = "jtag";

@@ -154,8 +154,17 @@ class Parser(object):
                 if self.get_variable_value(token_value) != False:
                     self.send_error_message("Variable '%s' already exists and cannot be defined again!" % token_value, self.token_stream[self.token_index:self.token_index + tokens_checked + 1])
                 else:
-                    var_exists = False # Set var exists to False so that it can be added
-                    ast['VariableDecleration'].append({ "name": token_value })
+                    # Set var exists to False so that it can be added
+                    var_exists = False
+
+                    # This will check if the variable is being delared but not initialised
+                    if token_stream[x + 1][0] == "STATEMENT_END":
+                        # Adds the default value of 'undefined' and breaks out of loop
+                        ast['VariableDecleration'].append({ "name": token_value })
+                        ast['VariableDecleration'].append({ "value": '"undefined"' })
+                        break
+                    else:
+                        ast['VariableDecleration'].append({ "name": token_value })
 
             # Error handling for variable name to make sure the naming convention is acceptable
             if x == 1 and token_type != "IDENTIFIER":
@@ -197,6 +206,7 @@ class Parser(object):
 
             tokens_checked += 1         # Indent within overall for loop
 
+        print(ast)
         # Last case error validation checking if all needed var decl elements are in the ast such as:
         # var type, name and value
         try: ast['VariableDecleration'][0] 

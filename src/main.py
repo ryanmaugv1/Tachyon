@@ -46,6 +46,8 @@ def main():
     # Call lexer method to perform lexical analysis on code
     tokens = lex.tokenize(content)
 
+    print(tokens)
+
     # --------------------------------------
     #  PARSER
     # --------------------------------------
