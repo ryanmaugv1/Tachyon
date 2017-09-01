@@ -5,6 +5,7 @@ int num = 10 * 10 + 10;
 str full_name = name + " " + name;
 str gang;
 
+(** This is a comment in tachyon **)
 if 30 > 21 {
     str xex = "jtag";
     if name == "Ryan Maugin" {

@@ -134,6 +134,9 @@ class Lexer(object):
             # Identify all scope definers '{ }' in source code
             elif word in "{}": tokens.append(["SCOPE_DEFINER", word])
 
+            # Identifies a comment defenition e.g. "// this is a comment \\"
+            elif word == "(**" or word == "**)": tokens.append(["COMMENT_DEFINER", word])
+
             # Identify all integer (number) values
             elif re.match("[0-9]", word): 
                 

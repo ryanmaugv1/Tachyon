@@ -23,8 +23,8 @@ class ParserTestCase(unittest.TestCase):
 
         # Create parser instance to test on
         parserObject = src.parser.Parser([['DATATYPE', 'int'], ['IDENTIFIER', 'a'], ['OPERATOR', '='], ['INTEGER', '11'], ['STATEMENT_END', ';']]).parse()
-
-        self.assertEqual(parserObject, )
+        # Perform comparison
+        self.assertEqual( parserObject, {'VariableDecleration': [{'type': 'int'}, {'name': 'a'}, {'value': '11'}]} )
 
 if __name__ == '__main__':
     unittest.main()

@@ -52,10 +52,51 @@ class Parser(object):
             elif token_type == "IDENTIFIER" and token_value in constants.BUILT_IN_FUNCTIONS:
                 self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], False)
 
+            elif token_type == "COMMENT_DEFINER" and token_value == "(**":
+                self.parse_comment(token_stream[self.token_index:len(token_stream)], False)
+
             self.token_index += 1
+
+        print(self.source_ast)
 
         return self.source_ast
     
+
+    def parse_comment(self, token_stream, isInBody):
+        """ Parse Comment
+
+        This will parse single/multi line comments
+        args:
+            token_stream (list) : The tokens produced by lexer
+            isInBody     (bool) : This will hold True if this function is being run from body parsing
+        returns:
+            ast          (dict) : The condtion ast without the body
+            tokens_checked (int): The count of tokens checked that made up the condition statement
+        """
+        ast            = {'Comment': ""}
+        tokens_checked = 0
+        comment_string = ""
+
+        for token in range(0, len(token_stream)):
+
+            # When the closing comment definer is found then break out the loop
+            if token_stream[token][0] == "COMMENT_DEFINER" and token != 0: break
+
+            # Add the words up together to make full comment string and also skip the first token because its the comment_definer
+            if token != 0: comment_string += str(token_stream[token][1]) + " "
+
+            # Increment tokens checked count
+            tokens_checked += 1
+
+        # Append comment string to the comment AST
+        ast['Comment'] = comment_string
+        # If parse not called from body parser method then append to source ast
+        if not isInBody: self.source_ast['main_scope'].append(ast)
+        # Append the number of variables checked to the token index
+        self.token_index += tokens_checked
+
+        return [ast, tokens_checked]
+
 
 
     def parse_built_in_function(self, token_stream, isInBody):
@@ -206,7 +247,6 @@ class Parser(object):
 
             tokens_checked += 1         # Indent within overall for loop
 
-        print(ast)
         # Last case error validation checking if all needed var decl elements are in the ast such as:
         # var type, name and value
         try: ast['VariableDecleration'][0] 
@@ -332,10 +372,17 @@ class Parser(object):
                 ast['body'].append(condition_parsing[0])
                 tokens_checked += condition_parsing[1] - 1 # minus one to not skip extra token
 
+            # This will parse builtin functions within the body 
             elif token_stream[tokens_checked][0] == 'IDENTIFIER' and token_stream[tokens_checked][1] in constants.BUILT_IN_FUNCTIONS:
                 built_in_func_parse = self.parse_built_in_function(token_stream[tokens_checked:len(token_stream)], True)
                 ast['body'].append(built_in_func_parse[0])
                 tokens_checked += built_in_func_parse[1]
+
+            # This will parse comments within the body 
+            elif token_stream[tokens_checked][0] == "COMMENT_DEFINER" and token_stream[tokens_checked][1] == "(**":
+                comment_parsing = self.parse_comment(token_stream[tokens_checked:len(token_stream)], True)
+                ast['body'].append(comment_parsing[0])
+                tokens_checked += comment_parsing[1]
 
             tokens_checked += 1
         

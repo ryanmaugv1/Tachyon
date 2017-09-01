@@ -19,9 +19,9 @@
 
 ---
 
-## Commenting
+## Single/Multi Line Commenting
 
-    // This is a comment
+    (** This is a comment **)
 
 ---
 
