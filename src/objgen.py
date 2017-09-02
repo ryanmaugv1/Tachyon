@@ -10,6 +10,7 @@
 from Objects.varObject       import VariableObject
 from Objects.conditionObject import ConditionObject
 from Objects.builtinObject   import BuiltInFunctionObject
+from Objects.commentObject   import CommentObject
 
 class ObjectGenerator():
 
@@ -49,6 +50,11 @@ class ObjectGenerator():
             if self.check_ast('PrebuiltFunction', ast):
                 gen_builtin = BuiltInFunctionObject(ast)
                 self.exec_string += gen_builtin.transpile() + "\n"
+
+            # Create dictionary comment object and append exec string to global exec string when return from transpile methof
+            if self.check_ast('Comment', ast):
+                gen_comment = CommentObject(ast)
+                self.exec_string += gen_comment.transpile() + "\n"
 
         return self.exec_string
 

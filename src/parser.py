@@ -57,8 +57,6 @@ class Parser(object):
 
             self.token_index += 1
 
-        print(self.source_ast)
-
         return self.source_ast
     
 

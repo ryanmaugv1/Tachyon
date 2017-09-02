@@ -61,13 +61,14 @@ def main():
     # --------------------------------------
 
     # Create an instance of the Object Generator (objgen) class
-    #object_generator = objgen.ObjectGenerator(source_ast)
+    object_generator = objgen.ObjectGenerator(source_ast)
 
     # Call the object definer to get python exec() string
-    #exec_string = object_generator.object_definer(False)
+    exec_string = object_generator.object_definer(False)
 
     # Execute the tachyon code that has been transpiled to python code to get output
-    #exec(exec_string)
+    print(exec_string)
+    exec(exec_string)
 
 main()
 
