@@ -10,7 +10,7 @@ import objgen
 def main():
     
     content  = ""           # This variable will hold the contents of the source code
-    path     = os.getcwd() # Holds path this script was executed from
+    path     = os.getcwd()  # Holds path this script was executed from
 
     # Holds the name of the file the user wants to compile
     try: fileName = sys.argv[1]

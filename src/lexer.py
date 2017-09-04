@@ -116,8 +116,10 @@ class Lexer(object):
 
             # Identify all custom identifers like variable names in source code
             elif re.match("[a-z]", word) or re.match("[A-Z]", word): 
-                if word[len(word) - 1] != ';': tokens.append(["IDENTIFIER", word])
-                else: tokens.append(["IDENTIFIER", word[0:len(word) - 1]])
+                if word[len(word) - 1] != ';': 
+                    tokens.append(["IDENTIFIER", word])
+                else: 
+                    tokens.append(["IDENTIFIER", word[0:len(word) - 1]])
 
             # Identify all arithmetic operations in source code
             elif word in "*-/+%=": tokens.append(["OPERATOR", word])
@@ -170,23 +172,9 @@ class Lexer(object):
 
             # Checks for the end of a statement ';'
             if ";" in word[len(word) - 1]: 
-
-                # Will hold the value of the last token which may have the end statemnt ';' still in it
-                last_token = tokens[source_index - 1][1]
-
-                # If there is an end statement still in that token then ...
-                if last_token[len(last_token) - 1] == ';':
-    
-                    # ... We remove the end_statement ';' from the token ...
-                    new = last_token[:len(last_token) - 1] + '' + last_token[len(last_token):]
-
-                    # ... and then we simply add the new made token to the place of the old one which had the end_statement ';'
-                    tokens[len(tokens) - 1][1] = new
-                
-                # Append the statement end token as a end stataemtn was found
+                # Add statement end
                 tokens.append(["STATEMENT_END", ";"])
 
-            
             # Increment to the next word in tachyon source code
             source_index += 1
         

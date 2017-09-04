@@ -12,7 +12,6 @@ import constants # for constants like tachyon keywords and datatypes
 class Parser(object):
 
 
-
     def __init__(self, token_stream):
         # Complete Abstract Syntax tree
         self.source_ast = { 'main_scope': [] }
@@ -22,7 +21,6 @@ class Parser(object):
         self.token_stream = token_stream
         # This will hold the token index we are parsing at
         self.token_index = 0
-
 
 
     def parse(self, token_stream):
@@ -55,9 +53,26 @@ class Parser(object):
             elif token_type == "COMMENT_DEFINER" and token_value == "(**":
                 self.parse_comment(token_stream[self.token_index:len(token_stream)], False)
 
+            #elif token_type == "IDENTIFIER" and self.get_variable_value(token_value) != False:
+            #    self.variable_initialiser_parsing(token_stream[self.token_index:len(token_stream)], False)
+
             self.token_index += 1
 
         return self.source_ast
+
+
+    def variable_initialiser_parsing(self, token_stream, isInBody):
+        """ Parse Variable Initialiser
+
+        This will parse variable initialisers e.g. varName = 10; or varName += 1; 
+        args:
+            token_stream (list) : The tokens produced by lexer
+            isInBody     (bool) : This will hold True if this function is being run from body parsing
+        returns:
+            ast          (dict) : The condtion ast without the body
+            tokens_checked (int): The count of tokens checked that made up the condition statement
+        """
+        print('var init')
     
 
     def parse_comment(self, token_stream, isInBody):
@@ -133,7 +148,7 @@ class Parser(object):
                         ast['PrebuiltFunction'].append( {'arguments': [value]} )
                     else: 
                         self.send_error_message("Variable '%s' does not exist" % token_stream[tokens_checked][1], 
-                                                    token_stream[0:tokens_checked + 1])
+                                                token_stream[0:tokens_checked + 1])
 
                 # TODO Allow for concatenation and equation parsing
                 else: 
