@@ -11,6 +11,7 @@ This is a performance focused language which tries to be an all in one with mult
 ![Tacyon Syntax v1](./documentation/img/v1-syntax.png)
 
 # Installation
+> Installation may still be glitchy.
 
 **Mac & Linux**
 1. Clone this repo into `~/Users/mac/Library` using `git clone https://github.com/RyanMaugin/Tachyon.git Tachyon`.
@@ -30,7 +31,7 @@ This is a performance focused language which tries to be an all in one with mult
     - [ ] Optimisation `current`
     
 - **Extra**
-    - [ ] Write all docmentations in detail
+    - [ ] Write all docmentations in detail `80%`
     - [ ] Tachyon IDE
     - [ ] Linter & Editor plugins
     
