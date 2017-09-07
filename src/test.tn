@@ -5,8 +5,6 @@ int num = 10 * 10 + 10;
 str full_name = name + " " + name;
 str gang;
 
-print gang;
-
 (** This is a comment in tachyon **)
 if 30 > 21 {
 	str xex = "jtag";
@@ -15,5 +13,7 @@ if 30 > 21 {
             str lol = "laugh out loud";
             print lol;
         }
+        str indent = "test";
     }
 }
+

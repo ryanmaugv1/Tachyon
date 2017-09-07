@@ -57,14 +57,14 @@ class Parser(object):
             #    self.variable_initialiser_parsing(token_stream[self.token_index:len(token_stream)], False)
 
             self.token_index += 1
-
+        #print(self.source_ast)
         return self.source_ast
 
 
     def variable_initialiser_parsing(self, token_stream, isInBody):
         """ Parse Variable Initialiser
 
-        This will parse variable initialisers e.g. varName = 10; or varName += 1; 
+        This will parse variable initialisers e.g. varName = 10; or varName += 1;
         args:
             token_stream (list) : The tokens produced by lexer
             isInBody     (bool) : This will hold True if this function is being run from body parsing
@@ -164,8 +164,8 @@ class Parser(object):
         # If it's being parsed within a body don't ass the ast to the source ast
         if not isInBody: self.source_ast['main_scope'].append(ast)
         # Increase token index to make up for tokens checked
-        self.token_index += tokens_checked 
-        
+        self.token_index += tokens_checked
+
         return [ast, tokens_checked]
 
 
@@ -348,7 +348,7 @@ class Parser(object):
         if isNested == True: self.parse_body(get_body_return[0], ast, True)
         else: self.parse_body(get_body_return[0], ast, False)
 
-        # Add the amount tokens we checked in body 
+        # Add the amount tokens we checked in body
         tokens_checked += get_body_return[1]
 
         return [ast, tokens_checked] # Return is only used within body parsing to create body ast
@@ -366,7 +366,7 @@ class Parser(object):
         returns:
              ast       (object) : Abstract Syntax Tree of the body
         """
-        
+
         ast = {'body': []}
         tokens_checked = 0
 
@@ -378,7 +378,7 @@ class Parser(object):
                 var_decl_parse = self.variable_decleration_parsing(token_stream[tokens_checked:len(token_stream)], True)
                 ast['body'].append(var_decl_parse[0])
                 tokens_checked += var_decl_parse[1]
-            
+
             # This will parse nested conditional statements within the body
             elif token_stream[tokens_checked][0] == 'IDENTIFIER' and token_stream[tokens_checked][1] == 'if':
                 condition_parsing = self.conditional_statement_parser(token_stream[tokens_checked:len(token_stream)], True)
@@ -398,20 +398,22 @@ class Parser(object):
                 tokens_checked += comment_parsing[1]
 
             tokens_checked += 1
-        
+
+        #print(tokens_checked)
+
         # Form the full ast with the statement and body combined and then add it to the source ast
         statement_ast['ConditionalStatement'].append(ast)
         # If the statments is not nested then add it or else don;t because parent will be added containing the child
         if not isNested: self.source_ast['main_scope'].append(statement_ast)
 
 
-    
+
     def get_statement_body(self, token_stream):
         """ Get Statement Body 
-        
+
         This will get the tokens that make up the body of a statement and return 
         the tokens
-        
+
         args:
             token_stream (list): This will hold the tokens after the scope definer
         return:
@@ -423,7 +425,7 @@ class Parser(object):
         body_tokens = []
 
         for token in token_stream:
-            
+
             tokens_checked += 1
 
             # Simpliies & Increases readabilty of toke type and value
@@ -433,13 +435,16 @@ class Parser(object):
             # Keeps track of the opening and closing scope definers '}' and '{'
             if token_type == "SCOPE_DEFINER" and token_value == "{": nesting_count += 1
             elif token_type == "SCOPE_DEFINER" and token_value == "}": nesting_count -= 1
-            
+
             # Checks whether the closing scope definer is found to finish creating body tokens
             if nesting_count == 0: break
             else: body_tokens.append(token)
 
+        # This adds the ending scope definer because for inside nested statements it wont do it 
+        if body_tokens[len(body_tokens) - 1][1] != "}": body_tokens.append(['SCOPE_DEFINER', '}'])
+        #print('-----', body_tokens)
         return [body_tokens, tokens_checked]
-    
+
 
 
     def equation_parser(self, equation):
@@ -468,7 +473,7 @@ class Parser(object):
                 elif equation[item] == "/": total /= equation[item + 1]
                 elif equation[item] == "*": total *= equation[item + 1]
                 elif equation[item] == "%": total %= equation[item + 1]
-                else: self.sned_error_message("Error parsing equation, check that you are using correct operand", equation)
+                else: self.send_error_message("Error parsing equation, check that you are using correct operand", equation)
 
             # Skip every number since we already check and use them
             elif item % 2 == 0: pass
@@ -491,14 +496,14 @@ class Parser(object):
         full_string = ""
 
         for item in range(0, len(concatenation_list)):
-            
+
             current_value = concatenation_list[item]
 
             # Add the first item to the string
             if item == 0:
                 # This checks if the value being checked is a string or a variable
                 # If it is a string then just add it without the surrounding quotes
-                if current_value[0] == '"': 
+                if current_value[0] == '"':
                     full_string += current_value[1:len(current_value) - 1]
                 # If it isn't a string then get the variable value and append it
                 else:
@@ -506,7 +511,7 @@ class Parser(object):
                     if var_value != False:
                         full_string += var_value[1:len(var_value) - 1]
                     else:
-                        self.sned_error_message('Cannot find variable "%s" because it was never created' % concatenation_list[item + 1], concatenation_list)
+                        self.send_error_message('Cannot find variable "%s" because it was never created' % concatenation_list[item + 1], concatenation_list)
                 pass
             
             # This will check for the concatenation operator
@@ -521,7 +526,7 @@ class Parser(object):
                         if var_value != False:
                             full_string += var_value[1:len(var_value) - 1]
                         else:
-                            self.sned_error_message('Cannot find variable "%s" because it was never created' % concatenation_list[item + 1], concatenation_list)
+                            self.send_error_message('Cannot find variable "%s" because it was never created' % concatenation_list[item + 1], concatenation_list)
 
                     else: 
                         full_string += concatenation_list[item + 1][1:len(concatenation_list[item + 1]) - 1]
@@ -534,8 +539,6 @@ class Parser(object):
             
             # This will skip value as it is already being added and dealt with when getting the operand
             if item % 2 == 0: pass
-
-        #print('"' + full_string + '"')
 
         return '"' + full_string + '"'
 
@@ -566,9 +569,9 @@ class Parser(object):
         args:
             error_list (list) : List with error message and tokens
         """
-        
+
         print("------------------------ ERROR FOUND ----------------------------")
         print(" " + msg)
         print('\033[91m', "".join(str(r) for v in error_list for r in (v[1] + " ") ) , '\033[0m')
         print("-----------------------------------------------------------------")
-        quit()
+        #quit()

@@ -54,18 +54,40 @@ class ConditionObject():
 
 
     def transpile_body(self, body_ast, nesting_count):
+
+        # BUG
+        #
+        # there is a bug where after the ending scope definer
+        # the program still counts the other things after it 
+        # as part of the indent so what needs to be dones is
+        # to decrease indent count by 1 when passing ending
+        # scope definer
+        #
         
         # Holds the body executable string of the first statement
         body_exec_string = ""
-        
+
         # Loop through each ast item in the body dictionary
         for ast in body_ast:
-            
+
             # This will parse variable declerations within the body
             if self.check_ast('VariableDecleration', ast):
                 var_obj = VariableObject(ast)
-                body_exec_string += ("   " * nesting_count) + var_obj.transpile() + "\n"
-            
+                transpile = var_obj.transpile()
+                if self.should_dedent_trailing(ast, self.ast):
+                    body_exec_string += ("   " * (nesting_count - 1)) + transpile + "\n"
+                else:
+                    body_exec_string += ("   " * nesting_count) + transpile + "\n"
+
+            # This will parse built-in within the body
+            if self.check_ast('PrebuiltFunction', ast):
+                gen_builtin = BuiltInFunctionObject(ast)
+                transpile = gen_builtin.transpile()
+                if self.should_dedent_trailing(ast, self.ast):
+                    body_exec_string += ("   " * (nesting_count - 1)) + transpile + "\n"
+                else:
+                    body_exec_string += ("   " * nesting_count) + transpile + "\n"
+
             # This will parse nested conditional statement within the body
             if self.check_ast('ConditionalStatement', ast):
                 # Increase nesting count because this is a condition statement inside a conditional statement
@@ -79,11 +101,6 @@ class ConditionObject():
                 else: 
                     # Add the content of conditional statement with correct indentation
                     body_exec_string += ("   " * (nesting_count - 1)) + condition_obj.transpile()
-                    
-            # This will parse built-in within the body
-            if self.check_ast('PrebuiltFunction', ast):
-                gen_builtin = BuiltInFunctionObject(ast)
-                body_exec_string += ("   " * nesting_count) + gen_builtin.transpile() + "\n"
         
         return body_exec_string
 
@@ -102,5 +119,31 @@ class ConditionObject():
             False   (bool) : If the astName doesn't matches the one in `ast` arg
         """
         try:
+            # In some cases when method is called from should_Dedent_trailing metho ast
+            # comes back with corret key but empty list value because it is removed. If
+            # this is removed this method returns None instead and causes condition trailing
+            # code to be indented one more than it should
+            if ast[astName] == []: return True
             if ast[astName]: return True
         except: return False
+
+
+
+    def should_dedent_trailing(self, ast, full_ast):
+        
+        # This creates an array of only body elements
+        new_ast = full_ast[3]['body']
+        # This will know whether it should dedent
+        dedent_flag = False
+
+        # Loop through body ast's and when a conditonal statement is founds set 
+        # the dedent flag to 'true'
+        for x in new_ast:
+            
+            if self.check_ast('ConditionalStatement', x):
+                dedent_flag = True
+
+            if ast == x and dedent_flag == True:
+                return True
+
+        return False
