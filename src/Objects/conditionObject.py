@@ -54,15 +54,14 @@ class ConditionObject():
 
 
     def transpile_body(self, body_ast, nesting_count):
+        """ Transpile Body
+        
+        This method will use the body AST in order to create a python version of the tachyon
+        code for the body statement while managing indentations
 
-        # BUG
-        #
-        # there is a bug where after the ending scope definer
-        # the program still counts the other things after it 
-        # as part of the indent so what needs to be dones is
-        # to decrease indent count by 1 when passing ending
-        # scope definer
-        #
+        return:
+            body_exec_string (str) : The python transpiled code
+        """
         
         # Holds the body executable string of the first statement
         body_exec_string = ""
@@ -91,7 +90,9 @@ class ConditionObject():
             # This will parse nested conditional statement within the body
             if self.check_ast('ConditionalStatement', ast):
                 # Increase nesting count because this is a condition statement inside a conditional statement
-                nesting_count += 1
+                # Only increase nest count if needed
+                if self.should_increment_nest_count(ast, self.ast):
+                    nesting_count += 1
                 # Create conditional statement exec string
                 condition_obj = ConditionObject(ast, nesting_count)
                 # The second nested statament only needs 1 indent not 2
@@ -130,6 +131,24 @@ class ConditionObject():
 
 
     def should_dedent_trailing(self, ast, full_ast):
+        """ Should dedent trailing 
+        
+        This method will check if the ast item being checked is outside a conditional statement e.g.
+
+        if a == 11 {
+            if name == "Ryan Maugin" {
+                print "Not it";
+            }
+            print "Hi"; <--- This is the code that should be dedented by 1 so when found will return true if dedent flag is true
+        }
+        
+        args:
+            ast       (list) : The ConditionalStatement ast we are looking for 
+            full_ast  (list) : The full ast being parsed
+        return:
+            True  : If the code should not be indented because it is in current scope below current nested condition
+            False : The item should not be dedented 
+        """
         
         # This creates an array of only body elements
         new_ast = full_ast[3]['body']
@@ -147,3 +166,42 @@ class ConditionObject():
                 return True
 
         return False
+
+
+    def should_increment_nest_count(self, ast, full_ast):
+        """ Should dedent trailing 
+        
+        This method will check if the ast item being checked is outside a conditional statement e.g.
+
+        if a == 11 {
+            if name == "Ryan Maugin" {
+                print "Not it";
+            }
+            if 1 != 2 { <--- This is the statement that should not be nested more
+                print "Yo"
+            }
+        }
+        
+        args:
+            ast       (list) : The ConditionalStatement ast we are looking for 
+            full_ast  (list) : The full ast being parsed
+        return:
+            True  : If the nesting should increase by 1
+            False : If the nesting ahould not be increased
+        """
+
+        # Counts of the number of statements in that one scope
+        statement_counts = 0
+
+        # Loops through the body to count the number of conditional statements
+        for x in full_ast[3]['body']:
+
+            # If a statement is found then increment statement count variable value by 1
+            if self.check_ast('ConditionalStatement', x): statement_counts += 1
+            # If the statement being checked is the one found then break
+            if ast == x: break
+
+        # Return false if there were less then 1 statements
+        if statement_counts > 1: return False
+        # Returen true if there were more than 1 statements
+        else: return True

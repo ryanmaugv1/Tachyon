@@ -53,8 +53,8 @@ class Parser(object):
             elif token_type == "COMMENT_DEFINER" and token_value == "(**":
                 self.parse_comment(token_stream[self.token_index:len(token_stream)], False)
 
-            #elif token_type == "IDENTIFIER" and self.get_variable_value(token_value) != False:
-            #    self.variable_initialiser_parsing(token_stream[self.token_index:len(token_stream)], False)
+            elif token_type == "IDENTIFIER" and self.get_variable_value(token_value) != False:
+                self.variable_initialiser_parsing(token_stream[self.token_index:len(token_stream)], False)
 
             self.token_index += 1
 
@@ -401,11 +401,11 @@ class Parser(object):
             tokens_checked += 1
 
         # Increase token index by number of tokens checked
-        self.token_index += tokens_checked
+        self.token_index += 3
         # Form the full ast with the statement and body combined and then add it to the source ast
         statement_ast['ConditionalStatement'].append(ast)
         # If the statments is not nested then add it or else don;t because parent will be added containing the child
-        if not isNested: self.source_ast['main_scope'].append(statement_ast)
+        if not isNested: self.source_ast['main_scope'].append(statement_ast) 
 
 
 
@@ -443,7 +443,7 @@ class Parser(object):
 
         # This adds the ending scope definer because for inside nested statements it wont do it 
         if body_tokens[len(body_tokens) - 1][1] != "}": body_tokens.append(['SCOPE_DEFINER', '}'])
-        #print('-----', body_tokens)
+
         return [body_tokens, tokens_checked]
 
 
