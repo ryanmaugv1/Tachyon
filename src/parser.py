@@ -57,7 +57,7 @@ class Parser(object):
             #    self.variable_initialiser_parsing(token_stream[self.token_index:len(token_stream)], False)
 
             self.token_index += 1
-        #print(self.source_ast)
+
         return self.source_ast
 
 
@@ -216,6 +216,7 @@ class Parser(object):
                         # Adds the default value of 'undefined' and breaks out of loop
                         ast['VariableDecleration'].append({ "name": token_value })
                         ast['VariableDecleration'].append({ "value": '"undefined"' })
+                        tokens_checked += 1
                         break
                     else:
                         ast['VariableDecleration'].append({ "name": token_value })
@@ -399,8 +400,8 @@ class Parser(object):
 
             tokens_checked += 1
 
-        #print(tokens_checked)
-
+        # Increase token index by number of tokens checked
+        self.token_index += tokens_checked
         # Form the full ast with the statement and body combined and then add it to the source ast
         statement_ast['ConditionalStatement'].append(ast)
         # If the statments is not nested then add it or else don;t because parent will be added containing the child

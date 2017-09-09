@@ -8,12 +8,16 @@ str gang;
 (** This is a comment in tachyon **)
 if 30 > 21 {
 	str xex = "jtag";
+    print xex;
+    print xex;
+    print xex;
     if name == "Ryan Maugin" {
         if "sick" != "happy" {
             str lol = "laugh out loud";
             print lol;
         }
         str indent = "test";
+        print indent;
     }
 }
 
