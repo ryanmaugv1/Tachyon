@@ -46,25 +46,27 @@ class Parser(object):
             elif token_type == "IDENTIFIER" and token_value == "if":
                 self.conditional_statement_parser(token_stream[self.token_index:len(token_stream)], False)
 
+            # This will find the pattern started for a for loop
+            elif token_type == "IDENTIFIER" and token_value == "for":
+                self.parse_for_loop(token_stream[self.token_index:len(token_stream)], False)
+
             # This will find the pattern for a buil-in function call
             elif token_type == "IDENTIFIER" and token_value in constants.BUILT_IN_FUNCTIONS:
                 self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], False)
 
+            # This will find the pattern started for a comment
             elif token_type == "COMMENT_DEFINER" and token_value == "(**":
                 self.parse_comment(token_stream[self.token_index:len(token_stream)], False)
-
-            elif token_type == "IDENTIFIER" and self.get_variable_value(token_value) != False:
-                self.variable_initialiser_parsing(token_stream[self.token_index:len(token_stream)], False)
 
             self.token_index += 1
 
         return self.source_ast
 
 
-    def variable_initialiser_parsing(self, token_stream, isInBody):
-        """ Parse Variable Initialiser
+    def parse_for_loop(self, token_stream, isInBody):
+        """ Parse For Loop
 
-        This will parse variable initialisers e.g. varName = 10; or varName += 1;
+        This will parse for loops e.g. `for int x = 0 :: x < 10 :: x = x + 1 {}`
         args:
             token_stream (list) : The tokens produced by lexer
             isInBody     (bool) : This will hold True if this function is being run from body parsing
@@ -72,7 +74,9 @@ class Parser(object):
             ast          (dict) : The condtion ast without the body
             tokens_checked (int): The count of tokens checked that made up the condition statement
         """
-        print('var init')
+        print('For Loop Parse')
+        print(token_stream)
+        quit()
     
 
     def parse_comment(self, token_stream, isInBody):
@@ -575,4 +579,4 @@ class Parser(object):
         print(" " + msg)
         print('\033[91m', "".join(str(r) for v in error_list for r in (v[1] + " ") ) , '\033[0m')
         print("-----------------------------------------------------------------")
-        #quit()
+        quit()

@@ -28,3 +28,5 @@ if 30 > 21 {
 }
 
 print lol;
+
+for int x = 0 :: x < 10 :: x = x + 1 {}
