@@ -74,9 +74,53 @@ class Parser(object):
             ast          (dict) : The condtion ast without the body
             tokens_checked (int): The count of tokens checked that made up the condition statement
         """
-        print('For Loop Parse')
-        print(token_stream)
+
+        ast = {'ForLoop': []}
+        tokens_checked = 0
+
+        # Start to loop through tokens but start at index 1 to skip 'for' keyword which is useless to loop through
+        for token in range(1, len(token_stream)):
+            
+            # this should get the variable decleration which starts at the first token index
+            if token == 1:
+                # Get the tokens before the first sperator '::'
+                var_decl_tokens = self.get_token_to_matcher("::", '{', token_stream[token:len(token_stream)])
+
+                # Perform error handling to see if the tokens could be fetched and the seperator '::' was found
+                if var_decl_tokens == False:
+                    self.send_error_message("Loop missing seperator '::'", token_stream)
+                print(var_decl_tokens)
+
+            tokens_checked += 1
+
         quit()
+
+
+    def get_token_to_matcher(self, matcher, terminating_matcher, token_stream):
+        """ Get Token Matcher 
+
+        This will get all the tokens in a token stream until it find the token with the correct
+        matcher
+        args:
+            matcher      (str)   : The string which contains matcher
+            token_stream (list)  : The list of tokens matcher needs to be found in
+            terminating_matcher (str) : The token value that when found will stop check regardless if there is more tokens or if the matcher was found
+        returns:
+            tokens (list) : A list of all the tokens found before the matcher"""
+
+        tokens = []
+
+        for token in token_stream:
+            # If the terminating matcher is found then return False as it means scope we allow for the check is reached
+            if token[1] == terminating_matcher: return False
+            # If the token matcher is found then return all the tokens found before it or else append the tokens to var
+            if token[1] == matcher:
+                return tokens
+            else: tokens.append(token)
+
+        # Return False if the matcher nor the terminator_matcher is found
+        return False
+
     
 
     def parse_comment(self, token_stream, isInBody):
