@@ -3,7 +3,7 @@
 #  objgen.py
 #
 #  Created on 06/08/17
-#  Ryan Maugin <ryan.maugin@adacollege.org.uk>
+#  Ryan Maugin <ryan.maugin@ada.ac.uk>
 #
 
 # Import all the objects

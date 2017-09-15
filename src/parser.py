@@ -4,7 +4,7 @@
 #  Parser.py
 #
 #  Created on 03/06/17
-#  Ryan Maugin <ryan.maugin@adacollege.org.uk>
+#  Ryan Maugin <ryan.maugin@ada.ac.uk>
 #
 
 import constants # for constants like tachyon keywords and datatypes
@@ -76,24 +76,54 @@ class Parser(object):
         """
 
         ast = {'ForLoop': []}
-        tokens_checked = 0
+        # Start tokens_check but start at index 1 to skip 'for' keyword which is useless to loop through
+        tokens_checked = 1
+        # This will know whether it is parsing 'ConditionForLoop' or 'InrementerForLoop'
+        # 1 - ConditionForLoop
+        # 2 - IncrementerForLoop
+        loopSection = 1
 
-        # Start to loop through tokens but start at index 1 to skip 'for' keyword which is useless to loop through
-        for token in range(1, len(token_stream)):
+        # Loop through the for loop tokens while tokens_checked value is less than the length of tokens_stream
+        while tokens_checked < len(token_stream):
             
             # this should get the variable decleration which starts at the first token index
-            if token == 1:
+            if tokens_checked == 0:
                 # Get the tokens before the first sperator '::'
-                var_decl_tokens = self.get_token_to_matcher("::", '{', token_stream[token:len(token_stream)])
+                var_decl_tokens = self.get_token_to_matcher("::", '{', token_stream[tokens_checked:len(token_stream)])
 
                 # Perform error handling to see if the tokens could be fetched and the seperator '::' was found
                 if var_decl_tokens == False:
                     self.send_error_message("Loop missing seperator '::'", token_stream)
-                print(var_decl_tokens)
+
+                # Manually append statement end to the end of the var decleration so var parser behaves and doesnt throw error
+                var_decl_tokens.append(['STATEMENT_END', ';'])
+                # Append initialValueName property to the ForLoop AST
+                ast['ForLoop'].append( { 'initialValueName': self.variable_decleration_parsing(var_decl_tokens, False)[0]['VariableDecleration'][1]['name'] })
+                # Append initialValue property to the ForLoop AST
+                ast['ForLoop'].append( { 'initialValue': self.variable_decleration_parsing(var_decl_tokens, False)[0]['VariableDecleration'][2]['value'] })
+
+                tokens_checked += len(var_decl_tokens)
+                print(token_stream[tokens_checked][1], token_stream[tokens_checked + 1][1])
+                print('-------- STEP 1 (DECLERATION) --------')
+                print(self.variable_decleration_parsing(var_decl_tokens, False)[0])
+                print(ast)
+
+            if token_stream[tokens_checked][1] == '::':
+
+                # This will handle the parsing for loop section 1 which is the ConditionForLoop such as x < 10
+                if loopSection == 1:
+                    print('---', token_stream[tokens_checked + 1][1], token_stream[tokens_checked + 2][1], token_stream[tokens_checked + 3][1])
+
+                # This will handle the parsing for loop section 1 which is the IncrementForLoop such as x = x + 1
+                if loopSection == 2:
+                    print('////', token_stream[tokens_checked + 1][1], token_stream[tokens_checked + 2][1], token_stream[tokens_checked + 3][1])
+
+                # Increase the loopSection by 1 so it can read next section differently
+                loopSection += 1
 
             tokens_checked += 1
 
-        quit()
+        #quit()
 
 
     def get_token_to_matcher(self, matcher, terminating_matcher, token_stream):
@@ -418,6 +448,7 @@ class Parser(object):
 
         ast = {'body': []}
         tokens_checked = 0
+        nesting_count = 0
 
         # Loop through each token to find a pattern to parse
         while tokens_checked < len(token_stream):
@@ -446,10 +477,16 @@ class Parser(object):
                 ast['body'].append(comment_parsing[0])
                 tokens_checked += comment_parsing[1]
 
+            # This is needed to increase token index by 1 when a closing scope definer is found because it is skipped
+            # so when it is found then add 1 or else this will lead to a logical bug in nesting
+            if token_stream[tokens_checked][1] == '}':
+                nesting_count += 1 
+
             tokens_checked += 1
 
-        # Increase token index by number of tokens checked
-        self.token_index += 3
+        # Increase token index by amount of closing scope definers found which is usually skipped and add 1 for the last
+        # one which is not passed in to this method
+        self.token_index += nesting_count + 1
         # Form the full ast with the statement and body combined and then add it to the source ast
         statement_ast['ConditionalStatement'].append(ast)
         # If the statments is not nested then add it or else don;t because parent will be added containing the child
