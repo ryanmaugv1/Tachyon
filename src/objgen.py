@@ -56,6 +56,10 @@ class ObjectGenerator():
                 gen_comment = CommentObject(ast)
                 self.exec_string += gen_comment.transpile() + "\n"
 
+            # Create dictionary repetition object and append exec string global exec string
+            if self.check_ast('ForLoop', ast):
+                print('FOUNDDD --- ', ast)
+
         return self.exec_string
 
 

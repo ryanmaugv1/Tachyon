@@ -55,6 +55,7 @@ def main():
 
     # Call the parser method and pass in the tokens as arguments
     source_ast = Parser.parse(tokens)
+    print(source_ast)
 
     # --------------------------------------
     # Object Generation

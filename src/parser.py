@@ -52,7 +52,9 @@ class Parser(object):
 
             # This will find the pattern for a buil-in function call
             elif token_type == "IDENTIFIER" and token_value in constants.BUILT_IN_FUNCTIONS:
+                print('---', self.token_index)
                 self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], False)
+                print('~~~', self.token_index)
 
             # This will find the pattern started for a comment
             elif token_type == "COMMENT_DEFINER" and token_value == "(**":
@@ -85,9 +87,13 @@ class Parser(object):
 
         # Loop through the for loop tokens while tokens_checked value is less than the length of tokens_stream
         while tokens_checked < len(token_stream):
+
+            # If the opening scope definer is found then break out the loop
+            if token_stream[tokens_checked][1] == '{': break
             
             # this should get the variable decleration which starts at the first token index
-            if tokens_checked == 0:
+            if tokens_checked == 1:
+
                 # Get the tokens before the first sperator '::'
                 var_decl_tokens = self.get_token_to_matcher("::", '{', token_stream[tokens_checked:len(token_stream)])
 
@@ -98,32 +104,60 @@ class Parser(object):
                 # Manually append statement end to the end of the var decleration so var parser behaves and doesnt throw error
                 var_decl_tokens.append(['STATEMENT_END', ';'])
                 # Append initialValueName property to the ForLoop AST
-                ast['ForLoop'].append( { 'initialValueName': self.variable_decleration_parsing(var_decl_tokens, False)[0]['VariableDecleration'][1]['name'] })
+                # Call the variable parser with True so the var decleration isn't added to source_ast
+                ast['ForLoop'].append( { 'initialValueName': self.variable_decleration_parsing(var_decl_tokens, True)[0]['VariableDecleration'][1]['name'] })
                 # Append initialValue property to the ForLoop AST
-                ast['ForLoop'].append( { 'initialValue': self.variable_decleration_parsing(var_decl_tokens, False)[0]['VariableDecleration'][2]['value'] })
+                ast['ForLoop'].append( { 'initialValue': self.variable_decleration_parsing(var_decl_tokens, True)[0]['VariableDecleration'][2]['value'] })
+                # Increase tokens checked count and minus 1 because we manually add the STATEMENT_END token
+                tokens_checked += len(var_decl_tokens) - 1
 
-                tokens_checked += len(var_decl_tokens)
-                print(token_stream[tokens_checked][1], token_stream[tokens_checked + 1][1])
                 print('-------- STEP 1 (DECLERATION) --------')
-                print(self.variable_decleration_parsing(var_decl_tokens, False)[0])
+                #print(self.variable_decleration_parsing(var_decl_tokens, False)[0])
                 print(ast)
 
             if token_stream[tokens_checked][1] == '::':
 
                 # This will handle the parsing for loop section 1 which is the ConditionForLoop such as x < 10
                 if loopSection == 1:
-                    print('---', token_stream[tokens_checked + 1][1], token_stream[tokens_checked + 2][1], token_stream[tokens_checked + 3][1])
+                    condition_tokens = self.get_token_to_matcher('::', '{', token_stream[tokens_checked + 1:len(token_stream)])
+                    print('-------- STEP 2 (CONDITION) --------')
+                    ast['ForLoop'].append({ 'condition': self.assemble_token_values(condition_tokens) })
+                    print(ast)
 
                 # This will handle the parsing for loop section 1 which is the IncrementForLoop such as x = x + 1
                 if loopSection == 2:
-                    print('////', token_stream[tokens_checked + 1][1], token_stream[tokens_checked + 2][1], token_stream[tokens_checked + 3][1])
+                    increment_tokens = self.get_token_to_matcher('{', '}', token_stream[tokens_checked + 1:len(token_stream)])
+                    print('-------- STEP 3 (INCREMENT) --------')
+                    ast['ForLoop'].append({ 'incrementer': self.assemble_token_values(increment_tokens) })
+                    print(ast)
 
                 # Increase the loopSection by 1 so it can read next section differently
                 loopSection += 1
 
+            # Increase tokens checked count by 1 for each token being looped through so we can keep an accurate count
             tokens_checked += 1
 
-        #quit()
+        # Append the number of tokens checked to the token index
+        self.token_index += tokens_checked + 2
+
+        # Get the tokens from the body and the amount of tokens there is in the body
+        get_body_tokens = self.get_statement_body(token_stream[tokens_checked:len(token_stream)])
+
+        # If parse not called from body parser method then append to source ast
+        if not isInBody: self.parse_body(get_body_tokens[0], ast, 'ForLoop', False)
+        else: self.parse_body(get_body_tokens[0], ast, 'ForLoop', True)
+
+        # Add the amount tokens we checked in body
+        tokens_checked += get_body_tokens[1]
+
+        return [ast, tokens_checked]
+
+
+    def assemble_token_values(self, tokens):
+        attached_tokens = ""
+        for token in tokens:
+            attached_tokens += token[1] + " "
+        return attached_tokens
 
 
     def get_token_to_matcher(self, matcher, terminating_matcher, token_stream):
@@ -416,16 +450,12 @@ class Parser(object):
         # Increment global token index for tokens checked in condition
         self.token_index += tokens_checked
 
-        # Get condition statament details
-        comparison_type = ast['ConditionalStatement'][1]['comparison_type']
-        values          = [ ast['ConditionalStatement'][0]['value1'], ast['ConditionalStatement'][2]['value2'] ]
-
         # This will get the body tokens and the tokens checked that make up the body to skip them
         get_body_return = self.get_statement_body(token_stream[tokens_checked:len(token_stream)])
 
         # If it nested then call parse_body with nested parameter of true else false
-        if isNested == True: self.parse_body(get_body_return[0], ast, True)
-        else: self.parse_body(get_body_return[0], ast, False)
+        if isNested == True: self.parse_body(get_body_return[0], ast, 'ConditionalStatement', True)
+        else: self.parse_body(get_body_return[0], ast, 'ConditionalStatement', False)
 
         # Add the amount tokens we checked in body
         tokens_checked += get_body_return[1]
@@ -434,7 +464,7 @@ class Parser(object):
 
 
 
-    def parse_body(self, token_stream, statement_ast, isNested):
+    def parse_body(self, token_stream, statement_ast, astName, isNested):
         """ Parse body
         This will parse the body of conditional, iteration, functions and more in order
         to return a body ast like this --> {'body': []}
@@ -477,6 +507,11 @@ class Parser(object):
                 ast['body'].append(comment_parsing[0])
                 tokens_checked += comment_parsing[1]
 
+            elif token_stream[tokens_checked][0] == "IDENTIFIER" and token_stream[tokens_checked][1] == "for":
+                loop_parse = self.parse_for_loop(token_stream[tokens_checked:len(token_stream)], True)
+                ast['body'].append(loop_parse[0])
+                tokens_checked += loop_parse[1]
+
             # This is needed to increase token index by 1 when a closing scope definer is found because it is skipped
             # so when it is found then add 1 or else this will lead to a logical bug in nesting
             if token_stream[tokens_checked][1] == '}':
@@ -488,7 +523,7 @@ class Parser(object):
         # one which is not passed in to this method
         self.token_index += nesting_count + 1
         # Form the full ast with the statement and body combined and then add it to the source ast
-        statement_ast['ConditionalStatement'].append(ast)
+        statement_ast[astName].append(ast)
         # If the statments is not nested then add it or else don;t because parent will be added containing the child
         if not isNested: self.source_ast['main_scope'].append(statement_ast) 
 

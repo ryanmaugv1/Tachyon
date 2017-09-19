@@ -121,6 +121,9 @@ class Lexer(object):
                 else: 
                     tokens.append(["IDENTIFIER", word[0:len(word) - 1]])
 
+            elif word == "+=" or word == "-=" or word == "*=" or word == "/=" or word == "%=":
+                tokens.append(['INCREMENTAL_OPERATOR', word])
+
             # Identify all arithmetic operations in source code
             elif word in "*-/+%=": tokens.append(["OPERATOR", word])
 
