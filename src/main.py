@@ -40,36 +40,47 @@ def main():
     #  LEXER
     # --------------------------------------
 
+    print('|||||||||||||||||||||  LEXER LOG  ||||||||||||||||||||| \n')
     # Create an instance of the lexer class
     lex = lexer.Lexer()
 
     # Call lexer method to perform lexical analysis on code
     tokens = lex.tokenize(content)
+    print('\n||||||||||||||||||||||||||||||||||||||||||||||||||||||| \n')
 
     # --------------------------------------
     #  PARSER
     # --------------------------------------
 
+    print('|||||||||||||||||||||  PARSER LOG  |||||||||||||||||||| \n')
     # Create an instance of the parser class
     Parser = parser.Parser(tokens)
 
     # Call the parser method and pass in the tokens as arguments
     source_ast = Parser.parse(tokens)
     print(source_ast)
+    print('\n||||||||||||||||||||||||||||||||||||||||||||||||||||||| \n')
 
     # --------------------------------------
     # Object Generation
     # --------------------------------------
 
+    print('||||||||||||||||  OBJECT GENERATION LOG  ||||||||||||||| \n')
     # Create an instance of the Object Generator (objgen) class
     object_generator = objgen.ObjectGenerator(source_ast)
 
     # Call the object definer to get python exec() string
     exec_string = object_generator.object_definer(False)
+    print('\n|||||||||||||||||||||||||||||||||||||||||||||||||||||||| \n')
 
     # Execute the tachyon code that has been transpiled to python code to get output
+    print('|||||||||||||||||||  TRANSPILED CODE  |||||||||||||||||| \n')
     print(exec_string)
+    print('\n|||||||||||||||||||||||||||||||||||||||||||||||||||||||| \n')
+
+    print('|||||||||||||||||||||||  OUTPUT  ||||||||||||||||||||||| \n')
     exec(exec_string)
+    print('\n|||||||||||||||||||||||||||||||||||||||||||||||||||||||| \n')
 
 main()
 
