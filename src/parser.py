@@ -121,7 +121,9 @@ class Parser(object):
                 if loopSection == 1:
                     condition_tokens = self.get_token_to_matcher('::', '{', token_stream[tokens_checked + 1:len(token_stream)])
                     print('-------- STEP 2 (CONDITION) --------')
-                    ast['ForLoop'].append({ 'condition': self.assemble_token_values(condition_tokens) })
+                    ast['ForLoop'].append({ 'comparison': condition_tokens[0][1] })
+                    ast['ForLoop'].append({ 'endValue': condition_tokens[1][1] })
+                    #ast['ForLoop'].append({ 'condition': self.assemble_token_values(condition_tokens) })
                     print(ast)
 
                 # This will handle the parsing for loop section 1 which is the IncrementForLoop such as x = x + 1
@@ -138,7 +140,7 @@ class Parser(object):
             tokens_checked += 1
 
         # Append the number of tokens checked to the token index
-        self.token_index += tokens_checked + 2
+        self.token_index += tokens_checked
 
         # Get the tokens from the body and the amount of tokens there is in the body
         get_body_tokens = self.get_statement_body(token_stream[tokens_checked:len(token_stream)])
@@ -156,7 +158,7 @@ class Parser(object):
     def assemble_token_values(self, tokens):
         attached_tokens = ""
         for token in tokens:
-            attached_tokens += token[1] + " "
+            attached_tokens += token[1] + ""
         return attached_tokens
 
 
@@ -510,7 +512,7 @@ class Parser(object):
             elif token_stream[tokens_checked][0] == "IDENTIFIER" and token_stream[tokens_checked][1] == "for":
                 loop_parse = self.parse_for_loop(token_stream[tokens_checked:len(token_stream)], True)
                 ast['body'].append(loop_parse[0])
-                tokens_checked += loop_parse[1]
+                tokens_checked += loop_parse[1] - 1
 
             # This is needed to increase token index by 1 when a closing scope definer is found because it is skipped
             # so when it is found then add 1 or else this will lead to a logical bug in nesting

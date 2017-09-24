@@ -159,6 +159,7 @@ class ConditionObject():
         # the dedent flag to 'true'
         for x in new_ast:
             
+            # When a conditional stateemenet AST is found set the dedent trailing to true
             if self.check_ast('ConditionalStatement', x):
                 dedent_flag = True
 

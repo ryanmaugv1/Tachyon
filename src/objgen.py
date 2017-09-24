@@ -11,6 +11,7 @@ from Objects.varObject       import VariableObject
 from Objects.conditionObject import ConditionObject
 from Objects.builtinObject   import BuiltInFunctionObject
 from Objects.commentObject   import CommentObject
+from Objects.loopObject      import LoopObject
 
 class ObjectGenerator():
 
@@ -58,7 +59,8 @@ class ObjectGenerator():
 
             # Create dictionary repetition object and append exec string global exec string
             if self.check_ast('ForLoop', ast):
-                print('FOUNDDD --- ', ast)
+                gen_loop = LoopObject(ast, 1)
+                print(gen_loop.transpile())
 
         return self.exec_string
 
