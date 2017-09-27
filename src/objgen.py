@@ -60,7 +60,7 @@ class ObjectGenerator():
             # Create dictionary repetition object and append exec string global exec string
             if self.check_ast('ForLoop', ast):
                 gen_loop = LoopObject(ast, 1)
-                print(gen_loop.transpile())
+                self.exec_string += gen_loop.transpile() + "\n"
 
         return self.exec_string
 

@@ -52,9 +52,7 @@ class Parser(object):
 
             # This will find the pattern for a buil-in function call
             elif token_type == "IDENTIFIER" and token_value in constants.BUILT_IN_FUNCTIONS:
-                print('---', self.token_index)
                 self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], False)
-                print('~~~', self.token_index)
 
             # This will find the pattern started for a comment
             elif token_type == "COMMENT_DEFINER" and token_value == "(**":
@@ -68,7 +66,7 @@ class Parser(object):
     def parse_for_loop(self, token_stream, isInBody):
         """ Parse For Loop
 
-        This will parse for loops e.g. `for int x = 0 :: x < 10 :: x = x + 1 {}`
+        This will parse for loops e.g. `for int x = 0 :: < 10 :: + 1 {}`
         args:
             token_stream (list) : The tokens produced by lexer
             isInBody     (bool) : This will hold True if this function is being run from body parsing
@@ -143,7 +141,8 @@ class Parser(object):
         self.token_index += tokens_checked
 
         # Get the tokens from the body and the amount of tokens there is in the body
-        get_body_tokens = self.get_statement_body(token_stream[tokens_checked:len(token_stream)])
+        # Add one as usual body tokens parsing and object generation or else indentation won't work properly
+        get_body_tokens = self.get_statement_body(token_stream[tokens_checked + 1:len(token_stream)])
 
         # If parse not called from body parser method then append to source ast
         if not isInBody: self.parse_body(get_body_tokens[0], ast, 'ForLoop', False)

@@ -6,9 +6,10 @@
 #  Ryan Maugin <ryan.maugin@adacollege.org.uk>
 #
 
-import objgen
 from Objects.varObject     import VariableObject
 from Objects.builtinObject import BuiltInFunctionObject
+from Objects.loopObject    import LoopObject
+from Objects.commentObject import CommentObject
 
 class ConditionObject():
 
@@ -102,6 +103,22 @@ class ConditionObject():
                 else: 
                     # Add the content of conditional statement with correct indentation
                     body_exec_string += ("   " * (nesting_count - 1)) + condition_obj.transpile()
+
+            # This will parse nested conditional statement within the body
+            if self.check_ast('ForLoop', ast):
+                # Increase nesting count because this is a condition statement inside a conditional statement
+                # Only increase nest count if needed
+                if self.should_increment_nest_count(ast, self.ast):
+                    nesting_count += 1
+                # Create conditional statement exec string
+                loop_obj = LoopObject(ast, nesting_count)
+                # The second nested statament only needs 1 indent not 2
+                if nesting_count == 2: 
+                    # Add the content of conditional statement with correct indentation
+                    body_exec_string += "   " + loop_obj.transpile()
+                else: 
+                    # Add the content of conditional statement with correct indentation
+                    body_exec_string += ("   " * (nesting_count - 1)) + loop_obj.transpile()
         
         return body_exec_string
 

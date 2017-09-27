@@ -32,11 +32,12 @@ if 30 > 21 {
 
 print lol;
 
-for int x = 0 :: < 10 :: + 1 {
+for int x = 0 :: < 2 :: + 1 {
     print "Hi";
-    for int b = 0 :: < 10 :: + 1 {
-        print "Bye";
+    if "Ryan" == "Ryan" {
+        for int z = 0 :: < 2 :: + 1 {
+            print "Bye";
+        }
     }
-    print "Fizz";
 }
 
