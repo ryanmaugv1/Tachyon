@@ -143,7 +143,7 @@ class Lexer(object):
             elif word == "(**" or word == "**)": tokens.append(["COMMENT_DEFINER", word])
 
             # Identify all integer (number) values
-            elif re.match("[0-9]", word): 
+            elif re.match("[0-9]", word) or re.match("[-]?[0-9]", word): 
                 
                 # This will check if there is an end statement at the end of an integer and remove it if there is
                 if word[len(word) - 1] == ';': tokens.append(["INTEGER", word[:-1]])
