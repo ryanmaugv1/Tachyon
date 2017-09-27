@@ -15,6 +15,7 @@ if 30 > 21 {
     if name == "Ryan Maugin" {
 
         if "sick" != "happy" {
+            (** This does something **)
             str lol = "laugh out loud";
             print lol;
         }

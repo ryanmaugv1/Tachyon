@@ -113,6 +113,15 @@ class LoopObject(object):
 				else:
 					body_exec_string += ("   " * nesting_count) + transpile + "\n"
 
+			# This will parse comments within the body
+			if self.check_ast('Comment', ast):
+				gen_comment = CommentObject(ast)
+				transpile = gen_comment.transpile()
+				if self.should_dedent_trailing(ast, self.ast):
+					body_exec_string += ("   " * (nesting_count - 1)) + transpile + "\n"
+				else:
+					body_exec_string += ("   " * nesting_count) + transpile + "\n"
+
 			# This will parse nested conditional statement within the body
 			if self.check_ast('ConditionalStatement', ast):
 				# Increase nesting count because this is a condition statement inside a conditional statement
