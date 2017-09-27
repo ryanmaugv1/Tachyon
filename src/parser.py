@@ -260,8 +260,7 @@ class Parser(object):
                     if value != False: 
                         ast['PrebuiltFunction'].append( {'arguments': [value]} )
                     else: 
-                        self.send_error_message("Variable '%s' does not exist" % token_stream[tokens_checked][1], 
-                                                token_stream[0:tokens_checked + 1])
+                        self.send_error_message("Variable '%s' does not exist" % token_stream[tokens_checked][1], token_stream[0:tokens_checked + 1])
 
                 # TODO Allow for concatenation and equation parsing
                 else: 

@@ -161,7 +161,8 @@ class LoopObject(object):
 		""" Call and Set Exec 
 		
 		This method will check if the AST dictionary item being looped through has the
-		same key name as the `astName` argument
+		same key name as the `astName` argument to see deterine what ast type is being 
+		looped through
 		
 		args:
 			astName (str)  : This will hold the ast name we are matching
@@ -223,7 +224,8 @@ class LoopObject(object):
 	def should_increment_nest_count(self, ast, full_ast):
 		""" Should dedent trailing 
 		
-		This method will check if the ast item being checked is outside a conditional statement e.g.
+		This method will check if another statement is found and whether or not it should increase
+		nesting count  e.g.
 
 		if a == 11 {
 			if name == "Ryan Maugin" {
