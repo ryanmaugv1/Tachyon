@@ -130,13 +130,7 @@ class LoopObject(object):
 					nesting_count += 1
 				# Create conditional statement exec string
 				condition_obj = Objects.conditionObject.ConditionObject(ast, nesting_count)
-				# The second nested statament only needs 1 indent not 2
-				if nesting_count == 2: 
-					# Add the content of conditional statement with correct indentation
-					body_exec_string += "   " + condition_obj.transpile()
-				else: 
-					# Add the content of conditional statement with correct indentation
-					body_exec_string += ("   " * (nesting_count - 1)) + condition_obj.transpile()
+				body_exec_string += ("   " * (nesting_count - 1)) + condition_obj.transpile()
 
 			# This will parse nested conditional statement within the body
 			if self.check_ast('ForLoop', ast):
@@ -225,7 +219,7 @@ class LoopObject(object):
 		""" Should dedent trailing 
 		
 		This method will check if another statement is found and whether or not it should increase
-		nesting count  e.g.
+		nesting count e.g.
 
 		if a == 11 {
 			if name == "Ryan Maugin" {

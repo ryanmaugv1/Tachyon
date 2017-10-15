@@ -121,13 +121,7 @@ class ConditionObject():
                     nesting_count += 1
                 # Create conditional statement exec string
                 loop_obj = LoopObject(ast, nesting_count)
-                # The second nested statament only needs 1 indent not 2
-                if nesting_count == 2: 
-                    # Add the content of conditional statement with correct indentation
-                    body_exec_string += "   " + loop_obj.transpile()
-                else: 
-                    # Add the content of conditional statement with correct indentation
-                    body_exec_string += ("   " * (nesting_count - 1)) + loop_obj.transpile()
+                body_exec_string += ("   " * (nesting_count - 1)) + loop_obj.transpile()
         
         return body_exec_string
 
