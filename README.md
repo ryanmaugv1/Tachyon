@@ -8,7 +8,7 @@ This is a language focused on being simple yet powerful and will change the way 
 
 > A preview of the syntax which tachyon supports in version `0.6`
 
-![Tacyon Syntax v1](./documentation/img/v1-syntax.png)
+![Tacyon Syntax v1](./documentation/img/v1-syntaxx.png)
 
 # Installation
 > Installation may still be glitchy.
