@@ -6,7 +6,7 @@ This is a language focused on being simple yet powerful and will change the way 
 
 # Tachyon Code Preview `v0.6`
 
-> A preview of the syntax which tachyon supports in version `0.5`
+> A preview of the syntax which tachyon supports in version `0.6`
 
 ![Tacyon Syntax v1](./documentation/img/v1-syntax.png)
 
