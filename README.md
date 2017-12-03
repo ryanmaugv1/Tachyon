@@ -1,4 +1,5 @@
 # Tachyon ☄️
+### **[!] This repo is discontinued and a new & improved one is being made called Oculorum!**
 
 > `Note:` There are a lot of comments since this is the first time I programme programming a toy language and it is part of my learning process so that I can make a better language next time.
 
