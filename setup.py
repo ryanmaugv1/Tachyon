@@ -19,7 +19,7 @@ class Setup():
         print('+------------------------------------------------------+')
         print("| Operating System : " + platform.system())
         print("| Release          : " + platform.release())
-        print("| Tachyon Version  : v1.0 alpha                     [√]|")
+        print("| Tachyon Version  : v1.0 alpha                     []|")
 
 
     def setup(self):
@@ -31,14 +31,14 @@ class Setup():
 
         # Check the platform and perform install for that platform
         if platform.system() == "Darwin":
-            print('| MacOS Install Route                               [√]|')
+            print('| MacOS Install Route                               []|')
             self.mac_osx_install_route()
         elif platform.system() == "Linux":
-            print('| Linux install route                               [√]|')
+            print('| Linux install route                               []|')
         elif platform.system() == "Windows":
-            print('| Windows install route                             [√]|')
+            print('| Windows install route                             []|')
         else:
-            print('| Default install route                             [√]|')
+            print('| Default install route                             []|')
             
         print("+------------------------------------------------------+")
 
@@ -52,15 +52,15 @@ class Setup():
 
         # CHOMD +X Changes the permissions of the fle to make it executable
         os.system("chmod +x ./src/main.py")
-        print("| Set Tachyon Executable Permission                 [√]|")
+        print("| Set Tachyon Executable Permission                 []|")
 
         # Add customised directory to the $PATH
         os.system('export PATH="$PATH:$HOME/bin"')
-        print("| Add Customised Directory to $PATH                 [√]|")
+        print("| Add Customised Directory to $PATH                 []|")
 
         # Create a symbolic link to the script
         os.system("ln -s " + os.getcwd() + "/src/main.py /usr/local/bin/tachyon")
-        print("| Create Symbolic Link to Script                    [√]|")
+        print("| Create Symbolic Link to Script                    []|")
         #print(os.getcwd() + "/src/main.py")
 
 
