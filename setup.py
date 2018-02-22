@@ -33,6 +33,7 @@ class Setup():
 
         # Check the platform and perform install for that platform
         if platform.system() == "Darwin":
+
             print('| MacOS Install Route                               [X]|')
             self.mac_osx_install_route()
         elif platform.system() == "Linux":
@@ -56,6 +57,7 @@ class Setup():
 
         # CHOMD +X Changes the permissions of the fle to make it executable
         os.system("chmod +x ./src/main.py")
+
         print("| Set Tachyon Executable Permission                 [X]|")
 
         # Add customised directory to the $PATH

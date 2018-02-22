@@ -1,4 +1,5 @@
 # Tachyon ☄️
+### **[!] This repo is discontinued and a new & improved one is being made called Oculorum!**
 
 > `Note:` There are a lot of comments since this is the first time I programme programming a toy language and it is part of my learning process so that I can make a better language next time.
 
@@ -6,9 +7,9 @@ This is a language focused on being simple yet powerful and will change the way 
 
 # Tachyon Code Preview `v0.6`
 
-> A preview of the syntax which tachyon supports in version `0.5`
+> A preview of the syntax which tachyon supports in version `0.6`
 
-![Tacyon Syntax v1](./documentation/img/v1-syntax.png)
+![Tacyon Syntax v1](./documentation/img/v1-syntaxx.png)
 
 # Installation
 > Installation may still be glitchy.

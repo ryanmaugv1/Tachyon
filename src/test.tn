@@ -7,38 +7,20 @@ str gang;
 
 (** This is a comment in tachyon **)
 
-if 30 > 21 {
-
-	str xex = "jtag";
-    print xex;
-
-    if name == "Ryan Maugin" {
-
-        if "sick" != "happy" {
-            (** This does something **)
-            str lol = "laugh out loud";
-            print lol;
-        }
-
-        str indent = "test";
-        print indent;
-
-        if a != 11 {
-        	print lol; 
-        }
-        print "woohoo";
-    }
-    print "wah";
-}
-
-print lol;
-
-for int x = 0 :: > -2 :: - 1 {
+for int x = 0 :: > 10 :: + 1 {
     print "Hi";
-    if "Ryan" == "Ryan" {
-        for int z = 0 :: < 2 :: + 1 {
-            print "Bye";
-        }
-    }
 }
+
+if a == 11 {
+	print "Perfect";
+	if name != "Ryan Maugin" {
+		print "Not good";
+	}
+}
+
+
+
+
+
+
 

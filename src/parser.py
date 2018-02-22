@@ -37,6 +37,8 @@ class Parser(object):
             # Set the token values in variables for clearer and easier debugging and readability
             token_type = token_stream[self.token_index][0]
             token_value = token_stream[self.token_index][1]
+
+            print('------------------------------ ', token_type, token_value, ' ------------------------------')
             
             # This will find the token pattern for a variable decleration
             if token_type == "DATATYPE":
@@ -48,9 +50,11 @@ class Parser(object):
 
             # This will find the pattern started for a for loop
             elif token_type == "IDENTIFIER" and token_value == "for":
+                print("FOR BEFORE: ", self.token_index)
                 self.parse_for_loop(token_stream[self.token_index:len(token_stream)], False)
+                print("FOR AFTER: ", self.token_index)
 
-            # This will find the pattern for a buil-in function call
+            # This will find the pattern for a built-in function call
             elif token_type == "IDENTIFIER" and token_value in constants.BUILT_IN_FUNCTIONS:
                 self.parse_built_in_function(token_stream[self.token_index:len(token_stream)], False)
 
@@ -68,11 +72,11 @@ class Parser(object):
 
         This will parse for loops e.g. `for int x = 0 :: < 10 :: + 1 {}`
         args:
-            token_stream (list) : The tokens produced by lexer
-            isInBody     (bool) : This will hold True if this function is being run from body parsing
+            token_stream   (list) : The tokens produced by lexer
+            isInBody       (bool) : This will hold True if this function is being run from body parsing
         returns:
-            ast          (dict) : The condtion ast without the body
-            tokens_checked (int): The count of tokens checked that made up the condition statement
+            ast            (dict) : The condtion ast without the body
+            tokens_checked (int)  : The count of tokens checked that made up the condition statement
         """
 
         ast = {'ForLoop': []}
@@ -100,36 +104,30 @@ class Parser(object):
                     self.send_error_message("Loop missing seperator '::'", token_stream)
 
                 # Manually append statement end to the end of the var decleration so var parser behaves and doesnt throw error
-                var_decl_tokens.append(['STATEMENT_END', ';'])
+                var_decl_tokens[0].append(['STATEMENT_END', ';'])
+                var_parsing = self.variable_decleration_parsing(var_decl_tokens[0], True)
                 # Append initialValueName property to the ForLoop AST
                 # Call the variable parser with True so the var decleration isn't added to source_ast
-                ast['ForLoop'].append( { 'initialValueName': self.variable_decleration_parsing(var_decl_tokens, True)[0]['VariableDecleration'][1]['name'] })
+                ast['ForLoop'].append( { 'initialValueName': var_parsing[0]['VariableDecleration'][1]['name'] })
                 # Append initialValue property to the ForLoop AST
-                ast['ForLoop'].append( { 'initialValue': self.variable_decleration_parsing(var_decl_tokens, True)[0]['VariableDecleration'][2]['value'] })
+                ast['ForLoop'].append( { 'initialValue': var_parsing[0]['VariableDecleration'][2]['value'] })
                 # Increase tokens checked count and minus 1 because we manually add the STATEMENT_END token
-                tokens_checked += len(var_decl_tokens) - 1
-
-                print('-------- STEP 1 (DECLERATION) --------')
-                #print(self.variable_decleration_parsing(var_decl_tokens, False)[0])
-                print(ast)
+                self.token_index -= var_decl_tokens[1]
 
             if token_stream[tokens_checked][1] == '::':
 
                 # This will handle the parsing for loop section 1 which is the ConditionForLoop such as x < 10
                 if loopSection == 1:
                     condition_tokens = self.get_token_to_matcher('::', '{', token_stream[tokens_checked + 1:len(token_stream)])
-                    print('-------- STEP 2 (CONDITION) --------')
-                    ast['ForLoop'].append({ 'comparison': condition_tokens[0][1] })
-                    ast['ForLoop'].append({ 'endValue': condition_tokens[1][1] })
-                    #ast['ForLoop'].append({ 'condition': self.assemble_token_values(condition_tokens) })
-                    print(ast)
+                    ast['ForLoop'].append({ 'comparison': condition_tokens[0][1][1] })
+                    ast['ForLoop'].append({ 'endValue': condition_tokens[0][1][1] })
+                    tokens_checked += condition_tokens[1]
 
                 # This will handle the parsing for loop section 1 which is the IncrementForLoop such as x = x + 1
                 if loopSection == 2:
                     increment_tokens = self.get_token_to_matcher('{', '}', token_stream[tokens_checked + 1:len(token_stream)])
-                    print('-------- STEP 3 (INCREMENT) --------')
-                    ast['ForLoop'].append({ 'incrementer': self.assemble_token_values(increment_tokens) })
-                    print(ast)
+                    ast['ForLoop'].append({ 'incrementer': self.assemble_token_values(increment_tokens[0]) })
+                    tokens_checked += increment_tokens[1]
 
                 # Increase the loopSection by 1 so it can read next section differently
                 loopSection += 1
@@ -137,16 +135,17 @@ class Parser(object):
             # Increase tokens checked count by 1 for each token being looped through so we can keep an accurate count
             tokens_checked += 1
 
-        # Append the number of tokens checked to the token index
         self.token_index += tokens_checked
 
         # Get the tokens from the body and the amount of tokens there is in the body
-        # Add one as usual body tokens parsing and object generation or else indentation won't work properly
+        # Add 1 as usual body tokens parsing and object generation or else indentation won't work properly
         get_body_tokens = self.get_statement_body(token_stream[tokens_checked + 1:len(token_stream)])
 
         # If parse not called from body parser method then append to source ast
-        if not isInBody: self.parse_body(get_body_tokens[0], ast, 'ForLoop', False)
-        else: self.parse_body(get_body_tokens[0], ast, 'ForLoop', True)
+        if not isInBody: 
+            self.parse_body(get_body_tokens[0], ast, 'ForLoop', False)
+        else: 
+            self.parse_body(get_body_tokens[0], ast, 'ForLoop', True)
 
         # Add the amount tokens we checked in body
         tokens_checked += get_body_tokens[1]
@@ -174,14 +173,17 @@ class Parser(object):
             tokens (list) : A list of all the tokens found before the matcher"""
 
         tokens = []
+        tokens_checked = 0
 
         for token in token_stream:
+            tokens_checked += 1
             # If the terminating matcher is found then return False as it means scope we allow for the check is reached
             if token[1] == terminating_matcher: return False
             # If the token matcher is found then return all the tokens found before it or else append the tokens to var
             if token[1] == matcher:
-                return tokens
-            else: tokens.append(token)
+                return [tokens, tokens_checked - 1]
+            else: 
+                tokens.append(token)
 
         # Return False if the matcher nor the terminator_matcher is found
         return False
@@ -254,21 +256,23 @@ class Parser(object):
 
                 # If the argument passed is a variable (identifier) then try get value
                 if token_stream[token][0] == 'IDENTIFIER':
-
                     # Get value and handle any errors
                     value = self.get_variable_value(token_stream[token][1])
                     if value != False: 
                         ast['PrebuiltFunction'].append( {'arguments': [value]} )
                     else: 
                         self.send_error_message("Variable '%s' does not exist" % token_stream[tokens_checked][1], token_stream[0:tokens_checked + 1])
-
                 # TODO Allow for concatenation and equation parsing
-                else: 
-                    ast['PrebuiltFunction'].append( {'arguments': [token_stream[token][1]]} )
+                else:
+                    if token_stream[token + 1][0] == 'STATEMENT_END':
+                        ast['PrebuiltFunction'].append( {'arguments': [token_stream[token][1]]} )
+                    else:
+                        value_list_func_call = self.form_value_list(token_stream[tokens_checked:len(token_stream)])
+                        print(value_list_func_call)
 
             # This will throw an error if argument passed in is not a permitted token type 
             elif token == 1 and token_stream[token][0] not in ['INTEGER', 'STRING', 'IDENTIFIER']: 
-                self.send.error_message.append("Invalid argument type of %s expected string, identifier or primitive data type" % token_stream[token][0], 
+                self.send_error_message("Invalid argument type of %s expected string, identifier or primitive data type" % token_stream[token][0], 
                                               token_stream[0:tokens_checked + 1])
 
             tokens_checked += 1 # Increment tokens checked
@@ -351,27 +355,22 @@ class Parser(object):
             # This will parse any variable declerations which have concatenation or arithmetics
             elif x >= 3:
 
-                # Holds the list of ints and perands that will be passed to equation parser
-                value_list = []
-
-                for equation_item in range(x, len(token_stream)):
-                    # If there is an end statement then break because the var decl is done
-                    if token_stream[equation_item][0] == "STATEMENT_END": break
-
-                    # Try to append item as int not string if you can
-                    try:               value_list.append(int(token_stream[equation_item][1]))
-                    except ValueError: value_list.append(token_stream[equation_item][1])
-
-                    tokens_checked += 1 # Indent the tokens checked within this for loop
+                # This will call the form_value_list method and it will return the concatenation value and tokens checked
+                value_list_func_call = self.form_value_list(token_stream[tokens_checked:len(token_stream)])
+                value_list = value_list_func_call[0]
+                tokens_checked += value_list_func_call[1]
 
                 # Call the equation parser and append value returned or try concat parser if an error occurs
-                try: ast['VariableDecleration'].append({ "value": self.equation_parser(value_list)})
+                try: 
+                    ast['VariableDecleration'].append({ "value": self.equation_parser(value_list)})
                 except:
-                    try:    ast['VariableDecleration'].append({ "value": self.concatenation_parser(value_list) })
-                    except: self.send_error_message("Invalid variable decleration!", self.token_stream[self.token_index:self.token_index + tokens_checked] )
-                break                   # Break out of the current var parsing loop since we just parsed everything
+                    try: 
+                        ast['VariableDecleration'].append({ "value": self.concatenation_parser(value_list) })
+                    except: 
+                        self.send_error_message("Invalid variable decleration!", self.token_stream[self.token_index:self.token_index + tokens_checked] )
+                break  # Break out of the current var parsing loop since we just parsed everything
 
-            tokens_checked += 1         # Indent within overall for loop
+            tokens_checked += 1  # Indent within overall for loop
 
         # Last case error validation checking if all needed var decl elements are in the ast such as:
         # var type, name and value
@@ -414,6 +413,7 @@ class Parser(object):
 
         # This loop will parse the condition e.g. if 12 < 11
         for x in range(0, len(token_stream)):
+
             tokens_checked += 1
 
             # Simplification variables that will improve readbility
@@ -448,14 +448,24 @@ class Parser(object):
                     ast['ConditionalStatement'].append( {'value2': token_value} )
 
         # Increment global token index for tokens checked in condition
-        self.token_index += tokens_checked
+        self.token_index += tokens_checked - 1
 
         # This will get the body tokens and the tokens checked that make up the body to skip them
         get_body_return = self.get_statement_body(token_stream[tokens_checked:len(token_stream)])
 
+        print()
+        print()
+        print()
+        print('---', get_body_return)
+        print()
+        print()
+        print()
+
         # If it nested then call parse_body with nested parameter of true else false
-        if isNested == True: self.parse_body(get_body_return[0], ast, 'ConditionalStatement', True)
-        else: self.parse_body(get_body_return[0], ast, 'ConditionalStatement', False)
+        if isNested == True: 
+            self.parse_body(get_body_return[0], ast, 'ConditionalStatement', True)
+        else: 
+            self.parse_body(get_body_return[0], ast, 'ConditionalStatement', False)
 
         # Add the amount tokens we checked in body
         tokens_checked += get_body_return[1]
@@ -473,7 +483,7 @@ class Parser(object):
             statement_ast (dict) : The condition of the body being parsed
             isNested      (bool) : If the condition being parsed is nested
         returns:
-             ast       (object) : Abstract Syntax Tree of the body
+            ast       (object) : Abstract Syntax Tree of the body
         """
 
         ast = {'body': []}
@@ -495,6 +505,11 @@ class Parser(object):
                 ast['body'].append(condition_parsing[0])
                 tokens_checked += condition_parsing[1] - 1 # minus one to not skip extra token
 
+            elif token_stream[tokens_checked][0] == "IDENTIFIER" and token_stream[tokens_checked][1] == "for":
+                loop_parse = self.parse_for_loop(token_stream[tokens_checked:len(token_stream)], True)
+                ast['body'].append(loop_parse[0])
+                tokens_checked += loop_parse[1]
+
             # This will parse builtin functions within the body 
             elif token_stream[tokens_checked][0] == 'IDENTIFIER' and token_stream[tokens_checked][1] in constants.BUILT_IN_FUNCTIONS:
                 built_in_func_parse = self.parse_built_in_function(token_stream[tokens_checked:len(token_stream)], True)
@@ -507,15 +522,10 @@ class Parser(object):
                 ast['body'].append(comment_parsing[0])
                 tokens_checked += comment_parsing[1]
 
-            elif token_stream[tokens_checked][0] == "IDENTIFIER" and token_stream[tokens_checked][1] == "for":
-                loop_parse = self.parse_for_loop(token_stream[tokens_checked:len(token_stream)], True)
-                ast['body'].append(loop_parse[0])
-                tokens_checked += loop_parse[1] - 1
-
             # This is needed to increase token index by 1 when a closing scope definer is found because it is skipped
             # so when it is found then add 1 or else this will lead to a logical bug in nesting
             if token_stream[tokens_checked][1] == '}':
-                nesting_count += 1 
+                nesting_count += 1
 
             tokens_checked += 1
 
@@ -558,11 +568,12 @@ class Parser(object):
             elif token_type == "SCOPE_DEFINER" and token_value == "}": nesting_count -= 1
 
             # Checks whether the closing scope definer is found to finish creating body tokens
-            if nesting_count == 0: break
+            if nesting_count == 0: 
+                body_tokens.append(token)
+                break
             else: body_tokens.append(token)
 
-        # This adds the ending scope definer because for inside nested statements it wont do it 
-        if body_tokens[len(body_tokens) - 1][1] != "}": body_tokens.append(['SCOPE_DEFINER', '}'])
+        print('{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}}}}}', body_tokens)
 
         return [body_tokens, tokens_checked]
 
@@ -679,6 +690,19 @@ class Parser(object):
         for var in self.symbol_tree:
             if var[0] == name: return var[1]
         return False
+
+
+
+    def form_value_list(self, tokens):
+        value_list = []
+        tokens_checked = 0
+        for token in tokens:
+            if token[0] == "STATEMENT_END": break
+            try: value_list.append(int(token[1]))
+            except: value_list.append(token[1])
+            tokens_checked += 1
+
+        return [value_list, tokens_checked]
 
 
 
