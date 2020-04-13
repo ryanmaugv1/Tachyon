@@ -46,4 +46,4 @@ I have created a youtube tutorial on how to recreate this language from scratch 
 
 🐦 [@techedryan](https://www.twitter.com/techedryan)
 
-📨 ryan.maugin@adacollege.org.uk
+📨 ryanmaugin@icloud.com
